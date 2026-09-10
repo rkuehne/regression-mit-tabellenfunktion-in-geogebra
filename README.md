@@ -1,35 +1,48 @@
-# Regressionstrainer
+# GeoGebra-Begleitkurs: Potenzregression auf dem iPad
 
-Eine kleine statische Web-App zum Üben von Potenzregression und Fehleranalyse.
+Eine statische, für GitHub Pages geeignete Lernanwendung für die Oberstufe. Die Schülerinnen und Schüler arbeiten in der separaten GeoGebra Rechner Suite und folgen auf dieser Seite acht bebilderten Schritten von der Messwerttabelle bis zur Fehlerbeurteilung.
+
+## Enthaltene Funktionen
+
+- acht frei anwählbare Lernschritte mit iPad-Anweisungen
+- neun vergrößerbare und markierte GeoGebra-Screenshots
+- kopierbare Formeln und Befehle
+- Kontrollpunkte mit Dezimalkomma- und Dezimalpunkt-Unterstützung
+- lokaler Lernfortschritt ohne Anmeldung oder Datenübertragung
+- optionaler Potenzregressions-Rechner für eigene Messwerte
+- druckbarer Lernnachweis, der auf dem iPad als PDF gesichert werden kann
+- Übernahme alter Messdaten aus `regressionstrainer-state-v1`
 
 ## Dateien
 
-- `index.html` – Seitenstruktur
-- `style.css` – Layout und responsive Darstellung
-- `app.js` – Regression, Diagramm, Auswertung und lokales Speichern
+- `index.html` – vollständige Seitenstruktur
+- `style.css` – Gestaltung, iPad-/Split-View-Anpassungen und Drucklayout
+- `app.js` – Lernweg, lokaler Zustand, Bedienung und Ausgabe
+- `lesson-data.js` – Inhalte, Screenshots und Prüfregeln der acht Schritte
+- `regression.js` – Zahlenverarbeitung, Potenzregression und Fehleranalyse
+- `state.js` – lokaler Lernstand und Migration der bisherigen Messdaten
+- `assets/steps/` – die neun Abbildungen aus der Word-Vorlage
+- `assets/og.png` – lokale Social-Preview-Grafik
+- `tests/` – mathematische und inhaltliche Tests ohne Zusatzpakete
 
-Die Seite benötigt **keine Bilder** und keine externen JavaScript-Bibliotheken.
+## Lokal prüfen
+
+Da die Anwendung JavaScript-Module nutzt, sollte sie über einen lokalen Webserver geöffnet werden, zum Beispiel:
+
+```powershell
+python -m http.server 8000
+```
+
+Danach `http://localhost:8000/` aufrufen. Die Tests laufen mit:
+
+```powershell
+node --test
+```
 
 ## Auf GitHub Pages veröffentlichen
 
-1. Neues GitHub-Repository anlegen, z. B. `regressionstrainer`.
-2. `index.html`, `style.css` und `app.js` in das Hauptverzeichnis des Repositories hochladen.
-3. Im Repository zu **Settings → Pages** gehen.
-4. Unter **Build and deployment** `Deploy from a branch` wählen.
-5. Branch `main`, Ordner `/ (root)` auswählen und speichern.
-6. Nach kurzer Zeit ist die Seite unter einer Adresse wie
-   `https://DEINNAME.github.io/regressionstrainer/` erreichbar.
+Die Dateien bleiben im Hauptverzeichnis des Pages-Repositories. Unter **Settings → Pages** weiterhin **Deploy from a branch**, Branch `main` und Ordner `/ (root)` verwenden. Es gibt keinen Build-Schritt und alle lokalen Ressourcen verwenden relative Pfade.
 
-## Bilder
+## Datenschutz
 
-Für diese Version sind keine Bilddateien nötig. Diagramm und Oberfläche werden direkt mit HTML/CSS/SVG erzeugt.
-
-Falls später eigene Screenshots oder Fotos eingebaut werden sollen:
-- im Repository einen Ordner `assets/` anlegen,
-- Bilder dort hochladen,
-- in HTML z. B. mit `src="./assets/dateiname.png"` referenzieren.
-
-## Datenschutz / Speicherung
-
-Der Arbeitsstand wird über `localStorage` nur im Browser des jeweiligen Geräts gespeichert.
-Zusätzlich kann der Arbeitsstand als JSON-Datei exportiert und später wieder geladen werden.
+Lernstand, optionale Namensangaben und Transferdaten werden nur unter dem Schlüssel `geogebra-begleitkurs-state-v2` im `localStorage` des jeweiligen Browsers gespeichert. Der Lernnachweis wird über den Druckdialog lokal erzeugt. Es werden keine Schülerdaten an einen Server gesendet.

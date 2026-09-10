@@ -2,179 +2,326 @@
 <html lang="de">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Interaktiver Regressionstrainer für Potenzregression und Fehleranalyse.">
-  <title>Regressionstrainer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#6552c8">
+  <meta name="description" content="Geführter GeoGebra-Begleitkurs: Potenzregression und Fehleranalyse auf dem iPad.">
+  <meta property="og:title" content="GeoGebra-Begleitkurs · Regression auf dem iPad">
+  <meta property="og:description" content="Geführter Begleitkurs mit iPad-Anleitungen, Kontrollpunkten und Potenzregression.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="./assets/og.png">
+  <meta property="og:image:width" content="1733">
+  <meta property="og:image:height" content="907">
+  <meta property="og:image:alt" content="GeoGebra-Begleitkurs – Regression Schritt für Schritt">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="GeoGebra-Begleitkurs · Regression auf dem iPad">
+  <meta name="twitter:description" content="Geführter Begleitkurs mit iPad-Anleitungen, Kontrollpunkten und Potenzregression.">
+  <meta name="twitter:image" content="./assets/og.png">
+  <title>GeoGebra-Begleitkurs · Regression auf dem iPad</title>
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+
   <header class="site-header">
-    <div class="wrap">
-      <p class="eyebrow">Interaktive Übung</p>
-      <h1>Regression mit Messdaten</h1>
-      <p class="intro">
-        Trage Messwerte ein, wähle ein Regressionsmodell und prüfe,
-        ob die Daten mit einem <span class="nowrap">1/r²-Gesetz</span> vereinbar sind.
-      </p>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="brand-line"><span class="brand-mark" aria-hidden="true">∑</span> GeoGebra-Begleitkurs</p>
+        <p class="eyebrow">Oberstufe Physik · selbstständig auf dem iPad</p>
+        <h1>Regression Schritt für Schritt</h1>
+        <p class="hero-lead">
+          Arbeite in der GeoGebra Rechner Suite und nutze diese Seite als Wegweiser.
+          Jeder Schritt zeigt dir genau, was du auf dem iPad antippen, eingeben und prüfen musst.
+        </p>
+        <div class="hero-actions">
+          <button id="startCourseBtn" class="button primary" type="button">Lernweg starten</button>
+          <a class="button secondary" href="https://www.geogebra.org/calculator" target="_blank" rel="noopener">GeoGebra-Webversion öffnen <span aria-hidden="true">↗</span></a>
+        </div>
+        <ul class="hero-facts" aria-label="Kursinformationen">
+          <li>8 Schritte</li>
+          <li>ca. 25 Minuten</li>
+          <li>Fortschritt nur auf diesem Gerät</li>
+        </ul>
+      </div>
+
+      <aside class="setup-card" aria-labelledby="setup-title">
+        <p class="setup-kicker">Vor dem Start</p>
+        <h2 id="setup-title">Zwei Apps, ein Arbeitsweg</h2>
+        <ol class="setup-list">
+          <li><span>1</span><div><strong>GeoGebra öffnen</strong><small>Starte die Rechner Suite auf dem iPad.</small></div></li>
+          <li><span>2</span><div><strong>Nebeneinander anordnen</strong><small>Öffne das Dock und ziehe die zweite App an den linken oder rechten Rand. Auf älteren iPads heißt diese Ansicht Split View.</small></div></li>
+          <li><span>3</span><div><strong>Schrittweise wechseln</strong><small>Ausführen, Ergebnis übertragen, prüfen.</small></div></li>
+        </ol>
+        <p class="privacy-note">Keine Anmeldung: Antworten und Name verlassen dein iPad nicht.</p>
+      </aside>
     </div>
   </header>
 
-  <main class="wrap">
-    <section class="panel" aria-labelledby="step1">
-      <div class="section-head">
+  <main id="main">
+    <section id="course" class="wrap course-section" aria-labelledby="course-title">
+      <div class="section-heading">
         <div>
-          <p class="step">Schritt 1</p>
-          <h2 id="step1">Messwerte eingeben</h2>
+          <p class="eyebrow">Geführter Lernweg</p>
+          <h2 id="course-title">Von der Tabelle zur Fehleranalyse</h2>
         </div>
-        <button id="resetDataBtn" class="button secondary" type="button">Beispieldaten zurücksetzen</button>
+        <p class="section-intro">Alle Schritte bleiben offen. Der violette Hinweis zeigt dir, wo du sinnvoll weiterarbeitest.</p>
       </div>
 
-      <p>
-        Die Ausgangsdaten entsprechen der GeoGebra-Übung: <strong>r</strong> in Spalte A,
-        <strong>F</strong> in Spalte B.
-      </p>
+      <div class="course-shell">
+        <aside class="course-rail" aria-label="Kursfortschritt">
+          <div class="progress-card">
+            <div class="progress-copy">
+              <strong id="progressLabel">0 von 8 Schritten</strong>
+              <span id="progressPercent">0 %</span>
+            </div>
+            <progress id="courseProgress" max="8" value="0">0 von 8</progress>
+          </div>
+          <nav aria-label="Lernschritte">
+            <ol id="stepNav" class="step-nav"></ol>
+          </nav>
+          <button id="resetCourseBtn" class="text-button" type="button">Lernfortschritt zurücksetzen</button>
+        </aside>
 
-      <div class="table-scroll">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th scope="col">Nr.</th>
-              <th scope="col">r</th>
-              <th scope="col">F (mN)</th>
-            </tr>
-          </thead>
-          <tbody id="inputRows"></tbody>
-        </table>
+        <article id="lessonCard" class="lesson-card" aria-labelledby="stepTitle">
+          <header class="lesson-header">
+            <div>
+              <p id="stepEyebrow" class="step-eyebrow"></p>
+              <h2 id="stepTitle"></h2>
+              <p id="stepGoal" class="step-goal"></p>
+            </div>
+            <span id="stepStateBadge" class="state-badge"></span>
+          </header>
+
+          <div class="lesson-grid">
+            <div class="instruction-column">
+              <section class="instruction-block" aria-labelledby="ipad-heading">
+                <p class="mini-label">Auf dem iPad</p>
+                <h3 id="ipad-heading">Jetzt in GeoGebra</h3>
+                <ol id="stepActions" class="action-list"></ol>
+              </section>
+
+              <div id="stepDataTable" class="source-data" hidden></div>
+
+              <div id="formulaBlock" class="formula-block" hidden>
+                <div>
+                  <span>Diese Eingabe verwenden</span>
+                  <code id="formulaText"></code>
+                </div>
+                <button id="copyFormulaBtn" class="copy-button" type="button">Kopieren</button>
+              </div>
+              <p id="copyStatus" class="sr-only" role="status" aria-live="polite"></p>
+
+              <details class="help-box">
+                <summary>Ich brauche einen Tipp</summary>
+                <p id="stepHint"></p>
+              </details>
+              <div class="mistake-box">
+                <strong>Typischer Stolperstein</strong>
+                <p id="stepMistake"></p>
+              </div>
+            </div>
+
+            <div id="stepImages" class="step-images" aria-label="Abbildungen zum Lernschritt"></div>
+          </div>
+
+          <section class="checkpoint" aria-labelledby="checkpoint-title">
+            <div class="checkpoint-heading">
+              <span class="checkpoint-icon" aria-hidden="true">✓</span>
+              <div>
+                <p class="mini-label">Kontrollpunkt</p>
+                <h3 id="checkpoint-title">Prüfe dein Ergebnis</h3>
+              </div>
+            </div>
+            <p id="checkpointPrompt"></p>
+            <form id="checkpointForm" novalidate>
+              <div id="checkpointFields" class="checkpoint-fields"></div>
+              <button class="button primary" type="submit">Ergebnis prüfen</button>
+            </form>
+            <p id="checkpointFeedback" class="feedback" role="status" aria-live="polite"></p>
+          </section>
+
+          <footer class="lesson-footer">
+            <button id="previousStepBtn" class="button secondary" type="button">← Zurück</button>
+            <button id="nextStepBtn" class="button primary" type="button">Weiter →</button>
+          </footer>
+        </article>
       </div>
 
-      <div class="actions">
-        <button id="addRowBtn" class="button secondary" type="button">Zeile hinzufügen</button>
-        <button id="removeRowBtn" class="button secondary" type="button">Letzte Zeile entfernen</button>
-      </div>
-      <p id="inputMessage" class="message" role="status" aria-live="polite"></p>
-    </section>
-
-    <section class="panel" aria-labelledby="step2">
-      <p class="step">Schritt 2</p>
-      <h2 id="step2">Regressionsmodell wählen</h2>
-      <p>Welcher Funktionstyp passt zu diesen Messwerten am besten?</p>
-
-      <div class="inline-form">
-        <label for="modelSelect">Modell</label>
-        <select id="modelSelect">
-          <option value="">Bitte wählen …</option>
-          <option value="linear">Lineare Regression</option>
-          <option value="quadratic">Quadratische Regression</option>
-          <option value="exponential">Exponentielle Regression</option>
-          <option value="power">Potenzregression</option>
-        </select>
-        <button id="checkModelBtn" class="button" type="button">Auswahl prüfen</button>
-      </div>
-
-      <p id="modelFeedback" class="message" role="status" aria-live="polite"></p>
-
-      <div id="regressionResult" class="result-box" hidden>
-        <h3>Potenzregression</h3>
-        <p class="equation" id="equationText"></p>
-        <p id="regressionMeta"></p>
-      </div>
-    </section>
-
-    <section class="panel" aria-labelledby="step3">
-      <p class="step">Schritt 3</p>
-      <h2 id="step3">Messpunkte und Regressionskurve</h2>
-      <p>
-        Die Punkte stammen direkt aus der Tabelle. Nach korrekter Modellwahl wird die
-        berechnete Potenzkurve eingezeichnet.
-      </p>
-      <div class="chart-wrap">
-        <svg id="chart" viewBox="0 0 760 420" role="img" aria-labelledby="chartTitle chartDesc">
-          <title id="chartTitle">Messwerte und Regressionskurve</title>
-          <desc id="chartDesc">Streudiagramm der Messwerte r und F mit Potenzregressionskurve.</desc>
-        </svg>
-      </div>
-    </section>
-
-    <section class="panel" aria-labelledby="step4">
-      <p class="step">Schritt 4</p>
-      <h2 id="step4">Regressionswerte und Abweichungen</h2>
-      <p>
-        Für jeden Messwert wird der von der Regression vorhergesagte Wert berechnet.
-        Die prozentuale Abweichung ist
-        <span class="formula">(Messwert − Regressionswert) / Regressionswert · 100</span>.
-      </p>
-
-      <div class="table-scroll">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th scope="col">r</th>
-              <th scope="col">Messwert F</th>
-              <th scope="col">Regression F̂</th>
-              <th scope="col">Abweichung</th>
-            </tr>
-          </thead>
-          <tbody id="analysisRows"></tbody>
-        </table>
-      </div>
-      <p id="analysisMessage" class="message muted">Wähle zuerst die Potenzregression.</p>
-    </section>
-
-    <section class="panel" aria-labelledby="step5">
-      <p class="step">Schritt 5</p>
-      <h2 id="step5">1/r²-Gesetz beurteilen</h2>
-
-      <div class="quiz">
-        <label for="exponentAnswer">
-          Welchen Wert sollte der Exponent einer idealen 1/r²-Abhängigkeit haben?
-        </label>
-        <div class="answer-row">
-          <input id="exponentAnswer" type="number" step="0.01" inputmode="decimal" placeholder="z. B. -2">
-          <button id="checkExponentBtn" class="button" type="button">Prüfen</button>
+      <div id="courseComplete" class="completion-banner" hidden>
+        <div aria-hidden="true" class="completion-mark">✓</div>
+        <div>
+          <p class="eyebrow">Lernweg abgeschlossen</p>
+          <h3>Du kannst die Auswertung jetzt auf eigene Messdaten übertragen.</h3>
+          <p>Öffne den Transferrechner oder erstelle direkt deinen Lernnachweis.</p>
         </div>
-        <p id="exponentFeedback" class="message" role="status" aria-live="polite"></p>
-      </div>
-
-      <div class="quiz">
-        <label for="errorAnswer">
-          Bei F = 0,06 mN und einem möglichen absoluten Fehler von 0,01 mN:
-          Wie groß ist der relative Fehler in Prozent ungefähr?
-        </label>
-        <div class="answer-row">
-          <input id="errorAnswer" type="number" step="0.1" inputmode="decimal" placeholder="Prozent">
-          <button id="checkErrorBtn" class="button" type="button">Prüfen</button>
-        </div>
-        <p id="errorFeedback" class="message" role="status" aria-live="polite"></p>
-      </div>
-
-      <div id="conclusionBox" class="result-box" hidden>
-        <h3>Auswertung</h3>
-        <p id="conclusionText"></p>
+        <a class="button light" href="#transfer">Zum Transfer</a>
       </div>
     </section>
 
-    <section class="panel save-panel" aria-labelledby="save">
-      <p class="step">Arbeitsstand</p>
-      <h2 id="save">Speichern und wieder laden</h2>
-      <p>
-        Änderungen werden automatisch auf diesem Gerät im Browser gespeichert.
-        Zusätzlich kannst du den Datensatz als Datei sichern.
-      </p>
-      <div class="actions">
-        <button id="exportBtn" class="button secondary" type="button">Arbeitsstand exportieren</button>
-        <label class="button secondary file-button">
-          Arbeitsstand laden
-          <input id="importInput" type="file" accept="application/json,.json">
+    <section id="transfer" class="transfer-section" aria-labelledby="transfer-title">
+      <div class="wrap">
+        <div class="section-heading inverse">
+          <div>
+            <p class="eyebrow">Optionaler Transfer</p>
+            <h2 id="transfer-title">Eigene Messreihe prüfen</h2>
+          </div>
+          <p class="section-intro">Gib mindestens drei positive Wertepaare ein. Der Rechner bestimmt dieselbe Potenzregression wie im Lernweg.</p>
+        </div>
+
+        <div class="transfer-card">
+          <div class="transfer-inputs">
+            <div class="panel-heading">
+              <div>
+                <p class="mini-label">Messdaten</p>
+                <h3>r und F eingeben</h3>
+              </div>
+              <button id="resetTransferBtn" class="text-button" type="button">Beispieldaten einsetzen</button>
+            </div>
+
+            <div class="table-scroll">
+              <table class="data-table input-table">
+                <thead>
+                  <tr><th scope="col">Nr.</th><th scope="col">r</th><th scope="col">F</th></tr>
+                </thead>
+                <tbody id="transferInputRows"></tbody>
+              </table>
+            </div>
+            <div class="row-actions">
+              <button id="addTransferRowBtn" class="button secondary compact" type="button">+ Zeile</button>
+              <button id="removeTransferRowBtn" class="button secondary compact" type="button">− Zeile</button>
+            </div>
+
+            <label class="field uncertainty-field" for="uncertaintyInput">
+              <span>Geschätzte relative Messunsicherheit in % <small>(optional)</small></span>
+              <input id="uncertaintyInput" type="text" inputmode="decimal" placeholder="z. B. 10">
+            </label>
+            <p class="field-note">Ohne Unsicherheitsangabe zeigt der Rechner Ergebnisse, fällt aber kein Urteil über die Vereinbarkeit.</p>
+
+            <button id="calculateTransferBtn" class="button primary wide" type="button">Potenzregression berechnen</button>
+            <div id="transferFeedback" class="feedback" role="status" aria-live="polite"></div>
+          </div>
+
+          <div id="transferResults" class="transfer-results" hidden>
+            <div class="result-heading">
+              <div>
+                <p class="mini-label">Auswertung</p>
+                <h3>Deine Potenzregression</h3>
+              </div>
+              <span class="result-dot" aria-hidden="true"></span>
+            </div>
+            <p id="transferEquation" class="result-equation"></p>
+            <p id="transferMeta" class="result-meta"></p>
+            <p id="uncertaintyResult" class="interpretation"></p>
+
+            <div class="chart-card">
+              <div class="chart-legend"><span><i class="legend-point"></i> Messwerte</span><span><i class="legend-line"></i> Potenzregression</span></div>
+              <svg id="transferChart" viewBox="0 0 760 420" role="img"></svg>
+            </div>
+
+            <div class="table-scroll result-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr><th scope="col">r</th><th scope="col">Messwert F</th><th scope="col">Regression F̂</th><th scope="col">Abweichung</th></tr>
+                </thead>
+                <tbody id="transferAnalysisRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <label class="reflection-card" for="reflectionInput">
+          <span class="mini-label">Deine Reflexion</span>
+          <strong>Was sagt deine Messreihe aus?</strong>
+          <textarea id="reflectionInput" rows="4" placeholder="Beschreibe den Exponenten, die Streuung und die Bedeutung der Messunsicherheit …"></textarea>
         </label>
       </div>
-      <p id="saveMessage" class="message" role="status" aria-live="polite"></p>
+    </section>
+
+    <section id="summary" class="wrap summary-section" aria-labelledby="summary-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Lernnachweis</p>
+          <h2 id="summary-title">Deine Zusammenfassung</h2>
+        </div>
+        <p class="section-intro">Ergänze bei Bedarf Name und Kurs. Beim Drucken werden nur die Ergebnisse angezeigt.</p>
+      </div>
+
+      <div id="printSummary" class="summary-sheet">
+        <header class="summary-header">
+          <div>
+            <span class="summary-subtitle">GeoGebra-Begleitkurs · Potenzregression</span>
+            <h3>Lernnachweis</h3>
+          </div>
+          <span id="summaryStatus" class="summary-status"></span>
+        </header>
+
+        <div class="student-fields screen-fields">
+          <label class="field" for="studentNameInput"><span>Name <small>(optional)</small></span><input id="studentNameInput" type="text" autocomplete="name"></label>
+          <label class="field" for="courseNameInput"><span>Kurs <small>(optional)</small></span><input id="courseNameInput" type="text"></label>
+        </div>
+        <dl class="print-student-meta">
+          <div><dt>Name</dt><dd id="printStudentName">–</dd></div>
+          <div><dt>Kurs</dt><dd id="printCourseName">–</dd></div>
+          <div><dt>Datum</dt><dd id="summaryDate"></dd></div>
+        </dl>
+
+        <div class="summary-grid">
+          <section>
+            <p class="mini-label">Fortschritt</p>
+            <h4 id="summaryProgress"></h4>
+            <ul id="summaryChecklist" class="summary-checklist"></ul>
+          </section>
+          <section>
+            <p class="mini-label">Referenzergebnisse</p>
+            <dl class="key-results">
+              <div><dt>Potenzfunktion</dt><dd>F(r) ≈ 28,9022 · r<sup>−2,075</sup></dd></div>
+              <div><dt>Größte Abweichung</dt><dd>≈ 15,7 % bei r = 12,4</dd></div>
+              <div><dt>Möglicher Einzelfehler</dt><dd>≈ 16,7 %</dd></div>
+            </dl>
+          </section>
+        </div>
+
+        <section class="summary-conclusion">
+          <p class="mini-label">Beurteilung</p>
+          <p id="summaryConclusion"></p>
+        </section>
+
+        <section id="summaryTransfer" class="summary-transfer" hidden>
+          <p class="mini-label">Eigene Messreihe</p>
+          <p id="summaryTransferResult"></p>
+          <p id="summaryReflection"></p>
+        </section>
+
+        <p class="print-footnote">Dieser Lernnachweis wurde lokal im Browser erstellt. Es wurden keine Daten übertragen.</p>
+      </div>
+
+      <div class="summary-actions">
+        <button id="printSummaryBtn" class="button primary" type="button">Als PDF sichern / drucken</button>
+        <p>Auf dem iPad im Druckdialog die Vorschau vergrößern und anschließend „In Dateien sichern“ wählen.</p>
+      </div>
     </section>
   </main>
 
-  <footer class="wrap footer">
-    <p>Regressionstrainer · läuft vollständig im Browser · keine Anmeldung erforderlich</p>
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <p><strong>GeoGebra-Begleitkurs</strong><br>Regression und Fehleranalyse · ohne Anmeldung</p>
+      <p>Der Kurs ist ein unabhängiges Lernangebot. GeoGebra ist eine Marke der International GeoGebra Institute.</p>
+    </div>
   </footer>
 
-  <script src="./app.js"></script>
+  <dialog id="imageDialog" class="image-dialog" aria-labelledby="dialogCaption">
+    <button id="closeImageDialogBtn" class="dialog-close" type="button" aria-label="Bild schließen">×</button>
+    <div class="dialog-image-wrap">
+      <div id="dialogImageStage" class="dialog-image-stage">
+        <img id="dialogImage" src="" alt="">
+      </div>
+    </div>
+    <p id="dialogCaption"></p>
+  </dialog>
+
+  <noscript>
+    <div class="noscript-note">Für die interaktiven Kontrollpunkte muss JavaScript aktiviert sein.</div>
+  </noscript>
+
+  <script type="module" src="./app.js"></script>
 </body>
 </html>
