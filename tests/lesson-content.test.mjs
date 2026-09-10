@@ -36,6 +36,15 @@ test("enthält die vier zentralen GeoGebra-Eingaben unverändert", () => {
   ]);
 });
 
+test("erklärt den richtigen Modus vor dem Öffnen der Tabellenkalkulation", () => {
+  const tableStep = LESSON_STEPS.find((step) => step.id === "table");
+  const orientation = tableStep.actions.join(" ");
+
+  assert.match(orientation, /Hamburger-Menü/);
+  assert.match(orientation, /Grafikrechner/);
+  assert.match(orientation, /vier Symbole/);
+});
+
 test("jeder Schritt ist vollständig prüfbar", () => {
   LESSON_STEPS.forEach((step) => {
     assert.ok(step.id);
