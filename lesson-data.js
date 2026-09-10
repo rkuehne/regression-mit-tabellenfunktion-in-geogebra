@@ -8,7 +8,6 @@ export const LESSON_STEPS = Object.freeze([
     goal: "Du öffnest die Tabellenkalkulation und überträgst die sechs Messwertpaare.",
     actions: [
       "Öffne die GeoGebra Rechner Suite auf dem iPad.",
-      "Öffne oben links das Hamburger-Menü (Symbol mit drei waagerechten Linien) und wähle den Modus „Grafikrechner“. Im richtigen Modus siehst du links vier Symbole; bei nur drei Symbolen wähle „Grafikrechner“ noch einmal.",
       "Tippe links auf Tabellenkalkulation.",
       "Trage die r-Werte in A1 bis A6 und die Kraftwerte F in B1 bis B6 ein. Verwende die Werte aus der Tabelle unten."
     ],
@@ -23,7 +22,7 @@ export const LESSON_STEPS = Object.freeze([
         highlights: [{ x: 32, y: 28, width: 66, height: 56, label: "A1:B6" }]
       }
     ],
-    hint: "Tippe eine Zelle an, gib den Wert über die Bildschirmtastatur ein und bestätige. Wechsle danach zur nächsten Zelle.",
+    hint: "Achte vor dem Öffnen der Tabellenkalkulation darauf, dass du im Hamburger-Menü oben links den Modus „Grafikrechner“ gewählt hast. Dann siehst du links vier Symbole; bei nur drei Symbolen wähle „Grafikrechner“ noch einmal.",
     mistake: "Achte darauf, 0.06 wirklich in B6 einzutragen. Ein fehlendes Dezimalzeichen verändert die Regression stark.",
     check: {
       prompt: "Übertrage zur Kontrolle die Werte aus der letzten Zeile.",
