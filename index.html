@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#6552c8">
-  <meta name="description" content="Geführter GeoGebra-Begleitkurs: Potenzregression und Fehleranalyse auf dem iPad.">
+  <meta name="description" content="Geführter GeoGebra-Lernkurs: Bedienung, Potenzregression und Modellbeurteilung auf dem iPad.">
   <meta property="og:title" content="GeoGebra-Begleitkurs · Regression auf dem iPad">
   <meta property="og:description" content="Geführter Begleitkurs mit iPad-Anleitungen, Kontrollpunkten und Potenzregression.">
   <meta property="og:type" content="website">
@@ -29,16 +29,16 @@
         <p class="eyebrow">Oberstufe Physik · selbstständig auf dem iPad</p>
         <h1>Regression Schritt für Schritt</h1>
         <p class="hero-lead">
-          Arbeite in der GeoGebra Rechner Suite und nutze diese Seite als Wegweiser.
-          Jeder Schritt zeigt dir genau, was du auf dem iPad antippen, eingeben und prüfen musst.
+          Arbeite in der GeoGebra Rechner Suite und nutze diese Seite als Lernbuch und Wegweiser.
+          Du erfährst nicht nur, was du antippen musst, sondern auch, warum jeder Schritt sinnvoll ist.
         </p>
         <div class="hero-actions">
           <button id="startCourseBtn" class="button primary" type="button">Lernweg starten</button>
           <a class="button secondary" href="https://www.geogebra.org/calculator" target="_blank" rel="noopener">GeoGebra-Webversion öffnen <span aria-hidden="true">↗</span></a>
         </div>
         <ul class="hero-facts" aria-label="Kursinformationen">
-          <li>8 Schritte</li>
-          <li>ca. 25 Minuten</li>
+          <li>10 Kapitel</li>
+          <li>etwa 20–35 Minuten, je nach Ansicht</li>
           <li>Fortschritt nur auf diesem Gerät</li>
         </ul>
       </div>
@@ -61,19 +61,39 @@
       <div class="section-heading">
         <div>
           <p class="eyebrow">Geführter Lernweg</p>
-          <h2 id="course-title">Von der Tabelle zur Fehleranalyse</h2>
+          <h2 id="course-title">Vom Messwert zum begründeten Urteil</h2>
         </div>
-        <p class="section-intro">Alle Schritte bleiben offen. Der violette Hinweis zeigt dir, wo du sinnvoll weiterarbeitest.</p>
+        <p class="section-intro">Alle Kapitel bleiben offen. Wähle zwischen ausführlicher Erklärung und kompakter Wiederholung.</p>
+      </div>
+
+      <ol class="learning-map" aria-label="Lernweg in sechs Etappen">
+        <li><span>1</span>Messwerte</li>
+        <li><span>2</span>Punkte</li>
+        <li><span>3</span>Modell</li>
+        <li><span>4</span>Modellwerte</li>
+        <li><span>5</span>Abweichungen</li>
+        <li><span>6</span>Urteil</li>
+      </ol>
+
+      <div class="course-tools" aria-label="Kursansicht und Begriffshilfe">
+        <div class="mode-control">
+          <span class="mode-label">Ansicht</span>
+          <div class="mode-switch" role="group" aria-label="Umfang der Erklärungen">
+            <button id="explainModeBtn" type="button" aria-pressed="true">Erklärmodus</button>
+            <button id="compactModeBtn" type="button" aria-pressed="false">Kurzansicht</button>
+          </div>
+        </div>
+        <button id="openGlossaryBtn" class="glossary-button" type="button">Begriffshilfe</button>
       </div>
 
       <div class="course-shell">
         <aside class="course-rail" aria-label="Kursfortschritt">
           <div class="progress-card">
             <div class="progress-copy">
-              <strong id="progressLabel">0 von 8 Schritten</strong>
+              <strong id="progressLabel">0 von 10 Kapiteln</strong>
               <span id="progressPercent">0 %</span>
             </div>
-            <progress id="courseProgress" max="8" value="0">0 von 8</progress>
+            <progress id="courseProgress" max="10" value="0">0 von 10</progress>
           </div>
           <nav aria-label="Lernschritte">
             <ol id="stepNav" class="step-nav"></ol>
@@ -86,16 +106,37 @@
             <div>
               <p id="stepEyebrow" class="step-eyebrow"></p>
               <h2 id="stepTitle"></h2>
+              <p class="mini-label learning-goal-label">Das lernst du</p>
               <p id="stepGoal" class="step-goal"></p>
             </div>
             <span id="stepStateBadge" class="state-badge"></span>
           </header>
 
-          <div class="lesson-grid">
+          <div id="lessonGrid" class="lesson-grid">
             <div class="instruction-column">
+              <section class="why-block" aria-labelledby="why-heading">
+                <p class="mini-label">Orientierung</p>
+                <h3 id="why-heading">Warum machen wir das?</h3>
+                <p id="stepWhy"></p>
+              </section>
+
+              <div id="depthContent" class="depth-content">
+                <section class="concept-block" aria-labelledby="concept-heading">
+                  <p class="mini-label">Grundlagen</p>
+                  <h3 id="concept-heading">Begriffe verstehen</h3>
+                  <dl id="stepConcepts" class="concept-list"></dl>
+                </section>
+
+                <section class="example-block" aria-labelledby="example-heading">
+                  <p class="mini-label">Durchgerechnet</p>
+                  <h3 id="example-heading"></h3>
+                  <div id="stepWorkedExample" class="worked-example"></div>
+                </section>
+              </div>
+
               <section class="instruction-block" aria-labelledby="ipad-heading">
                 <p class="mini-label">Auf dem iPad</p>
-                <h3 id="ipad-heading">Jetzt in GeoGebra</h3>
+                <h3 id="ipad-heading"></h3>
                 <ol id="stepActions" class="action-list"></ol>
               </section>
 
@@ -111,8 +152,8 @@
               <p id="copyStatus" class="sr-only" role="status" aria-live="polite"></p>
 
               <details class="help-box">
-                <summary>Ich brauche einen Tipp</summary>
-                <p id="stepHint"></p>
+                <summary>Wenn etwas anders aussieht</summary>
+                <p id="stepTroubleshooting"></p>
               </details>
               <div class="mistake-box">
                 <strong>Typischer Stolperstein</strong>
@@ -123,18 +164,23 @@
             <div id="stepImages" class="step-images" aria-label="Abbildungen zum Lernschritt"></div>
           </div>
 
+          <aside class="remember-box" aria-labelledby="remember-heading">
+            <span aria-hidden="true">!</span>
+            <div><strong id="remember-heading">Merke</strong><p id="stepRemember"></p></div>
+          </aside>
+
           <section class="checkpoint" aria-labelledby="checkpoint-title">
             <div class="checkpoint-heading">
               <span class="checkpoint-icon" aria-hidden="true">✓</span>
               <div>
                 <p class="mini-label">Kontrollpunkt</p>
-                <h3 id="checkpoint-title">Prüfe dein Ergebnis</h3>
+                <h3 id="checkpoint-title">Prüfe Ergebnis und Verständnis</h3>
               </div>
             </div>
             <p id="checkpointPrompt"></p>
             <form id="checkpointForm" novalidate>
               <div id="checkpointFields" class="checkpoint-fields"></div>
-              <button class="button primary" type="submit">Ergebnis prüfen</button>
+              <button class="button primary" type="submit">Alles prüfen</button>
             </form>
             <p id="checkpointFeedback" class="feedback" role="status" aria-live="polite"></p>
           </section>
@@ -150,7 +196,7 @@
         <div aria-hidden="true" class="completion-mark">✓</div>
         <div>
           <p class="eyebrow">Lernweg abgeschlossen</p>
-          <h3>Du kannst die Auswertung jetzt auf eigene Messdaten übertragen.</h3>
+          <h3>Du kannst den gesamten Weg erklären und auf eigene Messdaten übertragen.</h3>
           <p>Öffne den Transferrechner oder erstelle direkt deinen Lernnachweis.</p>
         </div>
         <a class="button light" href="#transfer">Zum Transfer</a>
@@ -180,7 +226,7 @@
             <div class="table-scroll">
               <table class="data-table input-table">
                 <thead>
-                  <tr><th scope="col">Nr.</th><th scope="col">r</th><th scope="col">F</th></tr>
+                  <tr><th scope="col">Nr.</th><th scope="col">r (cm)</th><th scope="col">F (mN)</th></tr>
                 </thead>
                 <tbody id="transferInputRows"></tbody>
               </table>
@@ -191,7 +237,7 @@
             </div>
 
             <label class="field uncertainty-field" for="uncertaintyInput">
-              <span>Geschätzte relative Messunsicherheit in % <small>(optional)</small></span>
+              <span>Geschätzte relative Messunsicherheit von F in % <small>(optional)</small></span>
               <input id="uncertaintyInput" type="text" inputmode="decimal" placeholder="z. B. 10">
             </label>
             <p class="field-note">Ohne Unsicherheitsangabe zeigt der Rechner Ergebnisse, fällt aber kein Urteil über die Vereinbarkeit.</p>
@@ -220,7 +266,7 @@
             <div class="table-scroll result-table-wrap">
               <table class="data-table">
                 <thead>
-                  <tr><th scope="col">r</th><th scope="col">Messwert F</th><th scope="col">Regression F̂</th><th scope="col">Abweichung</th></tr>
+                  <tr><th scope="col">r (cm)</th><th scope="col">Messwert F (mN)</th><th scope="col">Modellwert F̂ (mN)</th><th scope="col">Modellabweichung</th></tr>
                 </thead>
                 <tbody id="transferAnalysisRows"></tbody>
               </table>
@@ -274,11 +320,16 @@
             <p class="mini-label">Referenzergebnisse</p>
             <dl class="key-results">
               <div><dt>Potenzfunktion</dt><dd>F(r) ≈ 28,9022 · r<sup>−2,075</sup></dd></div>
-              <div><dt>Größte Abweichung</dt><dd>≈ 15,7 % bei r = 12,4</dd></div>
-              <div><dt>Möglicher Einzelfehler</dt><dd>≈ 16,7 %</dd></div>
+              <div><dt>Größte Modellabweichung</dt><dd>≈ 15,7 % bei r = 12,4 cm</dd></div>
+              <div><dt>Grobe relative Unsicherheit</dt><dd>≈ 16,7 % beim kleinsten F-Wert</dd></div>
             </dl>
           </section>
         </div>
+
+        <section class="competence-summary">
+          <p class="mini-label">Das kann ich jetzt</p>
+          <ul id="summaryCompetencies" class="competence-list"></ul>
+        </section>
 
         <section class="summary-conclusion">
           <p class="mini-label">Beurteilung</p>
@@ -303,10 +354,28 @@
 
   <footer class="site-footer">
     <div class="wrap footer-inner">
-      <p><strong>GeoGebra-Begleitkurs</strong><br>Regression und Fehleranalyse · ohne Anmeldung</p>
+      <p><strong>GeoGebra-Begleitkurs</strong><br>Potenzregression verstehen und beurteilen · ohne Anmeldung</p>
       <p>Der Kurs ist ein unabhängiges Lernangebot. GeoGebra ist eine Marke der International GeoGebra Institute.</p>
     </div>
   </footer>
+
+  <dialog id="glossaryDialog" class="glossary-dialog" aria-labelledby="glossaryTitle">
+    <button id="closeGlossaryBtn" class="dialog-close" type="button" aria-label="Begriffshilfe schließen">×</button>
+    <p class="mini-label">Zum Nachschlagen</p>
+    <h2 id="glossaryTitle">Begriffshilfe</h2>
+    <dl class="glossary-list">
+      <div><dt>Messwert</dt><dd>Ein beobachteter Wert mit Einheit, hier zum Beispiel F = 0,37 mN.</dd></div>
+      <div><dt>Messpaar</dt><dd>Die zusammengehörigen Werte r und F aus einer Messung.</dd></div>
+      <div><dt>Punkt</dt><dd>Die Darstellung eines Messpaares als (x, y) = (r, F).</dd></div>
+      <div><dt>Potenzfunktion</dt><dd>Eine Funktion der Form F(r) = a · rᵇ.</dd></div>
+      <div><dt>Regression</dt><dd>Ein Verfahren, das eine möglichst gut passende Modellfunktion zu mehreren Messpunkten findet.</dd></div>
+      <div><dt>Modellwert</dt><dd>Ein von der Regressionsfunktion berechneter Wert, nicht ein neuer Messwert.</dd></div>
+      <div><dt>Modellabweichung</dt><dd>Der relative Abstand zwischen Messwert und Modellwert.</dd></div>
+      <div><dt>Betrag</dt><dd>Die Größe einer Zahl ohne ihr Vorzeichen.</dd></div>
+      <div><dt>Messunsicherheit</dt><dd>Ein Bereich, in dem ein Messwert wegen begrenzter Genauigkeit schwanken kann.</dd></div>
+      <div><dt>R²</dt><dd>Ein Maß für die Güte der Modellanpassung; kein Beweis für ein Naturgesetz.</dd></div>
+    </dl>
+  </dialog>
 
   <dialog id="imageDialog" class="image-dialog" aria-labelledby="dialogCaption">
     <button id="closeImageDialogBtn" class="dialog-close" type="button" aria-label="Bild schließen">×</button>

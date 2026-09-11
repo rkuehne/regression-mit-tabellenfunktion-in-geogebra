@@ -1,21 +1,18 @@
 import { LESSON_STEPS } from "./lesson-data.js";
 import { cloneExampleData } from "./regression.js";
 
-export const STORAGE_KEY = "geogebra-begleitkurs-state-v2";
+export const STORAGE_KEY = "geogebra-begleitkurs-state-v3";
+export const V2_STORAGE_KEY = "geogebra-begleitkurs-state-v2";
 export const LEGACY_STORAGE_KEY = "regressionstrainer-state-v1";
 
 export function createDefaultState(transferData = cloneExampleData()) {
   return {
-    version: 2,
+    version: 3,
+    lessonMode: "explain",
     currentStep: 0,
     completedSteps: [],
     answers: {},
-    transfer: {
-      data: transferData,
-      uncertainty: "",
-      reflection: "",
-      result: null
-    },
+    transfer: { data: transferData, uncertainty: "", reflection: "", result: null },
     student: { name: "", course: "" },
     updatedAt: new Date().toISOString()
   };
@@ -29,9 +26,34 @@ export function sanitizeTransferData(data) {
   }));
 }
 
+function preservedTransfer(candidate) {
+  return {
+    data: sanitizeTransferData(candidate?.transfer?.data ?? candidate?.data),
+    uncertainty: String(candidate?.transfer?.uncertainty ?? ""),
+    reflection: String(candidate?.transfer?.reflection ?? ""),
+    result: candidate?.transfer?.result && typeof candidate.transfer.result === "object"
+      ? candidate.transfer.result
+      : null
+  };
+}
+
+function preservedStudent(candidate) {
+  return {
+    name: String(candidate?.student?.name ?? ""),
+    course: String(candidate?.student?.course ?? "")
+  };
+}
+
+export function migratePreviousState(candidate) {
+  const state = createDefaultState(sanitizeTransferData(candidate?.transfer?.data ?? candidate?.data));
+  state.transfer = preservedTransfer(candidate);
+  state.student = preservedStudent(candidate);
+  return state;
+}
+
 export function sanitizeState(candidate) {
   const base = createDefaultState();
-  if (!candidate || candidate.version !== 2) return base;
+  if (!candidate || candidate.version !== 3) return base;
 
   const validIds = new Set(LESSON_STEPS.map(({ id }) => id));
   const currentStep = Number.isInteger(candidate.currentStep)
@@ -42,20 +64,13 @@ export function sanitizeState(candidate) {
     : [];
 
   return {
-    version: 2,
+    version: 3,
+    lessonMode: candidate.lessonMode === "compact" ? "compact" : "explain",
     currentStep,
     completedSteps,
     answers: candidate.answers && typeof candidate.answers === "object" ? candidate.answers : {},
-    transfer: {
-      data: sanitizeTransferData(candidate.transfer?.data),
-      uncertainty: String(candidate.transfer?.uncertainty ?? ""),
-      reflection: String(candidate.transfer?.reflection ?? ""),
-      result: candidate.transfer?.result && typeof candidate.transfer.result === "object" ? candidate.transfer.result : null
-    },
-    student: {
-      name: String(candidate.student?.name ?? ""),
-      course: String(candidate.student?.course ?? "")
-    },
+    transfer: preservedTransfer(candidate),
+    student: preservedStudent(candidate),
     updatedAt: String(candidate.updatedAt ?? base.updatedAt)
   };
 }
@@ -69,9 +84,16 @@ export function loadState(storage) {
   }
 
   try {
+    const versionTwo = JSON.parse(storage.getItem(V2_STORAGE_KEY) || "null");
+    if (versionTwo?.version === 2) return migratePreviousState(versionTwo);
+  } catch {
+    // Ignore unreadable v2 data.
+  }
+
+  try {
     const legacy = JSON.parse(storage.getItem(LEGACY_STORAGE_KEY) || "null");
     if (Array.isArray(legacy?.data) && legacy.data.length >= 3 && legacy.data.length <= 30) {
-      return createDefaultState(sanitizeTransferData(legacy.data));
+      return migratePreviousState(legacy);
     }
   } catch {
     // Ignore unreadable legacy data.

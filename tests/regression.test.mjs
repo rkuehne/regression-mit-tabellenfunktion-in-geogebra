@@ -28,6 +28,8 @@ test("berechnet die Referenz-Potenzregression wie GeoGebra", () => {
   assert.ok(Math.abs(analysis.rows[0].predicted - 0.3863800509749) < 1e-10);
   assert.equal(analysis.maxDeviation.r, 12.4);
   assert.ok(Math.abs(analysis.maxDeviation.deviation - 15.66371072198) < 1e-9);
+  assert.ok(analysis.maxDeviation.deviation > 0);
+  assert.ok(analysis.maxDeviation.f > analysis.maxDeviation.predicted);
 });
 
 test("akzeptiert die geplanten Antworttoleranzen", () => {

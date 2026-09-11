@@ -16,11 +16,22 @@ const els = {
   progressLabel: document.getElementById("progressLabel"),
   progressPercent: document.getElementById("progressPercent"),
   courseProgress: document.getElementById("courseProgress"),
+  explainModeBtn: document.getElementById("explainModeBtn"),
+  compactModeBtn: document.getElementById("compactModeBtn"),
+  openGlossaryBtn: document.getElementById("openGlossaryBtn"),
   stepNav: document.getElementById("stepNav"),
   resetCourseBtn: document.getElementById("resetCourseBtn"),
   stepEyebrow: document.getElementById("stepEyebrow"),
   stepTitle: document.getElementById("stepTitle"),
   stepGoal: document.getElementById("stepGoal"),
+  stepWhy: document.getElementById("stepWhy"),
+  depthContent: document.getElementById("depthContent"),
+  stepConcepts: document.getElementById("stepConcepts"),
+  exampleHeading: document.getElementById("example-heading"),
+  stepWorkedExample: document.getElementById("stepWorkedExample"),
+  ipadHeading: document.getElementById("ipad-heading"),
+  lessonGrid: document.getElementById("lessonGrid"),
+  stepRemember: document.getElementById("stepRemember"),
   stepStateBadge: document.getElementById("stepStateBadge"),
   stepActions: document.getElementById("stepActions"),
   stepDataTable: document.getElementById("stepDataTable"),
@@ -28,7 +39,7 @@ const els = {
   formulaText: document.getElementById("formulaText"),
   copyFormulaBtn: document.getElementById("copyFormulaBtn"),
   copyStatus: document.getElementById("copyStatus"),
-  stepHint: document.getElementById("stepHint"),
+  stepTroubleshooting: document.getElementById("stepTroubleshooting"),
   stepMistake: document.getElementById("stepMistake"),
   stepImages: document.getElementById("stepImages"),
   checkpointPrompt: document.getElementById("checkpointPrompt"),
@@ -60,11 +71,14 @@ const els = {
   summaryStatus: document.getElementById("summaryStatus"),
   summaryProgress: document.getElementById("summaryProgress"),
   summaryChecklist: document.getElementById("summaryChecklist"),
+  summaryCompetencies: document.getElementById("summaryCompetencies"),
   summaryConclusion: document.getElementById("summaryConclusion"),
   summaryTransfer: document.getElementById("summaryTransfer"),
   summaryTransferResult: document.getElementById("summaryTransferResult"),
   summaryReflection: document.getElementById("summaryReflection"),
   printSummaryBtn: document.getElementById("printSummaryBtn"),
+  glossaryDialog: document.getElementById("glossaryDialog"),
+  closeGlossaryBtn: document.getElementById("closeGlossaryBtn"),
   imageDialog: document.getElementById("imageDialog"),
   closeImageDialogBtn: document.getElementById("closeImageDialogBtn"),
   dialogImageStage: document.getElementById("dialogImageStage"),
@@ -100,14 +114,28 @@ function recommendedStepIndex() {
   return index === -1 ? LESSON_STEPS.length - 1 : index;
 }
 
+function renderLessonMode() {
+  const explain = state.lessonMode !== "compact";
+  els.explainModeBtn.setAttribute("aria-pressed", String(explain));
+  els.compactModeBtn.setAttribute("aria-pressed", String(!explain));
+  els.depthContent.hidden = !explain;
+  document.body.dataset.lessonMode = explain ? "explain" : "compact";
+}
+
+function setLessonMode(mode) {
+  state.lessonMode = mode === "compact" ? "compact" : "explain";
+  renderLessonMode();
+  saveState();
+}
+
 function renderProgress() {
   const count = state.completedSteps.length;
   const percent = Math.round((count / LESSON_STEPS.length) * 100);
-  els.progressLabel.textContent = `${count} von ${LESSON_STEPS.length} Schritten`;
+  els.progressLabel.textContent = `${count} von ${LESSON_STEPS.length} Kapiteln`;
   els.progressPercent.textContent = `${percent} %`;
   els.courseProgress.max = LESSON_STEPS.length;
   els.courseProgress.value = count;
-  els.courseProgress.textContent = `${count} von ${LESSON_STEPS.length}`;
+  els.courseProgress.textContent = `${count} von ${LESSON_STEPS.length} Kapiteln`;
   els.courseComplete.hidden = count !== LESSON_STEPS.length;
 }
 
@@ -120,7 +148,7 @@ function renderStepNav() {
     const button = document.createElement("button");
     button.type = "button";
     button.dataset.stepIndex = String(index);
-    button.setAttribute("aria-label", `Schritt ${index + 1}: ${step.title}${isComplete(step.id) ? ", abgeschlossen" : ""}`);
+    button.setAttribute("aria-label", `Kapitel ${index + 1}: ${step.title}${isComplete(step.id) ? ", abgeschlossen" : ""}`);
     if (index === state.currentStep) button.setAttribute("aria-current", "step");
     if (index === recommended && !isComplete(step.id)) button.classList.add("is-next");
 
@@ -181,6 +209,32 @@ function renderSourceData(data) {
   els.stepDataTable.hidden = false;
 }
 
+function renderExplanation(step) {
+  els.stepWhy.textContent = step.why;
+  els.stepConcepts.replaceChildren();
+  step.concepts.forEach(({ term, text }) => {
+    const item = document.createElement("div");
+    const name = document.createElement("dt");
+    const description = document.createElement("dd");
+    name.textContent = term;
+    description.textContent = text;
+    item.append(name, description);
+    els.stepConcepts.append(item);
+  });
+
+  els.exampleHeading.textContent = step.workedExample.title;
+  els.stepWorkedExample.replaceChildren();
+  step.workedExample.lines.forEach((line) => {
+    const paragraph = document.createElement("p");
+    paragraph.textContent = line;
+    els.stepWorkedExample.append(paragraph);
+  });
+
+  els.ipadHeading.textContent = step.actionHeading;
+  els.stepRemember.textContent = step.remember;
+  renderLessonMode();
+}
+
 function openImageDialog(image) {
   els.dialogImageStage.querySelectorAll(".image-highlight").forEach((marker) => marker.remove());
   els.dialogImageStage.style.width = `${Math.max(image.width, 760)}px`;
@@ -216,6 +270,22 @@ function closeImageDialog() {
     els.imageDialog.close();
   } else {
     els.imageDialog.removeAttribute("open");
+  }
+}
+
+function openGlossary() {
+  if (typeof els.glossaryDialog.showModal === "function") {
+    els.glossaryDialog.showModal();
+  } else {
+    els.glossaryDialog.setAttribute("open", "");
+  }
+}
+
+function closeGlossary() {
+  if (typeof els.glossaryDialog.close === "function" && els.glossaryDialog.open) {
+    els.glossaryDialog.close();
+  } else {
+    els.glossaryDialog.removeAttribute("open");
   }
 }
 
@@ -273,24 +343,41 @@ function storeCheckpointValue(stepId, field, control) {
   state.answers[stepId] ||= {};
   state.answers[stepId][field.id] = field.type === "checkbox" ? control.checked : control.value;
   control.removeAttribute("aria-invalid");
+  const feedback = document.getElementById(`field-feedback-${stepId}-${field.id}`);
+  if (feedback) {
+    feedback.textContent = "";
+    feedback.className = "field-feedback";
+  }
   markStepIncomplete(stepId);
   setFeedback(els.checkpointFeedback);
   saveState();
 }
 
 function createCheckpointControl(step, field) {
+  const wrapper = document.createElement("div");
+  wrapper.className = `checkpoint-field ${field.kind}`;
+  const kind = document.createElement("span");
+  kind.className = "check-kind";
+  kind.textContent = field.kind === "understanding" ? "Verständnis" : "Ergebnis";
+  const feedback = document.createElement("p");
+  feedback.id = `field-feedback-${step.id}-${field.id}`;
+  feedback.className = "field-feedback";
+  feedback.setAttribute("aria-live", "polite");
+
   if (field.type === "checkbox") {
     const label = document.createElement("label");
     label.className = "checkbox-field";
     const input = document.createElement("input");
     input.type = "checkbox";
     input.id = `check-${step.id}-${field.id}`;
+    input.setAttribute("aria-describedby", feedback.id);
     input.checked = Boolean(fieldValue(step.id, field.id));
     const text = document.createElement("span");
     text.textContent = field.label;
     input.addEventListener("change", () => storeCheckpointValue(step.id, field, input));
     label.append(input, text);
-    return { wrapper: label, control: input };
+    wrapper.append(kind, label, feedback);
+    return { wrapper, control: input };
   }
 
   const label = document.createElement("label");
@@ -299,6 +386,7 @@ function createCheckpointControl(step, field) {
   text.textContent = field.label;
   const control = field.type === "choice" ? document.createElement("select") : document.createElement("input");
   control.id = `check-${step.id}-${field.id}`;
+  control.setAttribute("aria-describedby", feedback.id);
 
   if (field.type === "choice") {
     field.options.forEach((option) => {
@@ -318,7 +406,22 @@ function createCheckpointControl(step, field) {
   control.addEventListener("input", () => storeCheckpointValue(step.id, field, control));
   control.addEventListener("change", () => storeCheckpointValue(step.id, field, control));
   label.append(text, control);
-  return { wrapper: label, control };
+  wrapper.append(kind, label, feedback);
+  return { wrapper, control };
+}
+
+function isFieldAnswerValid(field, value) {
+  if (field.type === "number") return isWithin(value, field.expected, field.tolerance);
+  if (field.type === "choice") return value === field.expected;
+  if (field.type === "checkbox") return Boolean(value) === field.expected;
+  return false;
+}
+
+function setFieldFeedback(step, field, valid) {
+  const feedback = document.getElementById(`field-feedback-${step.id}-${field.id}`);
+  if (!feedback) return;
+  feedback.textContent = valid ? field.feedback.correct : field.feedback.incorrect;
+  feedback.className = `field-feedback ${valid ? "good" : "bad"}`;
 }
 
 function renderCheckpoint(step) {
@@ -330,6 +433,7 @@ function renderCheckpoint(step) {
   });
 
   if (isComplete(step.id)) {
+    step.check.fields.forEach((field) => setFieldFeedback(step, field, true));
     setFeedback(els.checkpointFeedback, step.check.success, "good");
   } else {
     setFeedback(els.checkpointFeedback);
@@ -345,10 +449,11 @@ function updateCurrentStepState() {
 
 function renderLesson() {
   const step = LESSON_STEPS[state.currentStep];
-  els.stepEyebrow.textContent = `Schritt ${state.currentStep + 1} von ${LESSON_STEPS.length}`;
+  els.stepEyebrow.textContent = `Kapitel ${state.currentStep + 1} von ${LESSON_STEPS.length}`;
   els.stepTitle.textContent = step.title;
   els.stepGoal.textContent = step.goal;
   updateCurrentStepState();
+  renderExplanation(step);
 
   els.stepActions.replaceChildren();
   step.actions.forEach((action) => {
@@ -360,10 +465,11 @@ function renderLesson() {
   renderSourceData(step.dataTable);
   els.formulaBlock.hidden = !step.formula;
   els.formulaText.textContent = step.formula || "";
-  els.stepHint.textContent = step.hint;
+  els.stepTroubleshooting.textContent = step.troubleshooting;
   els.stepMistake.textContent = step.mistake;
   document.querySelector(".help-box").open = false;
   renderStepImages(step.images);
+  els.lessonGrid.classList.toggle("no-images", step.images.length === 0);
   renderCheckpoint(step);
 
   els.previousStepBtn.disabled = state.currentStep === 0;
@@ -385,20 +491,17 @@ function setCurrentStep(index, shouldScroll = true) {
 
 function validateCheckpoint(step) {
   let valid = true;
+  let firstInvalid = null;
   step.check.fields.forEach((field) => {
     const control = document.getElementById(`check-${step.id}-${field.id}`);
-    let fieldValid = false;
-    if (field.type === "number") {
-      fieldValid = isWithin(control.value, field.expected, field.tolerance);
-    } else if (field.type === "choice") {
-      fieldValid = control.value === field.expected;
-    } else if (field.type === "checkbox") {
-      fieldValid = control.checked === field.expected;
-    }
+    const value = field.type === "checkbox" ? control.checked : control.value;
+    const fieldValid = isFieldAnswerValid(field, value);
     control.setAttribute("aria-invalid", fieldValid ? "false" : "true");
+    setFieldFeedback(step, field, fieldValid);
+    if (!fieldValid && !firstInvalid) firstInvalid = control;
     valid = valid && fieldValid;
   });
-  return valid;
+  return { valid, firstInvalid };
 }
 
 async function copyCurrentFormula() {
@@ -518,8 +621,8 @@ function renderTransferChart(points, regression) {
 
   svg.append(createSvgElement("line", { x1: margin.left, y1: margin.top + plotHeight, x2: margin.left + plotWidth, y2: margin.top + plotHeight, stroke: "#504b5f", "stroke-width": 1.5 }));
   svg.append(createSvgElement("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: margin.top + plotHeight, stroke: "#504b5f", "stroke-width": 1.5 }));
-  addSvgText(svg, margin.left + plotWidth / 2, height - 7, "r", { "text-anchor": "middle", fill: "#242236", "font-size": 15, "font-weight": 700 });
-  addSvgText(svg, 18, margin.top + plotHeight / 2, "F", { "text-anchor": "middle", fill: "#242236", "font-size": 15, "font-weight": 700, transform: `rotate(-90 18 ${margin.top + plotHeight / 2})` });
+  addSvgText(svg, margin.left + plotWidth / 2, height - 7, "r (cm)", { "text-anchor": "middle", fill: "#242236", "font-size": 15, "font-weight": 700 });
+  addSvgText(svg, 18, margin.top + plotHeight / 2, "F (mN)", { "text-anchor": "middle", fill: "#242236", "font-size": 15, "font-weight": 700, transform: `rotate(-90 18 ${margin.top + plotHeight / 2})` });
 
   let pathData = "";
   const samples = 180;
@@ -533,7 +636,7 @@ function renderTransferChart(points, regression) {
   points.forEach(({ r, f }, index) => {
     const circle = createSvgElement("circle", { cx: x(r), cy: y(f), r: 6, fill: "#242236", stroke: "#fff", "stroke-width": 2 });
     const pointTitle = createSvgElement("title");
-    pointTitle.textContent = `Messpunkt ${index + 1}: r = ${formatNumber(r, 3)}, F = ${formatNumber(f, 4)}`;
+    pointTitle.textContent = `Messpunkt ${index + 1}: r = ${formatNumber(r, 3)} cm, F = ${formatNumber(f, 4)} mN`;
     circle.append(pointTitle);
     svg.append(circle);
   });
@@ -542,7 +645,7 @@ function renderTransferChart(points, regression) {
 function renderTransferResult(points, regression, analysis, uncertainty) {
   els.transferResults.hidden = false;
   els.transferEquation.textContent = `F(r) ≈ ${formatNumber(regression.a, 5)} · r^(${formatNumber(regression.b, 5)})`;
-  els.transferMeta.textContent = `Exponent b ≈ ${formatNumber(regression.b, 5)} · Bestimmtheitsmaß R² ≈ ${formatNumber(regression.r2, 4)} · größte Abweichung ≈ ${formatNumber(Math.abs(analysis.maxDeviation.deviation), 2)} %`;
+  els.transferMeta.textContent = `Exponent b ≈ ${formatNumber(regression.b, 5)} · Bestimmtheitsmaß R² ≈ ${formatNumber(regression.r2, 4)} · größte Modellabweichung ≈ ${formatNumber(Math.abs(analysis.maxDeviation.deviation), 2)} %`;
 
   if (uncertainty === null) {
     els.uncertaintyResult.textContent = "Ohne angegebene Messunsicherheit wird keine automatische Aussage zur Vereinbarkeit getroffen. Beurteile Exponent und Streuung in deiner Reflexion.";
@@ -621,12 +724,26 @@ function restoreTransferResult() {
   renderTransferResult(validation.points, regression, analysis, state.transfer.result.uncertainty ?? null);
 }
 
+function isCheckpointKindComplete(step, kind) {
+  return step.check.fields
+    .filter((field) => field.kind === kind)
+    .every((field) => isFieldAnswerValid(field, fieldValue(step.id, field.id)));
+}
+
+const COMPETENCIES = Object.freeze([
+  { label: "Ich kann Messgrößen, Einheiten und Messpaare erklären.", steps: ["context", "table"] },
+  { label: "Ich kann Messwerte in GeoGebra als Punkte darstellen.", steps: ["setup", "first-point", "fill-points"] },
+  { label: "Ich kann eine Potenzregression erklären, berechnen und ihre Parameter deuten.", steps: ["regression-concept", "regression"] },
+  { label: "Ich kann Messwerte, Modellwerte und Modellabweichungen unterscheiden.", steps: ["predictions", "deviations"] },
+  { label: "Ich kann ein Modell unter Berücksichtigung der Messunsicherheit vorsichtig beurteilen.", steps: ["conclusion"] }
+]);
+
 function renderSummary() {
   const completeCount = state.completedSteps.length;
   const courseComplete = completeCount === LESSON_STEPS.length;
   els.summaryStatus.textContent = courseComplete ? "Abgeschlossen" : "In Bearbeitung";
   els.summaryStatus.className = `summary-status${courseComplete ? " complete" : ""}`;
-  els.summaryProgress.textContent = `${completeCount} von ${LESSON_STEPS.length} Schritten abgeschlossen`;
+  els.summaryProgress.textContent = `${completeCount} von ${LESSON_STEPS.length} Kapiteln abgeschlossen`;
   els.printStudentName.textContent = state.student.name.trim() || "–";
   els.printCourseName.textContent = state.student.course.trim() || "–";
   els.summaryDate.textContent = new Intl.DateTimeFormat("de-DE", { dateStyle: "long" }).format(new Date());
@@ -634,20 +751,34 @@ function renderSummary() {
   els.summaryChecklist.replaceChildren();
   LESSON_STEPS.forEach((step, index) => {
     const item = document.createElement("li");
+    const resultComplete = isCheckpointKindComplete(step, "result");
+    const understandingComplete = isCheckpointKindComplete(step, "understanding");
+    const missing = [];
+    if (!resultComplete) missing.push("Ergebnisprüfung offen");
+    if (!understandingComplete) missing.push("Verständnisprüfung offen");
     if (isComplete(step.id)) item.className = "complete";
-    item.textContent = `${index + 1}. ${step.title}`;
+    item.textContent = `${index + 1}. ${step.title}${missing.length ? ` – ${missing.join(", ")}` : " – vollständig"}`;
     els.summaryChecklist.append(item);
   });
 
+  els.summaryCompetencies.replaceChildren();
+  COMPETENCIES.forEach((competency) => {
+    const item = document.createElement("li");
+    const complete = competency.steps.every((stepId) => isComplete(stepId));
+    if (complete) item.className = "complete";
+    item.textContent = `${complete ? "✓" : "○"} ${competency.label}`;
+    els.summaryCompetencies.append(item);
+  });
+
   els.summaryConclusion.textContent = courseComplete
-    ? "Der Regressions-Exponent −2,075 liegt nahe bei −2. Die maximale Abweichung von etwa 15,7 % liegt im Bereich des möglichen relativen Einzelfehlers von rund 16,7 %. Die Messwerte sind deshalb innerhalb der angenommenen Messgenauigkeit mit einem 1/r²-Gesetz vereinbar."
-    : "Die abschließende Beurteilung wird nach dem erfolgreichen Kontrollpunkt in Schritt 8 eingetragen.";
+    ? "Der Regressions-Exponent −2,075 liegt nahe bei −2. Die größte Modellabweichung beträgt etwa 15,7 %; die grob abgeschätzte relative Unsicherheit des kleinsten Kraftwertes beträgt rund 16,7 %. Die Messwerte sind daher mit einem 1/r²-Modell vereinbar, beweisen es aber nicht. Die 16,7 % sind keine Unsicherheit des Regressions-Exponenten."
+    : "Die abschließende Beurteilung wird nach den Ergebnis- und Verständnisprüfungen in Kapitel 10 eingetragen.";
 
   const hasTransfer = Boolean(state.transfer.result) || Boolean(state.transfer.reflection.trim());
   els.summaryTransfer.hidden = !hasTransfer;
   if (state.transfer.result) {
     const result = state.transfer.result;
-    els.summaryTransferResult.textContent = `Eigene Regression: F(r) ≈ ${formatNumber(result.a, 5)} · r^(${formatNumber(result.b, 5)}), größte Abweichung ≈ ${formatNumber(Math.abs(result.maxDeviation), 2)} %.`;
+    els.summaryTransferResult.textContent = `Eigene Regression: F(r) ≈ ${formatNumber(result.a, 5)} · r^(${formatNumber(result.b, 5)}), größte Modellabweichung ≈ ${formatNumber(Math.abs(result.maxDeviation), 2)} %.`;
   } else {
     els.summaryTransferResult.textContent = "Für die eigene Messreihe wurde noch keine Regression gespeichert.";
   }
@@ -658,7 +789,7 @@ function renderSummary() {
 
 els.startCourseBtn.addEventListener("click", () => scrollToElement(els.course));
 els.resetCourseBtn.addEventListener("click", () => {
-  if (!window.confirm("Möchtest du alle acht Kontrollpunkte und ihre Antworten zurücksetzen? Deine Transferdaten bleiben erhalten.")) return;
+  if (!window.confirm("Möchtest du alle zehn Kapitelkontrollen und ihre Antworten zurücksetzen? Deine Transferdaten bleiben erhalten.")) return;
   state.currentStep = 0;
   state.completedSteps = [];
   state.answers = {};
@@ -680,7 +811,8 @@ els.nextStepBtn.addEventListener("click", () => {
 els.checkpointForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const step = LESSON_STEPS[state.currentStep];
-  if (validateCheckpoint(step)) {
+  const validation = validateCheckpoint(step);
+  if (validation.valid) {
     if (!isComplete(step.id)) state.completedSteps.push(step.id);
     saveState();
     setFeedback(els.checkpointFeedback, step.check.success, "good");
@@ -690,7 +822,16 @@ els.checkpointForm.addEventListener("submit", (event) => {
     renderSummary();
   } else {
     setFeedback(els.checkpointFeedback, step.check.retry, "bad");
+    validation.firstInvalid?.focus();
   }
+});
+
+els.explainModeBtn.addEventListener("click", () => setLessonMode("explain"));
+els.compactModeBtn.addEventListener("click", () => setLessonMode("compact"));
+els.openGlossaryBtn.addEventListener("click", openGlossary);
+els.closeGlossaryBtn.addEventListener("click", closeGlossary);
+els.glossaryDialog.addEventListener("click", (event) => {
+  if (event.target === els.glossaryDialog) closeGlossary();
 });
 
 els.copyFormulaBtn.addEventListener("click", copyCurrentFormula);
