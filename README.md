@@ -5,7 +5,7 @@ Eine statische, für GitHub Pages geeignete Lernanwendung für die Oberstufe. Di
 ## Enthaltene Funktionen
 
 - acht frei anwählbare Lernschritte mit iPad-Anweisungen
-- neun vergrößerbare und markierte GeoGebra-Screenshots
+- zehn vergrößerbare und markierte GeoGebra-Abbildungen
 - kopierbare Formeln und Befehle
 - Kontrollpunkte mit Dezimalkomma- und Dezimalpunkt-Unterstützung
 - lokaler Lernfortschritt ohne Anmeldung oder Datenübertragung
@@ -21,7 +21,7 @@ Eine statische, für GitHub Pages geeignete Lernanwendung für die Oberstufe. Di
 - `lesson-data.js` – Inhalte, Screenshots und Prüfregeln der acht Schritte
 - `regression.js` – Zahlenverarbeitung, Potenzregression und Fehleranalyse
 - `state.js` – lokaler Lernstand und Migration der bisherigen Messdaten
-- `assets/steps/` – die neun Abbildungen aus der Word-Vorlage
+- `assets/steps/` – die Abbildungen aus der Word-Vorlage und die Zusatzgrafik zum Ausfüllgriff
 - `assets/og.png` – lokale Social-Preview-Grafik
 - `tests/` – mathematische und inhaltliche Tests ohne Zusatzpakete
 

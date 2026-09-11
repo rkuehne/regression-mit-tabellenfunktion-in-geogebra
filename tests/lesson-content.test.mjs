@@ -7,10 +7,10 @@ import { LESSON_STEPS } from "../lesson-data.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
-test("enthält acht Lernschritte und alle neun Abbildungen", () => {
+test("enthält acht Lernschritte und alle zehn Abbildungen", () => {
   assert.equal(LESSON_STEPS.length, 8);
   const images = LESSON_STEPS.flatMap((step) => step.images);
-  assert.equal(images.length, 9);
+  assert.equal(images.length, 10);
   images.forEach((image) => {
     assert.ok(image.alt.length > 20);
     assert.ok(image.caption.length > 10);

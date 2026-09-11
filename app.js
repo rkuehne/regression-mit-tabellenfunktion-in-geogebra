@@ -158,7 +158,7 @@ function renderSourceData(data) {
   caption.textContent = "Messwerte für den Lernweg";
   const head = document.createElement("thead");
   const headerRow = document.createElement("tr");
-  ["Nr.", "A: r", "B: F (mN)"].forEach((text) => {
+  ["Nr.", "A: r (cm)", "B: F (mN)"].forEach((text) => {
     const th = document.createElement("th");
     th.scope = "col";
     th.textContent = text;

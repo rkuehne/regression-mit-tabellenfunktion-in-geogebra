@@ -95,9 +95,17 @@ export const LESSON_STEPS = Object.freeze([
         alt: "GeoGebra-Tabelle mit den sechs erzeugten Punkten in der Spalte C.",
         caption: "Durch relatives Ausfüllen werden aus A2 und B2 automatisch C2 und so weiter.",
         highlights: [{ x: 70, y: 36, width: 25, height: 51, label: "C1:C6" }]
+      },
+      {
+        src: "./assets/steps/03-ausfuellgriff.svg",
+        width: 1000,
+        height: 620,
+        alt: "Vergrößerte Markierung am unteren rechten Eck der Zelle C1 mit Hinweis zum langen Festhalten und Herunterziehen des Ausfüllgriffs auf dem iPad.",
+        caption: "Halte den Ausfüllgriff lange fest. Ziehe danach den lila Bereich bis C6 nach unten.",
+        highlights: [{ x: 59.5, y: 38.5, width: 2.5, height: 3.5, label: "Ausfüllgriff" }]
       }
     ],
-    hint: "Wenn nur C1 markiert bleibt, tippe die Zelle erneut an und ziehe genau am kleinen Griff in der unteren Ecke.",
+    hint: "Auf dem iPad musst du den Ausfüllgriff am unteren rechten Eck der markierten Zelle lange festhalten. Erst dann lässt sich der lila Bereich bis C6 nach unten ziehen.",
     mistake: "Kopiere nicht den angezeigten Wert (8, 0.37). Es muss die Formel kopiert werden, damit die Zellbezüge mitwandern.",
     check: {
       prompt: "Welcher Punkt muss nach dem Ausfüllen in C6 stehen?",
