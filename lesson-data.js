@@ -22,10 +22,10 @@ const IMAGES = Object.freeze({
     highlights: [{ x: 70, y: 36, width: 25, height: 51, label: "C1:C6" }]
   }),
   fillHandle: Object.freeze({
-    src: "./assets/steps/03-ausfuellgriff.svg", width: 1000, height: 620,
-    alt: "Vergrößerte Markierung am unteren rechten Eck der Zelle C1 mit Hinweis zum langen Festhalten und Herunterziehen des Ausfüllgriffs auf dem iPad.",
-    caption: "Halte den Ausfüllgriff lange fest und ziehe den violetten Bereich anschließend bis C6.",
-    highlights: [{ x: 59.5, y: 38.5, width: 2.5, height: 3.5, label: "Ausfüllgriff" }]
+    src: "./assets/steps/03-ausfuellgriff.png", width: 1100, height: 620,
+    alt: "GeoGebra-Tabellenkalkulation mit ausgewählter Zelle C1. Der kleine violette Ausfüllgriff am unteren rechten Zellenrand ist durch eine seitliche Vergrößerung erklärt.",
+    caption: "Setze den Finger auf das kleine violette Quadrat an C1, halte kurz und ziehe anschließend bis C6.",
+    highlights: []
   }),
   save: Object.freeze({
     src: "./assets/steps/04-zwischenstand-sichern.png", width: 720, height: 530,
@@ -70,23 +70,25 @@ const option = (value, label) => ({ value, label });
 export const LESSON_STEPS = Object.freeze([
   {
     id: "context", shortTitle: "Messidee", title: "Fragestellung und Messdaten verstehen",
-    goal: "Du erkennst, was r und F bedeuten und wie die sechs Messungen zusammengehören.",
-    why: "Eine Rechnung ist nur sinnvoll, wenn klar ist, was die Zahlen beschreiben. Hier untersuchen wir, wie sich die Kraft F verändert, wenn der Abstand r größer wird.",
+    goal: "Du verstehst, wie fehlerbehaftete Messungen einen theoretischen Zusammenhang prüfen, und erkennst die Bedeutung von r und F.",
+    why: "In der Physik sollen Experimente zeigen, ob Messdaten mit einem theoretisch vorhergesagten Zusammenhang vereinbar sind oder ihm widersprechen. Eine Formel beschreibt diesen Zusammenhang ideal und exakt; reale Messwerte streuen jedoch, weil jede Messung einer Messunsicherheit unterliegt. Deshalb erwarten wir nicht, dass alle Messpunkte genau auf dem theoretischen Graphen liegen. Stattdessen vergleichen wir Verlauf, Regressionsfunktion und Abweichungen mit der theoretischen Erwartung und beurteilen vorsichtig, ob der Versuch das Modell stützt oder widerlegt.",
     concepts: [
       { term: "Messwert", text: "Eine beobachtete Zahl mit Einheit, zum Beispiel F = 0,37 mN." },
       { term: "Messpaar", text: "Zwei Werte derselben Messung: Abstand r und Kraft F." },
-      { term: "Einheit", text: "r wird in Zentimetern (cm), F in Millinewton (mN) angegeben." }
+      { term: "Einheit", text: "r wird in Zentimetern (cm), F in Millinewton (mN) angegeben." },
+      { term: "Coulombgesetz", text: "Es beschreibt, wie die elektrische Kraft zwischen Ladungen vom Abstand abhängt; erwartet wird hier ein Verlauf proportional zu 1/r²." }
     ],
-    workedExample: { title: "Eine Zeile lesen", lines: ["Die erste Messung lautet: r = 8 cm und F = 0,37 mN.", "Die sechste Messung lautet: r = 18,6 cm und F = 0,06 mN.", "Der Abstand wird größer, während die Kraft deutlich kleiner wird."] },
-    remember: "Eine Tabellenzeile bildet immer genau ein zusammengehöriges Messpaar (r, F).",
+    workedExample: { title: "Die Messreihe einordnen", lines: ["Die Beispieldaten stammen aus einem Versuch zum Coulombgesetz mit einer Drehwaage: Gemessen wurden der Abstand r und die elektrische Kraft F.", "Im Unterricht wurde ein CASSY-Messsystem mit Millinewtonmeter verwendet. Je nach Aufbau und Messgerät können deshalb andere Größenordnungen auftreten – die Auswertungsmethode bleibt gleich.", "Die erste Messung lautet r = 8 cm und F = 0,37 mN; bei r = 18,6 cm sind es nur noch 0,06 mN."] },
+    remember: "Messpunkte müssen nicht exakt auf dem theoretischen Graphen liegen. Entscheidend ist, ob Verlauf und Abweichungen unter Berücksichtigung der Messunsicherheit mit dem Modell vereinbar sind.",
     actionHeading: "Bevor du GeoGebra öffnest",
-    actions: ["Lies die erste und die letzte Zeile der Messwerttabelle.", "Achte auf die Einheiten: r in cm und F in mN.", "Formuliere eine Vermutung: Was geschieht mit F, wenn r zunimmt?"],
+    actions: ["Lies die erste und die letzte Zeile der Messwerttabelle.", "Achte auf die Einheiten: r in cm und F in mN.", "Vergleiche den Verlauf mit der Erwartung des Coulombgesetzes: F ist proportional zu 1/r².", "Formuliere eine Vermutung: Was geschieht mit F, wenn r zunimmt?"],
     dataTable: EXAMPLE_DATA, formula: null, images: [],
     troubleshooting: "Wenn dir Dezimalpunkte ungewohnt sind: 0.37 bedeutet dasselbe wie 0,37. Die Kontrollfelder akzeptieren Punkt und Komma.",
     mistake: "Vergleiche nur Werte derselben Zeile. r = 8 cm gehört zu F = 0,37 mN.",
     check: { prompt: "Prüfe, ob du Messidee und Verlauf verstanden hast.", fields: [
       { id: "trend", kind: "result", type: "choice", label: "Was zeigt die Messreihe insgesamt?", expected: "decreases", options: [option("", "Bitte auswählen …"), option("decreases", "Wenn r zunimmt, wird F kleiner."), option("increases", "Wenn r zunimmt, wird F größer."), option("constant", "F bleibt ungefähr konstant.")], feedback: { correct: "Richtig: Die Kraft nimmt mit wachsendem Abstand ab.", incorrect: "Vergleiche erste und letzte Zeile: r steigt, F sinkt." } },
-      { id: "pair", kind: "understanding", type: "choice", label: "Welches ist ein zusammengehöriges Messpaar?", expected: "correct", options: [option("", "Bitte auswählen …"), option("correct", "r = 12,4 cm und F = 0,18 mN"), option("wrong-a", "r = 12,4 cm und F = 0,06 mN"), option("wrong-b", "r = 0,18 cm und F = 12,4 mN")], feedback: { correct: "Genau: Beide Werte stehen in Zeile 4.", incorrect: "Ein Messpaar besteht aus den Werten derselben Tabellenzeile." } }
+      { id: "pair", kind: "understanding", type: "choice", label: "Welches ist ein zusammengehöriges Messpaar?", expected: "correct", options: [option("", "Bitte auswählen …"), option("correct", "r = 12,4 cm und F = 0,18 mN"), option("wrong-a", "r = 12,4 cm und F = 0,06 mN"), option("wrong-b", "r = 0,18 cm und F = 12,4 mN")], feedback: { correct: "Genau: Beide Werte stehen in Zeile 4.", incorrect: "Ein Messpaar besteht aus den Werten derselben Tabellenzeile." } },
+      { id: "evidence", kind: "understanding", type: "choice", label: "Wann stützt ein Experiment ein theoretisches Modell?", expected: "compatible", options: [option("", "Bitte auswählen …"), option("compatible", "Wenn Verlauf und Abweichungen unter Berücksichtigung der Messunsicherheit vereinbar sind."), option("exact", "Nur wenn jeder Messwert exakt auf dem theoretischen Graphen liegt."), option("single", "Sobald ein einzelner Messwert zur Formel passt.")], feedback: { correct: "Richtig: Messunsicherheit und alle Messpunkte müssen gemeinsam betrachtet werden.", incorrect: "Messwerte streuen. Entscheidend ist die Vereinbarkeit der gesamten Messreihe mit dem Modell." } }
     ], success: "Du kennst die Messgrößen und den fallenden Verlauf.", retry: "Sieh dir Messwerttabelle und Einheiten noch einmal an." }
   },
   {
@@ -103,7 +105,7 @@ export const LESSON_STEPS = Object.freeze([
     actionHeading: "Jetzt auf dem iPad",
     actions: ["Öffne die GeoGebra Rechner Suite.", "Öffne oben links das Menü ☰ und wähle Grafikrechner.", "Tippe links auf Tabellenkalkulation, nicht auf Tabelle.", "Ordne GeoGebra und diesen Kurs wenn möglich nebeneinander an."],
     formula: null, images: [IMAGES.table],
-    troubleshooting: "Siehst du nur drei Symbole, wähle im Menü ☰ den Grafikrechner erneut. In einer schmalen Ansicht musst du die linke Leiste eventuell erst einblenden.",
+    troubleshooting: "GeoGebra arbeitet vermutlich noch im CAS-Modus, den du vielleicht aus dem Mathematikunterricht kennst. Das ist kein Fehler – für diesen Kurs brauchen wir nur eine andere Arbeitsumgebung. Öffne das Menü ☰, wähle Grafikrechner und öffne anschließend die Tabellenkalkulation. In einer schmalen Ansicht musst du die linke Leiste eventuell zuerst einblenden.",
     mistake: "Tabelle und Tabellenkalkulation klingen ähnlich. Benötigt wird das unterste Symbol mit dem Zellenraster.",
     check: { prompt: "Kontrolliere die Ansicht, bevor du Daten eingibst.", fields: [
       { id: "ready", kind: "result", type: "checkbox", label: "Ich sehe ein Zellenraster mit den Spalten A, B, C …", expected: true, feedback: { correct: "Das Zellenraster ist geöffnet.", incorrect: "Öffne die Tabellenkalkulation und prüfe die Spaltenbuchstaben." } },
@@ -191,7 +193,7 @@ export const LESSON_STEPS = Object.freeze([
     actions: ["Vergleiche F(r) = a · rᵇ mit dem fallenden Verlauf.", "Überlege, welches Vorzeichen b haben muss.", "Beachte: Das Modell muss nicht durch jeden Messpunkt gehen."],
     formula: null, images: [],
     troubleshooting: "Lies rᵇ als r hoch b. r⁻² bedeutet dasselbe wie 1/r².",
-    mistake: "Eine Regressionskurve ist keine exakte Verbindungslinie.",
+    mistake: "Der Graph der Regressionsfunktion verbindet die Messpunkte nicht nacheinander wie ein Linienzug. GeoGebra passt eine einzige Potenzfunktion so an, dass ihr Graph insgesamt möglichst nahe an allen Messpunkten verläuft. Deshalb dürfen einzelne Punkte oberhalb oder unterhalb des Graphen liegen.",
     check: { prompt: "Prüfe Modell und Exponent.", fields: [
       { id: "behavior", kind: "result", type: "choice", label: "Wie verhält sich F bei negativem b?", expected: "falling", options: [option("", "Bitte auswählen …"), option("falling", "F wird bei wachsendem r kleiner."), option("rising", "F wird größer."), option("constant", "F bleibt konstant.")], feedback: { correct: "Richtig: Der Verlauf fällt.", incorrect: "Setze größere r-Werte in 1/r² ein." } },
       { id: "meaning", kind: "understanding", type: "choice", label: "Was leistet eine Regression?", expected: "model", options: [option("", "Bitte auswählen …"), option("model", "Sie findet ein passendes Modell für alle Punkte."), option("connect", "Sie verbindet alle Punkte mit Geraden."), option("prove", "Sie beweist ein Naturgesetz.")], feedback: { correct: "Genau: Die Regression beschreibt den gemeinsamen Trend.", incorrect: "Sie liefert ein angenähertes Modell, keinen Beweis." } }
@@ -200,11 +202,12 @@ export const LESSON_STEPS = Object.freeze([
   {
     id: "regression", shortTitle: "TrendPot", title: "TrendPot in GeoGebra anwenden",
     goal: "Du berechnest die Potenzregression und liest Faktor und Exponent ab.",
-    why: "Nachdem das Modell klar ist, übernimmt GeoGebra die aufwendige Berechnung der passenden Parameter a und b.",
+    why: "Nachdem das Modell klar ist, berechnet GeoGebra die Parameter a und b so, dass der Graph der Potenzfunktion insgesamt möglichst nahe an den sechs Messpunkten verläuft.",
     concepts: [
       { term: "TrendPot", text: "Der GeoGebra-Befehl für eine Potenzregression." },
       { term: "C1:C6", text: "Der Zellbereich von C1 bis einschließlich C6." },
-      { term: "Funktionsname F", text: "Damit kann das Modell später in der Tabelle aufgerufen werden." }
+      { term: "Funktionsname F", text: "F wird gewählt, weil die physikalische Größe Kraft berechnet werden soll. Auch andere Funktionsnamen wären möglich." },
+      { term: "Variable x", text: "GeoGebra erwartet in dieser Eingabe in der Regel x als Funktionsvariable. Inhaltlich steht x hier für den Abstand r." }
     ],
     workedExample: { title: "Die Ausgabe lesen", lines: ["GeoGebra liefert etwa F(r) = 28,9022 · r⁻²·⁰⁷⁵.", "Damit ist a ≈ 28,9022 und b ≈ −2,075.", "b liegt nahe bei −2, ist aber nicht exakt gleich −2."] },
     remember: "TrendPot benötigt die Punkte C1:C6; F ist der Name des Modells.",
@@ -212,7 +215,7 @@ export const LESSON_STEPS = Object.freeze([
     actions: ["Wechsle zur Ansicht Algebra.", "Tippe in eine leere Eingabezeile.", "Gib den Befehl ein und bestätige.", "Lies a und b ab."],
     formula: "F(x)=TrendPot(C1:C6)", images: [IMAGES.regression],
     troubleshooting: "Meldet GeoGebra einen Fehler, prüfe C1:C6. TrendPot benötigt positive Punktkoordinaten.",
-    mistake: "Die Zahl vor x ist a; die Hochzahl ist b. Das Minuszeichen darf nicht fehlen.",
+    mistake: "In F(x) heißt die Funktion F, weil wir die physikalische Kraft F berechnen wollen; auch ein anderer Funktionsname wäre möglich. Als Variable solltest du hier trotzdem x verwenden: GeoGebra akzeptiert bei diesem Befehl in der Regel x und kann bei r als Variable empfindlich reagieren. Fachlich interpretieren wir x anschließend als den Abstand r. Die Zahl vor x ist a, die Hochzahl ist b – einschließlich ihres Minuszeichens.",
     check: { prompt: "Übertrage und deute die Parameter.", fields: [
       { id: "a", kind: "result", type: "number", label: "Faktor a", placeholder: "28,9022", expected: 28.9022, tolerance: 0.05, feedback: { correct: "a passt.", incorrect: "a ist ungefähr 28,9022." } },
       { id: "b", kind: "result", type: "number", label: "Exponent b", placeholder: "-2,0750", expected: -2.075, tolerance: 0.01, feedback: { correct: "b passt.", incorrect: "b ist ungefähr −2,075." } },
@@ -251,7 +254,7 @@ export const LESSON_STEPS = Object.freeze([
       { term: "Vorzeichen", text: "Plus: Messwert über dem Modell. Minus: Messwert darunter." },
       { term: "Betrag", text: "Die Größe ohne Vorzeichen, zum Beispiel |−10,6 %| = 10,6 %." }
     ],
-    workedExample: { title: "Zeile 1 vollständig berechnen", lines: ["0,37 − 0,38638 = −0,01638 mN", "−0,01638 / 0,38638 ≈ −0,0424", "−0,0424 · 100 ≈ −4,24 %: Der Messwert liegt unter dem Modellwert."] },
+    workedExample: { title: "Zeile 1 vollständig berechnen", lines: ["(0,37 − 0,38638) / 0,38638 · 100 ≈ −4,24 %", "0,37 − 0,38638 = −0,01638 mN", "−0,01638 / 0,38638 ≈ −0,0424", "−0,0424 · 100 ≈ −4,24 %: Der Messwert liegt unter dem Modellwert."] },
     remember: "Das Vorzeichen zeigt die Richtung; der Betrag zeigt die Größe der Modellabweichung.",
     actionHeading: "Jetzt in GeoGebra",
     actions: ["Gib in E1 die Formel ein.", "Fülle E1 bis E6 aus.", "Vergleiche die Beträge.", "Ordne beim größten Betrag das Vorzeichen ein."],

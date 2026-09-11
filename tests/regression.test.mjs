@@ -42,7 +42,9 @@ test("weist unvollständige, nicht positive und ungeeignete Messreihen zurück",
   assert.equal(validatePowerPoints([{ r: 1, f: 2 }, { r: 2, f: 1 }]).valid, false);
   assert.equal(validatePowerPoints([{ r: 1, f: 2 }, { r: 2, f: 1 }, { r: "", f: 0.5 }]).valid, false);
   assert.equal(validatePowerPoints([{ r: 1, f: 2 }, { r: 2, f: -1 }, { r: 3, f: 0.5 }]).valid, false);
+  assert.equal(validatePowerPoints([{ r: 1, f: 2 }, { r: 2, f: 0 }, { r: 3, f: 0.5 }]).valid, false);
   assert.equal(validatePowerPoints([{ r: 1, f: 3 }, { r: 1, f: 2 }, { r: 1, f: 1 }]).valid, false);
+  assert.equal(validatePowerPoints(Array.from({ length: 31 }, (_, index) => ({ r: index + 1, f: index + 2 }))).valid, false);
 });
 
 test("akzeptiert drei bis dreißig positive Messwertpaare mit verschiedenen r-Werten", () => {
@@ -50,4 +52,7 @@ test("akzeptiert drei bis dreißig positive Messwertpaare mit verschiedenen r-We
   const result = validatePowerPoints(data);
   assert.equal(result.valid, true);
   assert.deepEqual(result.points, [{ r: 1, f: 3 }, { r: 2, f: 1.5 }, { r: 4, f: 0.75 }]);
+
+  const thirtyRows = Array.from({ length: 30 }, (_, index) => ({ r: index + 1, f: index + 2 }));
+  assert.equal(validatePowerPoints(thirtyRows).valid, true);
 });

@@ -197,9 +197,9 @@ function renderSourceData(data) {
   const body = document.createElement("tbody");
   data.forEach(({ r, f }, index) => {
     const row = document.createElement("tr");
-    [index + 1, r, f].forEach((value) => {
+    [index + 1, r, f].forEach((value, columnIndex) => {
       const cell = document.createElement("td");
-      cell.textContent = String(value);
+      cell.textContent = columnIndex === 0 ? String(value) : formatNumber(value, 3);
       row.append(cell);
     });
     body.append(row);
@@ -291,6 +291,7 @@ function closeGlossary() {
 
 function renderStepImages(images) {
   els.stepImages.replaceChildren();
+  els.stepImages.hidden = images.length === 0;
   images.forEach((image, imageIndex) => {
     const figure = document.createElement("figure");
     figure.className = "step-figure";

@@ -26,7 +26,8 @@ test("bindet alle zehn lokalen Abbildungen zugänglich ein", () => {
     assert.ok(image.caption.length > 10);
     assert.ok(Number.isInteger(image.width) && image.width > 0);
     assert.ok(Number.isInteger(image.height) && image.height > 0);
-    assert.ok(image.highlights.length >= 1);
+    assert.ok(Array.isArray(image.highlights));
+    if (!image.src.endsWith("03-ausfuellgriff.png")) assert.ok(image.highlights.length >= 1);
     image.highlights.forEach(({ x, y, width, height }) => {
       assert.ok(x >= 0 && y >= 0 && width > 0 && height > 0);
       assert.ok(x + width <= 100 && y + height <= 100);
@@ -83,7 +84,22 @@ test("grundlegende Einrichtung steht im Lernweg und Hilfe bleibt Fehlerhilfe", (
   assert.equal(setup.actions.some((action) => action.includes("Grafikrechner")), true);
   assert.equal(setup.actions.some((action) => action.includes("Tabellenkalkulation")), true);
   assert.match(setup.remember, /vier Symbole/i);
-  assert.match(setup.troubleshooting, /Siehst du nur drei Symbole/i);
+  assert.match(setup.troubleshooting, /CAS-Modus/i);
+  assert.match(setup.troubleshooting, /Grafikrechner/i);
+});
+
+test("ordnet den Versuch und die Regressionsfunktion fachlich ein", () => {
+  const context = LESSON_STEPS.find((step) => step.id === "context");
+  const concept = LESSON_STEPS.find((step) => step.id === "regression-concept");
+  const regression = LESSON_STEPS.find((step) => step.id === "regression");
+
+  assert.match(context.why, /theoretisch vorhergesagten Zusammenhang/i);
+  assert.match(context.why, /Messunsicherheit/i);
+  assert.match(JSON.stringify(context.workedExample), /Drehwaage/);
+  assert.match(JSON.stringify(context.workedExample), /CASSY/);
+  assert.match(concept.mistake, /Graph.*möglichst nahe.*Messpunkten/i);
+  assert.match(regression.mistake, /F\(x\).*Kraft F/i);
+  assert.match(regression.mistake, /Variable.*x/i);
 });
 
 test("Einheiten und vorsichtige Fachsprache sind im Kurs konsistent", () => {
