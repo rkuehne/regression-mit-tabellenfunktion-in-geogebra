@@ -124,3 +124,13 @@ test("die Startseite enthält Moduswahl, Begriffshilfe und lokale Social Preview
   assert.match(html, /name="twitter:card" content="summary_large_image"/);
   assert.equal(existsSync(resolve(root, "assets", "og.png")), true);
 });
+
+test("weist Suchmaschinen auf die gewünschte Nicht-Indexierung hin", () => {
+  const root = resolve(here, "..");
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  const robots = readFileSync(resolve(root, "robots.txt"), "utf8");
+
+  assert.match(html, /<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">/);
+  assert.match(robots, /User-agent: \*/);
+  assert.match(robots, /Disallow:\s*$/m);
+});

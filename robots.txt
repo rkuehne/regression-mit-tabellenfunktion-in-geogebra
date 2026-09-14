@@ -1,0 +1,4 @@
+# Die Indexierung wird in index.html mit "noindex" untersagt.
+# Crawling bleibt erlaubt, damit Suchmaschinen diese Anweisung lesen können.
+User-agent: *
+Disallow:
