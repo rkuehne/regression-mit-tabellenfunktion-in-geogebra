@@ -5,9 +5,11 @@ import {
   UQ_EXAMPLE_DATA,
   analyzePoints,
   analyzeProportionality,
+  analyzeUqLinear,
   analyzeUqPower,
   greatestSingleRelativeError,
   isWithin,
+  linearRegression,
   parseLocaleNumber,
   powerRegression,
   uqPowerRegression,
@@ -67,11 +69,34 @@ test("berechnet die U-Q-Potenzregression und ihre Modellabweichungen wie GeoGebr
   const regression = uqPowerRegression(UQ_EXAMPLE_DATA);
   assert.ok(Math.abs(regression.a - 0.03930111363751862) < 1e-12);
   assert.ok(Math.abs(regression.b - 1.0115661789610593) < 1e-12);
-  assert.ok(Math.abs(regression.r2 - 0.9969190267646549) < 1e-12);
+  assert.deepEqual(Object.keys(regression).sort(), ["a", "b"]);
 
   const analysis = analyzeUqPower(UQ_EXAMPLE_DATA, regression);
   assert.equal(analysis.maxDeviation.u, 100);
   assert.ok(Math.abs(analysis.maxDeviation.deviation - 3.736416356841002) < 1e-10);
+});
+
+test("berechnet die lineare U-Q-Regression und ihre Modellabweichungen", () => {
+  const regression = linearRegression(UQ_EXAMPLE_DATA);
+  assert.ok(regression);
+  assert.ok(Math.abs(regression.slope - 0.0408) < 1e-14);
+  assert.ok(Math.abs(regression.intercept - 0.12) < 1e-12);
+
+  const analysis = analyzeUqLinear(UQ_EXAMPLE_DATA, regression);
+  assert.equal(analysis.invalidPrediction, false);
+  [2.16, 4.2, 6.24, 8.28, 10.32].forEach((expected, index) => {
+    assert.ok(Math.abs(analysis.rows[index].predicted - expected) < 1e-12);
+  });
+  assert.equal(analysis.maxDeviation.u, 50);
+  assert.ok(Math.abs(analysis.maxDeviation.deviation - (-7.407407407407414)) < 1e-12);
+});
+
+test("verwirft lineare Modellabweichungen mit nicht positivem Modellwert", () => {
+  const points = [{ u: 1, q: 10 }, { u: 2, q: 1 }, { u: 3, q: 1 }];
+  const regression = linearRegression(points);
+  assert.ok(regression);
+  assert.equal(analyzeUqLinear(points, regression).invalidPrediction, true);
+  assert.equal(linearRegression([{ u: 1, q: 2 }, { u: 1, q: 3 }, { u: 1, q: 4 }]), null);
 });
 
 test("berechnet Kapazitäten, Mittelwert und Konstantenabweichungen", () => {

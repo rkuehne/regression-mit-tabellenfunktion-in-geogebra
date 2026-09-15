@@ -19,14 +19,16 @@ function memoryStorage(initial = {}) {
   };
 }
 
-test("erzeugt drei getrennte Lern- und Transferstände", () => {
+test("erzeugt vier getrennte Lern- und Transferstände", () => {
   const state = loadState(memoryStorage());
   assert.equal(state.version, 4);
   assert.equal(state.activeCourseId, "inverse-square");
-  assert.deepEqual(Object.keys(state.courses), ["inverse-square", "proportional-power", "proportional-constants"]);
+  assert.deepEqual(Object.keys(state.courses), ["inverse-square", "proportional-power", "proportional-constants", "proportional-linear"]);
   assert.equal(state.transfer.methods["proportional-power"].deltaU, "5");
   assert.equal(state.transfer.methods["proportional-power"].deltaQ, "0,1");
   assert.equal(state.transfer.methods["proportional-constants"].data.length, 5);
+  assert.equal(state.transfer.methods["proportional-linear"].data.length, 5);
+  assert.equal(state.transfer.methods["proportional-linear"].deltaU, "5");
 });
 
 test("migriert v3-Kursfortschritt und Transfer in den 1/r²-Weg", () => {
@@ -52,6 +54,7 @@ test("migriert v3-Kursfortschritt und Transfer in den 1/r²-Weg", () => {
   assert.equal(state.courses["inverse-square"].currentStep, 7);
   assert.deepEqual(state.courses["inverse-square"].completedSteps, ["context", "table"]);
   assert.deepEqual(state.courses["proportional-power"].completedSteps, []);
+  assert.deepEqual(state.courses["proportional-linear"].completedSteps, []);
   assert.equal(state.transfer.methods["inverse-square"].reflection, "Passt grob.");
   assert.equal(state.student.name, "Ada");
 });
@@ -103,4 +106,33 @@ test("speichert unter dem v4-Schlüssel", () => {
   const state = loadState(storage);
   assert.equal(persistState(storage, state), true);
   assert.equal(JSON.parse(storage.value(STORAGE_KEY)).version, 4);
+});
+
+test("ergänzt einen bestehenden v4-Stand um den linearen Lernweg und entfernt alte r2-Werte", () => {
+  const state = sanitizeState({
+    version: 4,
+    activeCourseId: "proportional-power",
+    lessonMode: "explain",
+    courses: {
+      "proportional-power": { currentStep: 3, completedSteps: ["uq-power-context"], answers: {} }
+    },
+    transfer: {
+      activeMethod: "proportional-power",
+      methods: {
+        "proportional-power": {
+          data: [{ u: 50, q: 2 }, { u: 100, q: 4.3 }, { u: 150, q: 6.4 }],
+          deltaU: "5",
+          deltaQ: "0,1",
+          result: { type: "power", a: 0.04, b: 1.01, r2: 0.99 }
+        }
+      }
+    },
+    student: { name: "Ada", course: "Q1" }
+  });
+
+  assert.deepEqual(state.courses["proportional-power"].completedSteps, ["uq-power-context"]);
+  assert.deepEqual(state.courses["proportional-linear"].completedSteps, []);
+  assert.equal(state.transfer.methods["proportional-linear"].data.length, 5);
+  assert.equal("r2" in state.transfer.methods["proportional-power"].result, false);
+  assert.equal(state.student.name, "Ada");
 });

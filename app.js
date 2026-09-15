@@ -2,12 +2,14 @@ import { COURSE_IDS, COURSES } from "./lesson-data.js";
 import {
   analyzePoints,
   analyzeProportionality,
+  analyzeUqLinear,
   analyzeUqPower,
   cloneExampleData,
   cloneUqExampleData,
   formatNumber,
   greatestSingleRelativeError,
   isWithin,
+  linearRegression,
   parseLocaleNumber,
   powerRegression,
   uqPowerRegression,
@@ -620,6 +622,11 @@ const TRANSFER_CONFIG = Object.freeze({
     keys: ["u", "q"], symbols: ["U", "Q"], headers: ["U (V)", "Q/(10⁻⁸ C)"],
     inputTitle: "U und Q eingeben", resultTitle: "Deine Kapazitätsauswertung",
     button: "Konstanten auswerten", modelLabel: "Q = C̄ · U"
+  },
+  "proportional-linear": {
+    keys: ["u", "q"], symbols: ["U", "Q"], headers: ["U (V)", "Q/(10⁻⁸ C)"],
+    inputTitle: "U und Q eingeben", resultTitle: "Deine lineare U-Q-Regression",
+    button: "Lineare Regression berechnen", modelLabel: "Lineare Regression"
   }
 });
 
@@ -648,10 +655,14 @@ function renderTransferIdentity() {
   els.relativeUncertaintyGroup.hidden = uq;
   els.uqUncertaintyGroup.hidden = !uq;
   els.uncertaintyNote.textContent = uq
-    ? "Aus ΔU und ΔQ wird bewusst vereinfacht der größere relative Einzelwert als gemeinsame Vergleichsgrenze verwendet. Ohne beide Angaben erfolgt kein automatisches Urteil."
+    ? state.transfer.activeMethod === "proportional-linear"
+      ? "Aus ΔU und ΔQ wird bewusst vereinfacht der größere relative Einzelwert als Vergleichsgrenze für die Modellabweichungen verwendet. Diese Grenze ist keine Unsicherheit des Achsenabschnitts d."
+      : "Aus ΔU und ΔQ wird bewusst vereinfacht der größere relative Einzelwert als gemeinsame Vergleichsgrenze verwendet. Ohne beide Angaben erfolgt kein automatisches Urteil."
     : "Ohne Unsicherheitsangabe zeigt der Rechner Ergebnisse, fällt aber kein Urteil über die Vereinbarkeit.";
   els.transferIntro.textContent = uq
-    ? "Gib drei bis dreißig positive U-Q-Messpaare ein. Die voreingestellten Unsicherheiten gehören zum beschriebenen Kondensatorversuch."
+    ? state.transfer.activeMethod === "proportional-linear"
+      ? "Gib drei bis dreißig positive U-Q-Messpaare mit verschiedenen Spannungswerten ein. Die Regressionsgerade erhält einen frei bestimmten Achsenabschnitt."
+      : "Gib drei bis dreißig positive U-Q-Messpaare ein. Die voreingestellten Unsicherheiten gehören zum beschriebenen Kondensatorversuch."
     : "Gib drei bis dreißig positive r-F-Messpaare ein. TrendPot benötigt positive Punkte mit verschiedenen r-Werten.";
 }
 
@@ -771,7 +782,7 @@ function renderPowerTransferResult(points, regression, analysis, uncertainty, is
   const functionText = isUq ? "Q(U)" : "F(r)";
   const variable = isUq ? "U" : "r";
   els.transferEquation.textContent = `${functionText} ≈ ${formatNumber(regression.a, 6)} · ${variable}^(${formatNumber(regression.b, 6)})`;
-  els.transferMeta.textContent = `Exponent b ≈ ${formatNumber(regression.b, 5)} · Bestimmtheitsmaß R² ≈ ${formatNumber(regression.r2, 4)} · größte Modellabweichung ≈ ${formatNumber(Math.abs(analysis.maxDeviation.deviation), 2)} %`;
+  els.transferMeta.textContent = `Exponent b ≈ ${formatNumber(regression.b, 5)} · größte Modellabweichung ≈ ${formatNumber(Math.abs(analysis.maxDeviation.deviation), 2)} %`;
 
   if (uncertainty === null) {
     els.uncertaintyResult.textContent = "Ohne angegebene Messunsicherheit wird keine automatische Aussage zur Vereinbarkeit getroffen. Beurteile Exponent und Streuung in deiner Reflexion.";
@@ -804,6 +815,46 @@ function renderPowerTransferResult(points, regression, analysis, uncertainty, is
   const chartPoints = points.map((point) => ({ x: isUq ? point.u : point.r, y: isUq ? point.q : point.f }));
   renderTransferChart(chartPoints, (value) => regression.a * (value ** regression.b), config,
     `${functionText} ist ${formatNumber(regression.a, 5)} mal ${variable} hoch ${formatNumber(regression.b, 5)}.`);
+}
+
+function renderLinearTransferResult(points, regression, analysis, uncertainty) {
+  const config = transferConfig();
+  const interceptOperator = regression.intercept < 0 ? "−" : "+";
+  const capacityPf = regression.slope * 10000;
+  els.transferResults.hidden = false;
+  els.transferEquation.textContent = `Q(U) ≈ ${formatNumber(regression.slope, 7)} · U ${interceptOperator} ${formatNumber(Math.abs(regression.intercept), 7)}`;
+  els.transferMeta.textContent = `Steigung m ≈ ${formatNumber(regression.slope, 7)} · 10⁻⁸ F (≈ ${formatNumber(capacityPf, 2)} pF) · Achsenabschnitt d ≈ ${formatNumber(regression.intercept, 7)} · 10⁻⁸ C · größte Modellabweichung ≈ ${formatNumber(Math.abs(analysis.maxDeviation.deviation), 2)} % bei U = ${formatNumber(analysis.maxDeviation.u, 2)} V`;
+
+  if (!uncertainty) {
+    els.uncertaintyResult.textContent = "Ohne ΔU und ΔQ wird keine automatische Vereinbarkeitsaussage getroffen. Für eine Aussage darüber, ob d mit null vereinbar ist, wäre außerdem die Unsicherheit des Regressionsparameters nötig.";
+  } else {
+    const within = Math.abs(analysis.maxDeviation.deviation) <= uncertainty.limit;
+    els.uncertaintyResult.textContent = `Der größere der beiden geschätzten relativen Einzelwerte beträgt ${formatNumber(uncertainty.limit, 2)} % (U: ${formatNumber(uncertainty.uPercent, 2)} %, Q: ${formatNumber(uncertainty.qPercent, 2)} %). Die größte Modellabweichung liegt ${within ? "innerhalb" : "oberhalb"} dieser bewusst vereinfachten Vergleichsgrenze. Diese Grenze ist keine Unsicherheit des Achsenabschnitts d und bestätigt daher nicht d = 0.`;
+  }
+
+  els.resultXHeader.textContent = config.headers[0];
+  els.resultYHeader.textContent = `Messwert ${config.headers[1]}`;
+  els.resultModelHeader.textContent = "Modellwert Q/(10⁻⁸ C)";
+  els.resultDeviationHeader.textContent = "Modellabweichung";
+  els.transferAnalysisRows.replaceChildren();
+  analysis.rows.forEach((rowData) => {
+    const row = document.createElement("tr");
+    [
+      formatNumber(rowData.u, 3),
+      formatNumber(rowData.q, 5),
+      formatNumber(rowData.predicted, 6),
+      `${formatNumber(rowData.deviation, 2)} %`
+    ].forEach((value) => {
+      const cell = document.createElement("td");
+      cell.textContent = value;
+      row.append(cell);
+    });
+    els.transferAnalysisRows.append(row);
+  });
+  renderTransferChart(points.map(({ u, q }) => ({ x: u, y: q })),
+    (value) => regression.slope * value + regression.intercept,
+    config,
+    `Die Regressionsgerade hat die Steigung ${formatNumber(regression.slope, 5)} und den Achsenabschnitt ${formatNumber(regression.intercept, 5)}.`);
 }
 
 function calculateTransfer() {
@@ -853,6 +904,32 @@ function calculateTransfer() {
     transfer.result = { type: "constants", mean: analysis.mean, meanPf: analysis.meanPf, maxDeviation: analysis.maxDeviation.deviation, uncertainty };
     saveState();
     renderConstantTransferResult(validation.points, analysis, uncertainty);
+  } else if (methodId === "proportional-linear") {
+    const regression = linearRegression(validation.points);
+    if (!regression) {
+      setFeedback(els.transferFeedback, "Aus diesen Daten konnte keine lineare Regression bestimmt werden. Prüfe insbesondere, ob sich die U-Werte unterscheiden.", "bad");
+      transfer.result = null;
+      saveState();
+      return;
+    }
+    const analysis = analyzeUqLinear(validation.points, regression);
+    if (!analysis || analysis.invalidPrediction) {
+      setFeedback(els.transferFeedback, "Die Regressionsgerade liefert für mindestens einen eingegebenen U-Wert einen Modellwert Q̂ ≤ 0. Eine relative Abweichung mit diesem ungeeigneten Bezugswert wird nicht berechnet.", "bad");
+      transfer.result = null;
+      els.transferResults.hidden = true;
+      saveState();
+      renderSummary();
+      return;
+    }
+    transfer.result = {
+      type: "linear",
+      slope: regression.slope,
+      intercept: regression.intercept,
+      maxDeviation: analysis.maxDeviation.deviation,
+      uncertainty
+    };
+    saveState();
+    renderLinearTransferResult(validation.points, regression, analysis, uncertainty);
   } else {
     const regression = isUq ? uqPowerRegression(validation.points) : powerRegression(validation.points);
     if (!regression) {
@@ -860,7 +937,7 @@ function calculateTransfer() {
       return;
     }
     const analysis = isUq ? analyzeUqPower(validation.points, regression) : analyzePoints(validation.points, regression);
-    transfer.result = { type: "power", a: regression.a, b: regression.b, r2: regression.r2, maxDeviation: analysis.maxDeviation.deviation, uncertainty };
+    transfer.result = { type: "power", a: regression.a, b: regression.b, maxDeviation: analysis.maxDeviation.deviation, uncertainty };
     saveState();
     renderPowerTransferResult(validation.points, regression, analysis, isUq ? uncertainty?.limit ?? null : uncertainty, isUq);
   }
@@ -913,6 +990,17 @@ function restoreTransferResult() {
   }
   if (methodId === "proportional-constants") {
     renderConstantTransferResult(validation.points, analyzeProportionality(validation.points), transfer.result.uncertainty ?? null);
+    return;
+  }
+  if (methodId === "proportional-linear") {
+    const regression = linearRegression(validation.points);
+    const analysis = analyzeUqLinear(validation.points, regression);
+    if (!regression || !analysis || analysis.invalidPrediction) {
+      transfer.result = null;
+      els.transferResults.hidden = true;
+      return;
+    }
+    renderLinearTransferResult(validation.points, regression, analysis, transfer.result.uncertainty ?? null);
     return;
   }
   const regression = isUq ? uqPowerRegression(validation.points) : powerRegression(validation.points);
@@ -1000,6 +1088,12 @@ function renderSummary() {
     const result = transfer.result;
     if (result.type === "constants") {
       els.summaryTransferResult.textContent = `Eigene Konstantenauswertung: C̄ ≈ ${formatNumber(result.meanPf, 2)} pF, größte Konstantenabweichung ≈ ${formatNumber(Math.abs(result.maxDeviation), 2)} %.`;
+    } else if (result.type === "linear") {
+      const interceptOperator = result.intercept < 0 ? "−" : "+";
+      const limitText = result.uncertainty?.limit
+        ? `, vereinfachte Vergleichsgrenze ${formatNumber(result.uncertainty.limit, 2)} %`
+        : "";
+      els.summaryTransferResult.textContent = `Eigene lineare Regression: Q(U) ≈ ${formatNumber(result.slope, 6)} · U ${interceptOperator} ${formatNumber(Math.abs(result.intercept), 6)}, Kapazität aus der Steigung ≈ ${formatNumber(result.slope * 10000, 2)} pF, größte Modellabweichung ≈ ${formatNumber(Math.abs(result.maxDeviation), 2)} %${limitText}. Der Achsenabschnitt ist ohne Parameterunsicherheit nicht statistisch mit null verglichen.`;
     } else {
       const functionName = state.activeCourseId === "inverse-square" ? "F(r)" : "Q(U)";
       const variable = state.activeCourseId === "inverse-square" ? "r" : "U";

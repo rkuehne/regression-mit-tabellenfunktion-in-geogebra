@@ -127,22 +127,32 @@ export function powerRegression(points) {
 
   const b = numerator / denominator;
   const a = Math.exp(meanY - b * meanX);
-  const meanObserved = points.reduce((sum, { f }) => sum + f, 0) / n;
-  let residualSquares = 0;
-  let totalSquares = 0;
-
-  points.forEach(({ r, f }) => {
-    const predicted = a * (r ** b);
-    residualSquares += (f - predicted) ** 2;
-    totalSquares += (f - meanObserved) ** 2;
-  });
-
-  const r2 = totalSquares === 0 ? 1 : 1 - residualSquares / totalSquares;
-  return { a, b, r2 };
+  return { a, b };
 }
 
 export function uqPowerRegression(points) {
   return powerRegression(points.map(({ u, q }) => ({ r: u, f: q })));
+}
+
+export function linearRegression(points) {
+  if (!Array.isArray(points) || points.length < 2) return null;
+  if (points.some(({ u, q }) => !Number.isFinite(u) || !Number.isFinite(q))) return null;
+
+  const n = points.length;
+  const meanU = points.reduce((sum, { u }) => sum + u, 0) / n;
+  const meanQ = points.reduce((sum, { q }) => sum + q, 0) / n;
+  let numerator = 0;
+  let denominator = 0;
+
+  points.forEach(({ u, q }) => {
+    numerator += (u - meanU) * (q - meanQ);
+    denominator += (u - meanU) ** 2;
+  });
+  if (denominator === 0) return null;
+
+  const slope = numerator / denominator;
+  const intercept = meanQ - slope * meanU;
+  return { slope, intercept };
 }
 
 export function analyzePoints(points, regression) {
@@ -174,6 +184,28 @@ export function analyzeUqPower(points, regression) {
         }
       : null
   };
+}
+
+export function analyzeUqLinear(points, regression) {
+  if (!regression || !Array.isArray(points) || points.length === 0) return null;
+
+  const predictedRows = points.map(({ u, q }) => ({
+    u,
+    q,
+    predicted: regression.slope * u + regression.intercept
+  }));
+  if (predictedRows.some(({ predicted }) => !Number.isFinite(predicted) || predicted <= 0)) {
+    return { rows: [], maxDeviation: null, invalidPrediction: true };
+  }
+
+  const rows = predictedRows.map((row) => ({
+    ...row,
+    deviation: ((row.q - row.predicted) / row.predicted) * 100
+  }));
+  const maxDeviation = rows.reduce((largest, row) => (
+    !largest || Math.abs(row.deviation) > Math.abs(largest.deviation) ? row : largest
+  ), null);
+  return { rows, maxDeviation, invalidPrediction: false };
 }
 
 export function analyzeProportionality(points) {

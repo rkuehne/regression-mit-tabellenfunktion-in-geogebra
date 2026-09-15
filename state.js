@@ -14,7 +14,8 @@ function defaultTransferMethods() {
   return {
     "inverse-square": { data: cloneExampleData(), uncertainty: "", deltaU: "", deltaQ: "", reflection: "", result: null },
     "proportional-power": { data: cloneUqExampleData(), uncertainty: "", deltaU: "5", deltaQ: "0,1", reflection: "", result: null },
-    "proportional-constants": { data: cloneUqExampleData(), uncertainty: "", deltaU: "5", deltaQ: "0,1", reflection: "", result: null }
+    "proportional-constants": { data: cloneUqExampleData(), uncertainty: "", deltaU: "5", deltaQ: "0,1", reflection: "", result: null },
+    "proportional-linear": { data: cloneUqExampleData(), uncertainty: "", deltaU: "5", deltaQ: "0,1", reflection: "", result: null }
   };
 }
 
@@ -38,6 +39,12 @@ function sanitizeRows(data, methodId) {
     key,
     typeof row?.[key] === "number" || typeof row?.[key] === "string" ? row[key] : ""
   ])));
+}
+
+function sanitizeStoredResult(result) {
+  if (!result || typeof result !== "object" || Array.isArray(result)) return null;
+  const { r2: unusedLegacyValue, ...resultWithoutLegacyMetric } = result;
+  return resultWithoutLegacyMetric;
 }
 
 export function sanitizeTransferData(data) {
@@ -65,7 +72,7 @@ function sanitizeTransferMethod(candidate, methodId) {
     deltaU: String(candidate?.deltaU ?? defaults.deltaU),
     deltaQ: String(candidate?.deltaQ ?? defaults.deltaQ),
     reflection: String(candidate?.reflection ?? ""),
-    result: candidate?.result && typeof candidate.result === "object" ? candidate.result : null
+    result: sanitizeStoredResult(candidate?.result)
   };
 }
 
@@ -85,7 +92,7 @@ export function migratePreviousState(candidate) {
     deltaU: "",
     deltaQ: "",
     reflection: String(oldTransfer.reflection ?? ""),
-    result: oldTransfer.result && typeof oldTransfer.result === "object" ? oldTransfer.result : null
+    result: sanitizeStoredResult(oldTransfer.result)
   };
   state.student = preservedStudent(candidate);
 

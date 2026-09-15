@@ -149,6 +149,9 @@ $deviationRows = @(
 $modelRows = @(
   @("50", "2", "(50, 2)", "2.056011", "-2.72426"), @("100", "4.3", "(100, 4.3)", "4.145121", "3.736416"), @("150", "6.4", "(150, 6.4)", "6.246909", "2.450669"), @("200", "8.3", "(200, 8.3)", "8.356973", "-0.681737"), @("250", "10.2", "(250, 10.2)", "10.473211", "-2.608669")
 )
+$linearModelRows = @(
+  @("50", "2", "(50, 2)", "2.16", "-7.407407"), @("100", "4.3", "(100, 4.3)", "4.2", "2.380952"), @("150", "6.4", "(150, 6.4)", "6.24", "2.564103"), @("200", "8.3", "(200, 8.3)", "8.28", "0.241546"), @("250", "10.2", "(250, 10.2)", "10.32", "-1.162791")
+)
 
 Save-Shot "01-messwerte-u-q.png" 900 500 { param($g,$w,$h) Draw-Table $g $w $h @("A","B","C") $baseRows }
 Save-Shot "02-punkte-u-q.png" 900 500 { param($g,$w,$h) Draw-Table $g $w $h @("A","B","C") $pointRows 2 0 4 }
@@ -169,3 +172,9 @@ Save-Shot "10-potenzregression-u-q.png" 900 500 { param($g,$w,$h)
   $g.DrawLine([System.Drawing.Pen]::new($violet,1), 84, 174, $w, 174)
 } -Algebra
 Save-Shot "11-modellwerte-u-q.png" 1040 500 { param($g,$w,$h) Draw-Table $g $w $h @("A","B","C","D","E") $modelRows 3 0 4 }
+Save-Shot "12-lineare-regression-u-q.png" 900 500 { param($g,$w,$h)
+  Draw-Text $g "Q(x) = TrendPoly(C1:C5, 1)" 176 88 23 $ink
+  Draw-Text $g "=   0.0408 x + 0.12" 176 137 22 $ink
+  $g.DrawLine([System.Drawing.Pen]::new($violet,1), 84, 174, $w, 174)
+} -Algebra
+Save-Shot "13-lineare-modellwerte-u-q.png" 1040 500 { param($g,$w,$h) Draw-Table $g $w $h @("A","B","C","D","E") $linearModelRows 3 0 4 }

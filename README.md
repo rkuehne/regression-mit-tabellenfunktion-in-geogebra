@@ -1,22 +1,23 @@
-# GeoGebra-Begleitkurs: Drei Auswertungswege auf dem iPad
+# GeoGebra-Begleitkurs: Vier Auswertungswege auf dem iPad
 
-Eine statische, für GitHub Pages geeignete Lernanwendung für die Oberstufe. Die Schülerinnen und Schüler arbeiten in der separaten GeoGebra Rechner Suite und wählen zwischen drei eigenständigen Lernwegen:
+Eine statische, für GitHub Pages geeignete Lernanwendung für die Oberstufe. Die Schülerinnen und Schüler arbeiten in der separaten GeoGebra Rechner Suite und wählen zwischen vier eigenständigen Lernwegen:
 
 - Coulombkraft F ∝ 1/r² mit Potenzregression
 - Kondensatorladung Q ∝ U mit Potenzregression
 - Kondensatorladung Q ∝ U mit dem Konstantenverfahren C = Q/U
+- Kondensatorladung Q ∝ U mit linearer Regression und freiem Achsenabschnitt
 
 ## Enthaltene Funktionen
 
-- drei frei wählbare Lernwege mit jeweils 8–10 Kapiteln und iPad-Anweisungen
+- vier frei wählbare Lernwege mit jeweils 8–10 Kapiteln und iPad-Anweisungen
 - Erklärmodus mit Begriffen und Rechenbeispielen sowie Kurzansicht zur Wiederholung
 - dauerhafte Begriffshilfe für zentrale Fachwörter
-- zehn bisherige sowie elf neue vergrößerbare und markierte Anleitungsgrafiken
+- zehn Abbildungen zum Coulomb-Versuch sowie dreizehn vergrößerbare und markierte U-Q-Anleitungsgrafiken
 - kopierbare Formeln und Befehle
 - getrennte Ergebnis- und Verständnisprüfungen mit feldbezogenem Feedback
 - Dezimalkomma- und Dezimalpunkt-Unterstützung
 - getrennter lokaler Lernfortschritt je Lernweg
-- optionaler Transferrechner mit denselben drei Auswertungsverfahren
+- optionaler Transferrechner mit denselben vier Auswertungsverfahren
 - dynamischer Lernnachweis, der auf dem iPad als PDF gesichert werden kann
 - Übernahme des bisherigen v3-Kursstands in den 1/r²-Lernweg sowie ältere Migrationen
 
@@ -25,10 +26,10 @@ Eine statische, für GitHub Pages geeignete Lernanwendung für die Oberstufe. Di
 - index.html – vollständige Seitenstruktur
 - style.css – Gestaltung, iPad-/Split-View-Anpassungen und Drucklayout
 - app.js – Lernwege, lokaler Zustand, Bedienung und Ausgaben
-- lesson-data.js – drei Kursmodelle, Inhalte, Abbildungen und Prüfregeln
-- regression.js – Potenzregression, Kapazitätsauswertung, Abweichungen und vereinfachte Vergleichsgrenzen
+- lesson-data.js – vier Kursmodelle, Inhalte, Abbildungen und Prüfregeln
+- regression.js – Potenzregression, lineare Regression, Kapazitätsauswertung, Abweichungen und vereinfachte Vergleichsgrenzen
 - state.js – getrennte lokale Lernstände und Migration bisheriger Speicherstände
-- assets/steps/ – Abbildungen des Coulomb-Kurses und der beiden U-Q-Verfahren
+- assets/steps/ – Abbildungen des Coulomb-Kurses und der drei U-Q-Verfahren
 - generate-uq-screenshots.ps1 – erzeugt die austauschbaren U-Q-Anleitungsgrafiken erneut
 - tests/ – mathematische, inhaltliche und Migrationstests ohne Zusatzpakete
 

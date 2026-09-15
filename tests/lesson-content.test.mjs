@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
-import { COURSE_IDS, COURSES, LESSON_STEPS, UQ_CONSTANT_STEPS, UQ_POWER_STEPS } from "../lesson-data.js";
+import { COURSE_IDS, COURSES, LESSON_STEPS, UQ_CONSTANT_STEPS, UQ_LINEAR_STEPS, UQ_POWER_STEPS } from "../lesson-data.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const expectedIds = [
@@ -122,20 +122,22 @@ test("die Startseite enthält Kurswahl, Moduswahl, Begriffshilfe und lokale Soci
   assert.match(html, /data-course-id="inverse-square"/);
   assert.match(html, /data-course-id="proportional-power"/);
   assert.match(html, /data-course-id="proportional-constants"/);
+  assert.match(html, /data-course-id="proportional-linear"/);
   assert.match(html, /property="og:image" content="\.\/assets\/og\.png"/);
   assert.match(html, /name="twitter:card" content="summary_large_image"/);
   assert.equal(existsSync(resolve(root, "assets", "og.png")), true);
 });
 
-test("enthält drei eigenständige Lernwege mit 10, 8 und 8 Kapiteln", () => {
-  assert.deepEqual(COURSE_IDS, ["inverse-square", "proportional-power", "proportional-constants"]);
+test("enthält vier eigenständige Lernwege mit 10, 8, 8 und 8 Kapiteln", () => {
+  assert.deepEqual(COURSE_IDS, ["inverse-square", "proportional-power", "proportional-constants", "proportional-linear"]);
   assert.equal(COURSES["inverse-square"].steps.length, 10);
   assert.equal(UQ_POWER_STEPS.length, 8);
   assert.equal(UQ_CONSTANT_STEPS.length, 8);
+  assert.equal(UQ_LINEAR_STEPS.length, 8);
 });
 
 test("alle neuen Kapitel besitzen Erklärfelder sowie Ergebnis- und Verständnisprüfung", () => {
-  [...UQ_POWER_STEPS, ...UQ_CONSTANT_STEPS].forEach((step) => {
+  [...UQ_POWER_STEPS, ...UQ_CONSTANT_STEPS, ...UQ_LINEAR_STEPS].forEach((step) => {
     assert.ok(step.goal && step.why && step.remember && step.troubleshooting && step.mistake);
     assert.ok(step.concepts.length >= 2);
     assert.ok(step.workedExample.lines.length >= 2);
@@ -146,10 +148,10 @@ test("alle neuen Kapitel besitzen Erklärfelder sowie Ergebnis- und Verständnis
   });
 });
 
-test("bindet elf lokale U-Q-Abbildungen zugänglich ein", () => {
-  const images = [...UQ_POWER_STEPS, ...UQ_CONSTANT_STEPS].flatMap((step) => step.images);
+test("bindet dreizehn lokale U-Q-Abbildungen zugänglich ein", () => {
+  const images = [...UQ_POWER_STEPS, ...UQ_CONSTANT_STEPS, ...UQ_LINEAR_STEPS].flatMap((step) => step.images);
   const uniqueImages = [...new Map(images.map((image) => [image.src, image])).values()];
-  assert.equal(uniqueImages.length, 11);
+  assert.equal(uniqueImages.length, 13);
   uniqueImages.forEach((image) => {
     assert.ok(image.alt.length > 20);
     assert.ok(image.caption.length > 10);
@@ -166,6 +168,7 @@ test("bindet elf lokale U-Q-Abbildungen zugänglich ein", () => {
 test("enthält die zentralen U-Q-Eingaben und vorsichtige Fachsprache", () => {
   const power = JSON.stringify(UQ_POWER_STEPS);
   const constants = JSON.stringify(UQ_CONSTANT_STEPS);
+  const linear = JSON.stringify(UQ_LINEAR_STEPS);
   const courses = JSON.stringify(COURSES);
   assert.match(power, /Q\(x\)=TrendPot\(C1:C5\)/);
   assert.match(power, /=Q\(A1\)/);
@@ -177,9 +180,24 @@ test("enthält die zentralen U-Q-Eingaben und vorsichtige Fachsprache", () => {
   assert.match(constants, /10 %/);
   assert.match(constants, /keine.*Unsicherheit von C|keine vollständige Fehlerfortpflanzung/i);
   assert.doesNotMatch(constants, /wechsle freundlich/i);
+  assert.match(linear, /Q\(x\)=TrendPoly\(C1:C5,1\)/);
+  assert.match(linear, /=Q\(A1\)/);
+  assert.match(linear, /408 pF/);
+  assert.match(linear, /7,41 %/);
+  assert.match(linear, /Extrapolation/i);
+  assert.match(linear, /Parameterunsicherheit/i);
+  assert.doesNotMatch(linear, /d = 0 (?:ist|wird) (?:damit )?bestätigt/i);
   assert.match(courses, /Q\/\(10⁻⁸ C\)/);
-  assert.match(power + constants, /vereinbar/i);
-  assert.match(power + constants, /beweis/i);
+  assert.match(power + constants + linear, /vereinbar/i);
+  assert.match(power + constants + linear, /beweis/i);
+});
+
+test("entfernt das Bestimmtheitsmaß aus Schüleransicht und Programmlogik", () => {
+  const root = resolve(here, "..");
+  for (const file of ["index.html", "lesson-data.js", "app.js", "regression.js", "README.md"]) {
+    const content = readFileSync(resolve(root, file), "utf8");
+    assert.doesNotMatch(content, /R²|RQuadrat|\br2\b/, file);
+  }
 });
 
 test("weist Suchmaschinen auf die gewünschte Nicht-Indexierung hin", () => {

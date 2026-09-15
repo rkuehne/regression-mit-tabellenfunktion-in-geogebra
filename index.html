@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#6552c8">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
-  <meta name="description" content="Drei geführte GeoGebra-Lernwege: Potenzregression, Proportionalität und Messunsicherheit auf dem iPad.">
+  <meta name="description" content="Vier geführte GeoGebra-Lernwege: Potenzregression, lineare Regression, Proportionalität und Messunsicherheit auf dem iPad.">
   <meta property="og:title" content="GeoGebra-Begleitkurs · Messdaten auswerten">
   <meta property="og:description" content="Geführte iPad-Lernwege zu Potenzregression und direkter Proportionalität.">
   <meta property="og:type" content="website">
@@ -39,7 +39,7 @@
           <a class="button secondary" href="https://www.geogebra.org/calculator" target="_blank" rel="noopener">GeoGebra-Webversion öffnen <span aria-hidden="true">↗</span></a>
         </div>
         <ul class="hero-facts" aria-label="Kursinformationen">
-          <li>3 wählbare Lernwege</li>
+          <li>4 wählbare Lernwege</li>
           <li>je 8–10 Kapitel</li>
           <li>Fortschritt nur auf diesem Gerät</li>
         </ul>
@@ -81,13 +81,16 @@
           <p class="mini-label">Kondensator-Versuch · U und Q</p>
           <h3>Direkte Proportionalität</h3>
           <p class="choice-equation">Q = C · U</p>
-          <p>Wähle, ob du den Exponenten des Potenzmodells oder die annähernd konstanten Quotienten Q/U untersuchen möchtest.</p>
+          <p>Wähle, ob du den Exponenten eines Potenzmodells, die Quotienten Q/U oder Steigung und Achsenabschnitt einer Regressionsgeraden untersuchen möchtest.</p>
           <div class="choice-button-stack">
             <button class="course-choice-button" type="button" data-course-id="proportional-power">
               <span>Potenzregression wählen</span><small>8 Kapitel · b mit 1 vergleichen</small>
             </button>
             <button class="course-choice-button" type="button" data-course-id="proportional-constants">
               <span>Konstantenverfahren wählen</span><small>8 Kapitel · Kapazitäten vergleichen</small>
+            </button>
+            <button class="course-choice-button" type="button" data-course-id="proportional-linear">
+              <span>Lineare Regression wählen</span><small>8 Kapitel · m und d untersuchen</small>
             </button>
           </div>
         </article>
@@ -252,6 +255,7 @@
                 <option value="inverse-square">F ∝ 1/r² · Potenzregression</option>
                 <option value="proportional-power">Q ∝ U · Potenzregression</option>
                 <option value="proportional-constants">Q ∝ U · Quotienten Q/U</option>
+                <option value="proportional-linear">Q ∝ U · Lineare Regression</option>
               </select>
             </label>
             <div class="panel-heading">
@@ -416,12 +420,16 @@
       <div><dt>Betrag</dt><dd>Die Größe einer Zahl ohne ihr Vorzeichen.</dd></div>
       <div><dt>Messunsicherheit</dt><dd>Eine Angabe dazu, wie genau ein Messergebnis aufgrund von Messverfahren und Geräten sinnvoll angegeben werden kann.</dd></div>
       <div><dt>Vereinbarkeit</dt><dd>Die Messdaten liefern im Rahmen der betrachteten Unsicherheiten keinen erkennbaren Widerspruch zum Modell.</dd></div>
-      <div><dt>R²</dt><dd>Ein Maß für die Güte der Modellanpassung; kein Beweis für ein Naturgesetz.</dd></div>
       <div><dt>Spannung U</dt><dd>Die elektrische Spannung in Volt; beim Kondensator ist sie die unabhängige Größe.</dd></div>
       <div><dt>Elektrische Ladung Q</dt><dd>Die auf dem Kondensator gespeicherte Ladung in Coulomb.</dd></div>
       <div><dt>Kapazität C</dt><dd>Der Quotient Q/U. Seine Einheit ist Farad; hier ergeben sich Werte um 416 pF.</dd></div>
       <div><dt>Direkte Proportionalität</dt><dd>Ein Zusammenhang der Form y = k · x; bei realen Messdaten bleibt der Quotient y/x innerhalb der Messunsicherheit annähernd konstant.</dd></div>
       <div><dt>Proportionalitätskonstante</dt><dd>Der feste Faktor k; bei Q = C · U ist dies die Kapazität C.</dd></div>
+      <div><dt>Lineare Funktion</dt><dd>Eine Funktion der Form y = m · x + d. Ihr Graph ist eine Gerade.</dd></div>
+      <div><dt>Steigung m</dt><dd>Sie gibt an, um wie viel sich der Modellwert y ändert, wenn x um eine Einheit zunimmt. Bei Q = C · U entspricht sie der Kapazität.</dd></div>
+      <div><dt>Achsenabschnitt d</dt><dd>Der Modellwert bei x = 0. Für eine direkte Proportionalität wird d = 0 erwartet.</dd></div>
+      <div><dt>Ursprungsgerade</dt><dd>Eine Gerade durch den Koordinatenursprung (0, 0); sie beschreibt einen direkt proportionalen Zusammenhang.</dd></div>
+      <div><dt>Extrapolation</dt><dd>Die Verwendung eines Modells außerhalb des gemessenen Bereichs. Der Achsenabschnitt wird hier aus Messungen zwischen 50 V und 250 V bis U = 0 fortgesetzt.</dd></div>
       <div><dt>Vereinfachte Vergleichsgrenze</dt><dd>Hier der größere relative Einzelwert aus ΔU/U und ΔQ/Q. Sie dient nur zur groben Orientierung und ersetzt keine Fehlerfortpflanzung.</dd></div>
     </dl>
   </dialog>

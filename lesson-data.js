@@ -276,7 +276,7 @@ export const LESSON_STEPS = Object.freeze([
       { term: "Messunsicherheit", text: "Sie kennzeichnet, wie genau ein Messergebnis aufgrund des Messverfahrens und der Geräte sinnvoll angegeben werden kann." },
       { term: "Vereinbar", text: "Die Daten widersprechen dem Modell innerhalb der angenommenen Genauigkeit nicht." },
       { term: "Bewiesen", text: "Eine viel stärkere Aussage, die aus dieser Messreihe nicht folgt." },
-      { term: "R²", text: "Ein Maß für die Modellgüte; ein hoher Wert beweist kein Naturgesetz." }
+      { term: "Grenze der Aussage", text: "Die Auswertung prüft die Vereinbarkeit der Messdaten mit dem Modell, liefert aber keinen mathematischen Beweis des Naturgesetzes." }
     ],
     workedExample: { title: "Eine angemessene Schlussfolgerung", lines: ["b = −2,075 liegt nahe beim theoretisch erwarteten Wert −2.", "Die größte Modellabweichung beträgt etwa 15,7 %. Für den kleinsten Kraftwert ergibt 0,01/0,06 · 100 eine grobe relative Unsicherheit von 16,7 %.", "In dieser vereinfachten Betrachtung liefern die Daten keinen erkennbaren Widerspruch zum 1/r²-Modell. Sie beweisen das Modell jedoch nicht und bestimmen auch nicht direkt die Unsicherheit von b."] },
     remember: "Formuliere: mit 1/r² vereinbar – nicht: exakt bewiesen.",
@@ -310,7 +310,7 @@ const UQ_IMAGES = Object.freeze({
     [{ x: 16.5, y: 35, width: 55.5, height: 45, label: "A1:B5" }]),
   points: uqImage("02-punkte-u-q.png", 900, 500,
     "GeoGebra-Tabelle mit fünf Punkten aus den Spannungs- und Ladungswerten in Spalte C.",
-    "C1:C5 enthält die Punkte (U, Q), die TrendPot für die Regression benötigt.",
+    "C1:C5 enthält die Punkte (U, Q), die anschließend ausgewertet werden.",
     [{ x: 72, y: 35, width: 27.5, height: 45, label: "C1:C5" }]),
   ratioFormula: uqImage("03-konstante-formel.png", 900, 500,
     "In GeoGebra wird in Zelle C1 der Quotient B1 durch A1 eingegeben.",
@@ -347,6 +347,14 @@ const UQ_IMAGES = Object.freeze({
   modelTable: uqImage("11-modellwerte-u-q.png", 1040, 500,
     "GeoGebra-Tabelle mit U-Q-Punkten, Modellwerten der Potenzregression und prozentualen Modellabweichungen.",
     "D enthält die Modellwerte, E die Abweichungen der Messwerte vom Regressionsmodell.",
+    [{ x: 65.6, y: 35, width: 34, height: 45, label: "D und E" }]),
+  linearRegression: uqImage("12-lineare-regression-u-q.png", 900, 500,
+    "GeoGebra-Algebraansicht mit einer linearen Regression ersten Grades für die fünf U-Q-Punkte.",
+    "TrendPoly mit Grad 1 liefert Q(x) = 0,0408 · x + 0,12.",
+    [{ x: 18, y: 16, width: 77, height: 18, label: "Q(x)" }]),
+  linearModelTable: uqImage("13-lineare-modellwerte-u-q.png", 1040, 500,
+    "GeoGebra-Tabelle mit U-Q-Punkten, Modellwerten der linearen Regression und prozentualen Modellabweichungen.",
+    "D enthält die Werte der Regressionsgeraden, E die relativen Modellabweichungen.",
     [{ x: 65.6, y: 35, width: 34, height: 45, label: "D und E" }])
 });
 
@@ -630,6 +638,143 @@ export const UQ_CONSTANT_STEPS = Object.freeze([
   }
 ]);
 
+export const UQ_LINEAR_STEPS = Object.freeze([
+  {
+    id: "uq-linear-context", shortTitle: "Messidee", title: "Die theoretische Erwartung formulieren",
+    goal: "Du erklärst, warum Q = C · U für einen unveränderten Kondensator eine direkte Proportionalität beschreibt.",
+    why: "Ein Experiment prüft, ob die Messdaten mit einem theoretisch vorhergesagten Zusammenhang vereinbar sind. Für einen festen Kondensator sagt Q = C · U voraus, dass Q linear mit U wächst und der Graph durch den Ursprung verläuft. Wegen der Messunsicherheit erwarten wir jedoch keine exakt auf einer Geraden liegenden Punkte.",
+    concepts: uqContextConcepts,
+    workedExample: { title: "Die Theorie als Graph lesen", lines: ["Bei U = 0 V sagt Q = C · U auch Q = 0 C voraus.", "Eine Verdopplung von U führt bei konstantem C zu einer Verdopplung von Q.", "Der theoretische Graph ist deshalb eine Gerade durch den Ursprung."] },
+    remember: "Direkte Proportionalität verlangt beides: einen linearen Verlauf und einen Graphen durch den Ursprung.",
+    actionHeading: "Zuerst vorhersagen", actions: ["Lies U und Q mit ihren Einheiten ab.", "Notiere die Hypothese Q = C · U.", "Überlege, welchen Punkt der theoretische Graph bei U = 0 besitzen muss."],
+    dataTable: UQ_EXAMPLE_DATA, formula: null, images: [UQ_IMAGES.table],
+    troubleshooting: "GeoGebra zeigt 2 statt 2,0. Der Zahlenwert ist derselbe; die angenommene Messunsicherheit ΔQ = 0,1 · 10⁻⁸ C bleibt bestehen.",
+    mistake: "Ein ansteigender Verlauf allein reicht nicht aus. Auch ein nicht proportionaler Zusammenhang kann mit U wachsen.",
+    check: { prompt: "Prüfe Messwert und theoretische Erwartung.", fields: [
+      { id: "q100", kind: "result", type: "number", label: "Q/(10⁻⁸ C) bei U = 100 V", placeholder: "4,3", expected: 4.3, tolerance: 0.001, feedback: { correct: "Der Messwert ist 4,3 · 10⁻⁸ C.", incorrect: "Lies Zeile 2 der Messwerttabelle ab." } },
+      { id: "origin", kind: "understanding", type: "choice", label: "Welche zusätzliche Forderung gilt bei direkter Proportionalität?", expected: "origin", options: [option("", "Bitte auswählen …"), option("origin", "Der Graph verläuft durch den Ursprung."), option("horizontal", "Der Graph verläuft waagerecht."), option("curve", "Der Graph muss gekrümmt sein.")], feedback: { correct: "Richtig: Für U = 0 gilt theoretisch Q = 0.", incorrect: "Setze U = 0 in Q = C · U ein." } }
+    ], success: "Du kannst die theoretische Erwartung als Ursprungsgerade beschreiben.", retry: "Unterscheide einen beliebigen linearen Verlauf von direkter Proportionalität." }
+  },
+  {
+    id: "uq-linear-table", shortTitle: "Tabelle", title: "U und Q in GeoGebra eingeben",
+    goal: "Du überträgst die fünf Messpaare mit korrekter Skalierung in A1:B5.",
+    why: "Die lineare Regression ordnet jeder Spannung U genau den in derselben Zeile stehenden Ladungswert Q zu. Deshalb müssen Spalten, Zeilen und Skalierung eindeutig stimmen.",
+    concepts: [{ term: "Spalte A", text: "Spannungswerte U in Volt." }, { term: "Spalte B", text: "Zahlenwerte Q/(10⁻⁸ C), also Ladungen in der Einheit 10⁻⁸ C." }, { term: "Messpaar", text: "Zwei Werte derselben Messung in derselben Tabellenzeile." }],
+    workedExample: { title: "Zeile 5 lesen", lines: ["A5 enthält 250 und bedeutet U = 250 V.", "B5 enthält 10,2 und bedeutet Q = 10,2 · 10⁻⁸ C.", "Beide Werte bilden gemeinsam das fünfte Messpaar."] },
+    remember: "In Spalte B steht nur der skalierte Zahlenwert; der Faktor 10⁻⁸ gehört zur Einheit.",
+    actionHeading: "Jetzt auf dem iPad", actions: ["Öffne Rechner Suite → Grafikrechner.", "Öffne die Tabellenkalkulation.", "Trage U in A1:A5 ein.", "Trage die Q-Zahlenwerte in B1:B5 ein."],
+    dataTable: UQ_EXAMPLE_DATA, formula: null, images: [UQ_IMAGES.table],
+    troubleshooting: "Bist du im CAS-Modus, öffne das Menü ☰ und wähle Grafikrechner. Tippe anschließend links auf Tabellenkalkulation.",
+    mistake: "Trage in B nicht zusätzlich den Faktor 10⁻⁸ ein. GeoGebra darf Dezimalpunkte statt Dezimalkommas anzeigen.",
+    check: { prompt: "Prüfe die letzte Zeile und die Skalierung.", fields: [
+      { id: "a5", kind: "result", type: "number", label: "A5 in V", placeholder: "250", expected: 250, tolerance: 0.01, feedback: { correct: "A5 stimmt.", incorrect: "A5 enthält 250 V." } },
+      { id: "b5", kind: "result", type: "number", label: "B5: Q/(10⁻⁸ C)", placeholder: "10,2", expected: 10.2, tolerance: 0.001, feedback: { correct: "B5 stimmt.", incorrect: "B5 enthält 10,2." } },
+      { id: "scale", kind: "understanding", type: "choice", label: "Was gibst du für 2,0 · 10⁻⁸ C in B1 ein?", expected: "two", options: [option("", "Bitte auswählen …"), option("two", "2 oder 2,0"), option("full", "0,00000002"), option("unit", "2 C")], feedback: { correct: "Richtig: Der Faktor steht in der Spalteneinheit.", incorrect: "In B stehen die Zahlenwerte Q/(10⁻⁸ C)." } }
+    ], success: "Die U-Q-Messreihe ist korrekt übertragen.", retry: "Kontrolliere Zeilen, Einheiten und Skalierung." }
+  },
+  {
+    id: "uq-linear-points", shortTitle: "Punkte", title: "Die Messpaare als Punkte darstellen",
+    goal: "Du erzeugst in C1:C5 die Punkte (U, Q) und deutest ihre Koordinaten.",
+    why: "Die Regression benötigt Messpunkte. U ist die unabhängige Größe auf der x-Achse; der skalierte Zahlenwert von Q ist die abhängige Größe auf der y-Achse.",
+    concepts: [{ term: "x-Koordinate", text: "Der erste Punktwert: U aus Spalte A." }, { term: "y-Koordinate", text: "Der zweite Punktwert: Q aus Spalte B." }, { term: "Relativer Zellbezug", text: "Beim Ausfüllen wird aus A1/B1 automatisch A2/B2 und so weiter." }],
+    workedExample: { title: "Aus Zeile 1 wird ein Punkt", lines: ["A1 enthält 50 und B1 enthält 2.", "=(A1,B1) erzeugt den Punkt (50, 2).", "Beim Ausfüllen entsteht in C5 entsprechend (250, 10.2)."] },
+    remember: "Die Koordinatenreihenfolge lautet (U, Q) = (x, y).",
+    actionHeading: "Jetzt in GeoGebra", actions: ["Tippe C1 an.", "Gib die Formel ein und bestätige.", "Ziehe den Ausfüllgriff bis C5.", "Prüfe den letzten Punkt."],
+    formula: "=(A1,B1)", images: [UQ_IMAGES.points],
+    troubleshooting: "Beginne mit dem Gleichheitszeichen und setze A1 sowie B1 gemeinsam in runde Klammern.",
+    mistake: "Bei =(B1,A1) würden Ladung und Spannung auf den falschen Achsen liegen.",
+    check: { prompt: "Prüfe Punkt und Koordinatenreihenfolge.", fields: [
+      { id: "c5", kind: "result", type: "choice", label: "Was steht in C5?", expected: "correct", options: [option("", "Bitte auswählen …"), option("correct", "(250, 10.2)"), option("reverse", "(10.2, 250)"), option("copy", "(50, 2)")], feedback: { correct: "C5 stimmt.", incorrect: "C5 verwendet A5 als ersten und B5 als zweiten Wert." } },
+      { id: "order", kind: "understanding", type: "choice", label: "Warum steht U an erster Stelle?", expected: "independent", options: [option("", "Bitte auswählen …"), option("independent", "Q wird in Abhängigkeit von U untersucht."), option("larger", "U besitzt größere Zahlenwerte."), option("unit", "Volt steht grundsätzlich zuerst.")], feedback: { correct: "Richtig: U ist die unabhängige x-Größe.", incorrect: "Untersucht wird Q als Funktion der Spannung U." } }
+    ], success: "Alle fünf Messpunkte sind für die Regression vorbereitet.", retry: "Denke an die Reihenfolge (U, Q)." }
+  },
+  {
+    id: "uq-linear-concept", shortTitle: "Geradenmodell", title: "Lineare Regression und Proportionalität unterscheiden",
+    goal: "Du erklärst die Parameter der Geraden Q(U) = m · U + d und erkennst direkte Proportionalität als Sonderfall d = 0.",
+    why: "Eine lineare Regression bestimmt die Gerade, die insgesamt möglichst gut zu den Messpunkten passt. Der freie Achsenabschnitt erlaubt zu prüfen, ob die Daten auf eine Ursprungsgerade hindeuten, statt diese Eigenschaft bereits vorauszusetzen.",
+    concepts: [{ term: "Steigung m", text: "Sie gibt die Änderung von Q je Änderung von U an. Im Modell Q = C · U entspricht sie der Kapazität C." }, { term: "Achsenabschnitt d", text: "Der vom Modell vorhergesagte Q-Wert bei U = 0." }, { term: "Ursprungsgerade", text: "Eine Gerade mit d = 0; nur dieser lineare Sonderfall ist direkt proportional." }, { term: "Extrapolation", text: "Eine Aussage außerhalb des Messbereichs; hier liegt U = 0 außerhalb der Messwerte von 50 bis 250 V." }],
+    workedExample: { title: "Warum der Achsenabschnitt wichtig ist", lines: ["Q(U) = 0,04 · U ist direkt proportional, weil d = 0 gilt.", "Q(U) = 0,04 · U + 1 ist zwar linear, aber nicht direkt proportional.", "Eine Verdopplung von U verdoppelt Q bei einem von null verschiedenen d nicht exakt."] },
+    remember: "Linear bedeutet nicht automatisch proportional: Direkte Proportionalität verlangt zusätzlich d = 0.",
+    actionHeading: "Vor der Regression", actions: ["Vergleiche Q = C · U mit Q = m · U + d.", "Ordne m der Kapazität C zu.", "Notiere die theoretische Erwartung d = 0."],
+    formula: null, images: [],
+    troubleshooting: "Der Achsenabschnitt ist der Funktionswert bei U = 0. Er ist nicht mit dem ersten gemessenen Q-Wert zu verwechseln.",
+    mistake: "Eine Gerade mit hohem Anstieg oder kleinen Punktabständen ist nicht allein deshalb proportional. Entscheidend ist auch ihr Verlauf durch den Ursprung.",
+    check: { prompt: "Prüfe die Bedingungen direkter Proportionalität.", fields: [
+      { id: "ideal-intercept", kind: "result", type: "number", label: "Theoretisch erwarteter Achsenabschnitt d", placeholder: "0", expected: 0, tolerance: 0.0001, feedback: { correct: "Für direkte Proportionalität gilt d = 0.", incorrect: "Setze U = 0 in Q = C · U ein." } },
+      { id: "slope", kind: "understanding", type: "choice", label: "Welche physikalische Größe entspricht der Steigung?", expected: "capacity", options: [option("", "Bitte auswählen …"), option("capacity", "Die Kapazität C."), option("charge", "Die Ladung Q."), option("uncertainty", "Die Messunsicherheit.")], feedback: { correct: "Richtig: C = ΔQ/ΔU entspricht der Steigung.", incorrect: "Vergleiche Q = C · U mit Q = m · U + d." } }
+    ], success: "Du kannst lineare und direkt proportionale Zusammenhänge unterscheiden.", retry: "Vergleiche insbesondere die Achsenabschnitte beider Gleichungen." }
+  },
+  {
+    id: "uq-linear-fit", shortTitle: "TrendPoly", title: "Die lineare Regression in GeoGebra berechnen",
+    goal: "Du erzeugst eine lineare Regressionsfunktion und liest Steigung sowie Achsenabschnitt ab.",
+    why: "TrendPoly mit Grad 1 passt ein Polynom ersten Grades – also eine Gerade – an alle fünf Messpunkte an. Durch den Funktionsnamen Q können wir anschließend für jede Spannung einen Modellwert berechnen.",
+    concepts: [{ term: "TrendPoly", text: "GeoGebras Befehl für eine Polynomregression." }, { term: "Grad 1", text: "Ein Polynom ersten Grades hat die Form m · x + d und ist eine Gerade." }, { term: "Q(x)", text: "Q ist der gewählte Funktionsname; GeoGebra verwendet x als Variable, die hier für U steht." }],
+    workedExample: { title: "Die Ausgabe lesen", lines: ["GeoGebra liefert Q(x) = 0,0408 · x + 0,12.", "Damit ist m = 0,0408 und d = 0,12 in der verwendeten Skalierung.", "Die Steigung entspricht 0,0408 · 10⁻⁸ F = 408 pF."] },
+    remember: "Steigung m ≈ 408 pF; Achsenabschnitt d = 0,12 · 10⁻⁸ C.",
+    actionHeading: "Jetzt in GeoGebra", actions: ["Wechsle zur Algebraansicht.", "Gib den Befehl vollständig ein und bestätige.", "Lies die Zahl vor x als Steigung m ab.", "Lies den konstanten Summanden als Achsenabschnitt d ab."],
+    formula: "Q(x)=TrendPoly(C1:C5,1)", images: [UQ_IMAGES.linearRegression],
+    troubleshooting: "Prüfe bei einer Fehlermeldung, ob C1:C5 tatsächlich fünf Punkte enthalten und nach dem Befehl eine 1 für den Polynomgrad steht.",
+    mistake: "d = 0,12 ist kein bei U = 0 gemessener Wert. Die Regression extrapoliert die aus 50 bis 250 V gewonnene Gerade bis zur y-Achse.",
+    check: { prompt: "Übertrage und deute die Regressionsparameter.", fields: [
+      { id: "slope", kind: "result", type: "number", label: "Steigung m", placeholder: "0,0408", expected: 0.0408, tolerance: 0.0001, feedback: { correct: "Die Steigung stimmt.", incorrect: "m ist die Zahl vor x: 0,0408." } },
+      { id: "intercept", kind: "result", type: "number", label: "Achsenabschnitt d", placeholder: "0,12", expected: 0.12, tolerance: 0.01, feedback: { correct: "Der Achsenabschnitt stimmt.", incorrect: "d ist der konstante Summand +0,12." } },
+      { id: "capacity", kind: "result", type: "number", label: "Kapazität aus m in pF", placeholder: "408", expected: 408, tolerance: 1, feedback: { correct: "Die Steigung entspricht etwa 408 pF.", incorrect: "Multipliziere 0,0408 mit 10 000." } },
+      { id: "degree", kind: "understanding", type: "choice", label: "Warum steht im Befehl der Grad 1?", expected: "line", options: [option("", "Bitte auswählen …"), option("line", "Ein Polynom ersten Grades ist eine Gerade."), option("point", "Es wird nur ein Punkt verwendet."), option("exact", "Die Messwerte werden dadurch exakt.")], feedback: { correct: "Richtig: Grad 1 erzeugt das lineare Modell.", incorrect: "Vergleiche m · x + d mit einem Polynom ersten Grades." } }
+    ], success: "Du hast Regressionsgerade, Steigung und Achsenabschnitt richtig bestimmt.", retry: "Lies die Ausgabe als m · x + d." }
+  },
+  {
+    id: "uq-linear-model", shortTitle: "Modellwerte", title: "Werte der Regressionsgeraden berechnen",
+    goal: "Du berechnest in D1:D5 die Modellwerte der Regressionsgeraden und unterscheidest sie von Messwerten.",
+    why: "Messwert und Modellwert müssen sich auf dieselbe Spannung beziehen, bevor ihre Abweichung sinnvoll berechnet werden kann.",
+    concepts: [{ term: "Messwert", text: "Der im Versuch bestimmte Q-Wert in Spalte B." }, { term: "Modellwert", text: "Der von Q(x) berechnete Wert in Spalte D." }, { term: "Q(A1)", text: "Setzt die Spannung aus A1 in die Regressionsfunktion ein." }],
+    workedExample: { title: "Erste Zeile", lines: ["Für U = 50 V berechnet das Modell Q(50) = 0,0408 · 50 + 0,12.", "Daraus ergibt sich Q(50) = 2,16 · 10⁻⁸ C.", "Der gemessene Wert in B1 beträgt dagegen 2,0 · 10⁻⁸ C."] },
+    remember: "B enthält Messwerte; D enthält berechnete Werte der Regressionsgeraden.",
+    actionHeading: "Jetzt in GeoGebra", actions: ["Wechsle zur Tabellenkalkulation.", "Gib in D1 die Formel ein.", "Fülle D1 bis D5 aus.", "Prüfe den ersten und letzten Modellwert."],
+    formula: "=Q(A1)", images: [UQ_IMAGES.linearModelTable],
+    troubleshooting: "Wird Q nicht erkannt, kontrolliere in der Algebraansicht, ob die Regressionsfunktion wirklich Q(x) heißt.",
+    mistake: "Die Werte in D wurden nicht gemessen. Sie sind Vorhersagen des linearen Modells für die Spannungen aus Spalte A.",
+    check: { prompt: "Prüfe Modellwerte und ihre Bedeutung.", fields: [
+      { id: "d1", kind: "result", type: "number", label: "D1: Modellwert Q/(10⁻⁸ C)", placeholder: "2,16", expected: 2.16, tolerance: 0.005, feedback: { correct: "D1 stimmt.", incorrect: "Berechne 0,0408 · 50 + 0,12." } },
+      { id: "d5", kind: "result", type: "number", label: "D5: Modellwert Q/(10⁻⁸ C)", placeholder: "10,32", expected: 10.32, tolerance: 0.005, feedback: { correct: "D5 stimmt.", incorrect: "D5 sollte 10,32 enthalten." } },
+      { id: "kind", kind: "understanding", type: "choice", label: "Was ist der Wert in D1?", expected: "model", options: [option("", "Bitte auswählen …"), option("model", "Ein berechneter Modellwert."), option("measurement", "Eine zweite Messung."), option("uncertainty", "Die Messunsicherheit.")], feedback: { correct: "Genau: D1 wird aus Q(x) berechnet.", incorrect: "Vergleiche die Aufgaben der Spalten B und D." } }
+    ], success: "Du kannst Messwerte und lineare Modellwerte unterscheiden.", retry: "Prüfe D1, D5 und die Bedeutung der Spalten." }
+  },
+  {
+    id: "uq-linear-deviation", shortTitle: "Abweichungen", title: "Relative Modellabweichungen berechnen",
+    goal: "Du berechnest die relativen Modellabweichungen und bestimmst ihren größten Betrag.",
+    why: "Die relative Abweichung zeigt für jede Spannung, wie groß die Differenz zwischen Messwert und Geradenmodell im Verhältnis zum Modellwert ist.",
+    concepts: [{ term: "Relative Modellabweichung", text: "(Messwert − Modellwert) geteilt durch den Modellwert." }, { term: "Vorzeichen", text: "Positiv bedeutet oberhalb, negativ unterhalb der Regressionsgeraden." }, { term: "Betrag", text: "Die Größe der Abweichung ohne Berücksichtigung ihrer Richtung." }],
+    workedExample: { title: "Zeile 1", lines: ["(2,0 − 2,16) / 2,16 · 100 ≈ −7,41 %.", "Das Minus zeigt: Der Messwert liegt unter dem Modellwert.", "Der Betrag der Modellabweichung beträgt 7,41 %."] },
+    remember: "Die größte lineare Modellabweichung beträgt etwa 7,41 % bei U = 50 V.",
+    actionHeading: "Jetzt in GeoGebra", actions: ["Gib die Formel in E1 ein.", "Fülle E1 bis E5 aus.", "Vergleiche die Beträge.", "Notiere Spannung und Vorzeichen des größten Betrags."],
+    formula: "=(B1-D1)/D1*100", images: [UQ_IMAGES.linearModelTable],
+    troubleshooting: "Setze B1−D1 in Klammern und verwende D1 als Bezugswert im Nenner.",
+    mistake: "Die Modellabweichung ist keine Messunsicherheit. Sie beschreibt nur den Abstand eines Messwertes vom gewählten Modell.",
+    check: { prompt: "Bestimme und deute die größte Modellabweichung.", fields: [
+      { id: "max", kind: "result", type: "number", label: "Größter Betrag in %", placeholder: "7,41", expected: 7.4074074074, tolerance: 0.08, feedback: { correct: "Der Betrag stimmt.", incorrect: "Vergleiche |E1| bis |E5|." } },
+      { id: "u", kind: "result", type: "number", label: "Zugehörige Spannung in V", placeholder: "50", expected: 50, tolerance: 0.01, feedback: { correct: "U = 50 V stimmt.", incorrect: "Der größte Betrag steht in Zeile 1." } },
+      { id: "sign", kind: "understanding", type: "choice", label: "Was bedeutet das negative Vorzeichen in Zeile 1?", expected: "below", options: [option("", "Bitte auswählen …"), option("below", "Der Messwert liegt unter der Regressionsgeraden."), option("above", "Der Messwert liegt darüber."), option("invalid", "Die Messung ist ungültig.")], feedback: { correct: "Richtig: B1 ist kleiner als D1.", incorrect: "Negativ bedeutet B1 − D1 < 0." } }
+    ], success: "Du kannst die Abweichungen vom linearen Modell berechnen und deuten.", retry: "Nutze Betrag und Vorzeichen getrennt." }
+  },
+  {
+    id: "uq-linear-conclusion", shortTitle: "Urteil", title: "Die lineare Auswertung vorsichtig beurteilen",
+    goal: "Du verbindest Steigung, Achsenabschnitt, Modellabweichungen und Messunsicherheit zu einem fachlich angemessenen Urteil.",
+    why: "Eine lineare Messreihe ist nicht automatisch direkt proportional. Das Urteil muss deshalb sowohl die gute Anpassung der Geraden als auch den von null verschiedenen, extrapolierten Achsenabschnitt und die Grenzen der Unsicherheitsbetrachtung nennen.",
+    concepts: [{ term: "Vergleichsgrenze", text: "Der größere relative Einzelwert aus ΔU/U und ΔQ/Q wird hier vereinfacht als 10-%-Grenze verwendet." }, { term: "Parameterunsicherheit", text: "Sie würde angeben, wie genau m und d durch die Regression bestimmt sind; sie wird in diesem Kurs nicht berechnet." }, { term: "Vereinbar", text: "Die Daten liefern im Rahmen der vereinfachten Betrachtung keinen deutlichen Widerspruch zur theoretischen Erwartung." }],
+    workedExample: { title: "Eine angemessene Schlussfolgerung", lines: ["Die Steigung entspricht etwa 408 pF; die größte Modellabweichung 7,41 % liegt unter der vereinfachten 10-%-Vergleichsgrenze.", "Der Achsenabschnitt d = 0,12 · 10⁻⁸ C liegt nahe bei null, ist aber extrapoliert und besitzt hier keine berechnete Parameterunsicherheit.", "Die Daten sind deshalb in dieser vereinfachten Betrachtung mit Q ∝ U vereinbar, beweisen direkte Proportionalität jedoch nicht."] },
+    remember: "Linearer Verlauf und kleiner Achsenabschnitt stützen Q ∝ U; eine statistisch abgesicherte Aussage über d = 0 wird nicht getroffen.",
+    actionHeading: "Jetzt urteilen", actions: ["Nenne die Steigung als Kapazität von etwa 408 pF.", "Nenne d = 0,12 · 10⁻⁸ C und die Extrapolation auf U = 0.", "Vergleiche 7,41 % mit der vereinfachten Grenze von 10 %.", "Formuliere eine Vereinbarkeitsaussage mit Einschränkung."],
+    formula: null, images: [UQ_IMAGES.linearRegression, UQ_IMAGES.linearModelTable],
+    troubleshooting: "Die 10-%-Grenze ist nur eine vereinfachte Vergleichsgröße. Sie liefert keine Unsicherheit des Achsenabschnitts d.",
+    mistake: "Vergleiche d nicht direkt mit ΔQ, um d = 0 zu bestätigen. d ist ein aus allen Punkten bestimmter Regressionsparameter; seine Unsicherheit müsste gesondert berechnet werden.",
+    check: { prompt: "Prüfe Vergleichswerte und Schlussfolgerung.", fields: [
+      { id: "limit", kind: "result", type: "number", label: "Vereinfachte Vergleichsgrenze in %", placeholder: "10", expected: 10, tolerance: 0.05, feedback: { correct: "Die vereinfachte Grenze beträgt 10 %.", incorrect: "Vergleiche 5/50 · 100 mit 0,1/2,0 · 100." } },
+      { id: "intercept", kind: "result", type: "number", label: "Achsenabschnitt d", placeholder: "0,12", expected: 0.12, tolerance: 0.01, feedback: { correct: "d = 0,12 stimmt.", incorrect: "Lies den konstanten Summanden der Geradengleichung ab." } },
+      { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist fachlich angemessen?", expected: "compatible", options: [option("", "Bitte auswählen …"), option("compatible", "Die Daten sind vereinfacht mit Q ∝ U vereinbar; d = 0 ist damit nicht statistisch bestätigt."), option("proven", "Die direkte Proportionalität ist exakt bewiesen."), option("uncertainty", "10 % ist die Unsicherheit von d.")], feedback: { correct: "Genau: vereinbar, aber weder bewiesen noch statistisch für d = 0 abgesichert.", incorrect: "Unterscheide Modellabweichung, Vergleichsgrenze und Parameterunsicherheit." } }
+    ], success: "Du hast die lineare Regression fachlich vorsichtig beurteilt.", retry: "Verbinde 408 pF, d = 0,12, 7,41 % und die Grenze der Aussage." }
+  }
+]);
+
 export const COURSES = Object.freeze({
   "inverse-square": Object.freeze({
     id: "inverse-square",
@@ -702,6 +847,31 @@ export const COURSES = Object.freeze({
       ["Grobe Vergleichsgrenze", "10 %"]
     ],
     conclusion: "Die mittlere Kapazität beträgt etwa 416 pF. Die größte Konstantenabweichung von etwa 3,83 % liegt unter der bewusst vereinfachten 10-%-Vergleichsgrenze. In dieser Betrachtung ist die Messreihe mit Q = C · U vereinbar und stützt die Annahme direkter Proportionalität; sie beweist sie jedoch nicht."
+  }),
+  "proportional-linear": Object.freeze({
+    id: "proportional-linear",
+    eyebrow: "Direkte Proportionalität · Methode 3",
+    title: "Kondensator: Lineare Regression",
+    subtitle: "Q ∝ U anhand von Steigung und Achsenabschnitt prüfen",
+    duration: "etwa 20–30 Minuten",
+    dataHeaders: ["A: U (V)", "B: Q/(10⁻⁸ C)"],
+    dataKeys: ["u", "q"],
+    stages: ["Messidee", "Tabelle", "Punkte", "Geradenmodell", "Modellwerte", "Abweichungen", "Urteil"],
+    steps: UQ_LINEAR_STEPS,
+    competencies: [
+      { label: "Ich kann Q = C · U als Ursprungsgerade erklären.", steps: ["uq-linear-context"] },
+      { label: "Ich kann U-Q-Messwerte in GeoGebra als Punkte darstellen.", steps: ["uq-linear-table", "uq-linear-points"] },
+      { label: "Ich kann Steigung und Achsenabschnitt einer Regressionsgeraden deuten.", steps: ["uq-linear-concept", "uq-linear-fit"] },
+      { label: "Ich kann Modellwerte und Modellabweichungen berechnen.", steps: ["uq-linear-model", "uq-linear-deviation"] },
+      { label: "Ich kann die Proportionalitätsvermutung fachlich vorsichtig beurteilen.", steps: ["uq-linear-conclusion"] }
+    ],
+    referenceResults: [
+      ["Regressionsgerade", "Q(U) = 0,0408 · U + 0,12"],
+      ["Kapazität aus der Steigung", "≈ 408 pF"],
+      ["Größte Modellabweichung", "≈ 7,41 % bei U = 50 V"],
+      ["Vereinfachte Vergleichsgrenze", "10 %"]
+    ],
+    conclusion: "Die Messpunkte werden gut durch eine Gerade beschrieben. Die Steigung entspricht einer Kapazität von etwa 408 pF, der Achsenabschnitt liegt nahe bei null und die größte Modellabweichung von etwa 7,41 % bleibt unter der vereinfachten 10-%-Vergleichsgrenze. In dieser vereinfachten Betrachtung sind die Daten mit Q ∝ U vereinbar. Ein Beweis für direkte Proportionalität oder eine statistisch abgesicherte Aussage über d = 0 folgt daraus nicht."
   })
 });
 
