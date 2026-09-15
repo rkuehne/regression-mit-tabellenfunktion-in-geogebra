@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
-import { LESSON_STEPS } from "../lesson-data.js";
+import { COURSE_IDS, COURSES, LESSON_STEPS, UQ_CONSTANT_STEPS, UQ_POWER_STEPS } from "../lesson-data.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const expectedIds = [
@@ -113,16 +113,73 @@ test("Einheiten und vorsichtige Fachsprache sind im Kurs konsistent", () => {
   assert.match(content, /0,37 − 0,38638/);
 });
 
-test("die Startseite enthält Moduswahl, Begriffshilfe und lokale Social Preview", () => {
+test("die Startseite enthält Kurswahl, Moduswahl, Begriffshilfe und lokale Social Preview", () => {
   const root = resolve(here, "..");
   const html = readFileSync(resolve(root, "index.html"), "utf8");
   assert.match(html, /id="explainModeBtn"/);
   assert.match(html, /id="compactModeBtn"/);
   assert.match(html, /id="glossaryDialog"/);
-  assert.match(html, /etwa 20–35 Minuten/);
+  assert.match(html, /data-course-id="inverse-square"/);
+  assert.match(html, /data-course-id="proportional-power"/);
+  assert.match(html, /data-course-id="proportional-constants"/);
   assert.match(html, /property="og:image" content="\.\/assets\/og\.png"/);
   assert.match(html, /name="twitter:card" content="summary_large_image"/);
   assert.equal(existsSync(resolve(root, "assets", "og.png")), true);
+});
+
+test("enthält drei eigenständige Lernwege mit 10, 8 und 8 Kapiteln", () => {
+  assert.deepEqual(COURSE_IDS, ["inverse-square", "proportional-power", "proportional-constants"]);
+  assert.equal(COURSES["inverse-square"].steps.length, 10);
+  assert.equal(UQ_POWER_STEPS.length, 8);
+  assert.equal(UQ_CONSTANT_STEPS.length, 8);
+});
+
+test("alle neuen Kapitel besitzen Erklärfelder sowie Ergebnis- und Verständnisprüfung", () => {
+  [...UQ_POWER_STEPS, ...UQ_CONSTANT_STEPS].forEach((step) => {
+    assert.ok(step.goal && step.why && step.remember && step.troubleshooting && step.mistake);
+    assert.ok(step.concepts.length >= 2);
+    assert.ok(step.workedExample.lines.length >= 2);
+    assert.ok(step.actions.length >= 3);
+    const kinds = new Set(step.check.fields.map(({ kind }) => kind));
+    assert.equal(kinds.has("result"), true, `${step.id}: Ergebnisprüfung fehlt`);
+    assert.equal(kinds.has("understanding"), true, `${step.id}: Verständnisprüfung fehlt`);
+  });
+});
+
+test("bindet elf lokale U-Q-Abbildungen zugänglich ein", () => {
+  const images = [...UQ_POWER_STEPS, ...UQ_CONSTANT_STEPS].flatMap((step) => step.images);
+  const uniqueImages = [...new Map(images.map((image) => [image.src, image])).values()];
+  assert.equal(uniqueImages.length, 11);
+  uniqueImages.forEach((image) => {
+    assert.ok(image.alt.length > 20);
+    assert.ok(image.caption.length > 10);
+    assert.ok(image.width > 0 && image.height > 0);
+    assert.ok(image.highlights.length >= 1);
+    const imagePath = resolve(here, "..", image.src.replace(/^\.\//, ""));
+    assert.equal(existsSync(imagePath), true, image.src);
+    const png = readFileSync(imagePath);
+    assert.equal(png.readUInt32BE(16), image.width, `${image.src}: Breite`);
+    assert.equal(png.readUInt32BE(20), image.height, `${image.src}: Höhe`);
+  });
+});
+
+test("enthält die zentralen U-Q-Eingaben und vorsichtige Fachsprache", () => {
+  const power = JSON.stringify(UQ_POWER_STEPS);
+  const constants = JSON.stringify(UQ_CONSTANT_STEPS);
+  const courses = JSON.stringify(COURSES);
+  assert.match(power, /Q\(x\)=TrendPot\(C1:C5\)/);
+  assert.match(power, /=Q\(A1\)/);
+  assert.match(power, /keine Unsicherheit von b|nicht.*Unsicherheit.*b/i);
+  assert.match(power, /theoretischen Wert 1/i);
+  assert.match(constants, /=B1\/A1/);
+  assert.match(constants, /Mittel\(C1:C5\)/);
+  assert.match(constants, /416 pF/);
+  assert.match(constants, /10 %/);
+  assert.match(constants, /keine.*Unsicherheit von C|keine vollständige Fehlerfortpflanzung/i);
+  assert.doesNotMatch(constants, /wechsle freundlich/i);
+  assert.match(courses, /Q\/\(10⁻⁸ C\)/);
+  assert.match(power + constants, /vereinbar/i);
+  assert.match(power + constants, /beweis/i);
 });
 
 test("weist Suchmaschinen auf die gewünschte Nicht-Indexierung hin", () => {

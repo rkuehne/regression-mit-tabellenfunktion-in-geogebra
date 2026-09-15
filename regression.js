@@ -7,8 +7,20 @@ export const EXAMPLE_DATA = Object.freeze([
   Object.freeze({ r: 18.6, f: 0.06 })
 ]);
 
+export const UQ_EXAMPLE_DATA = Object.freeze([
+  Object.freeze({ u: 50, q: 2 }),
+  Object.freeze({ u: 100, q: 4.3 }),
+  Object.freeze({ u: 150, q: 6.4 }),
+  Object.freeze({ u: 200, q: 8.3 }),
+  Object.freeze({ u: 250, q: 10.2 })
+]);
+
 export function cloneExampleData() {
   return EXAMPLE_DATA.map(({ r, f }) => ({ r, f }));
+}
+
+export function cloneUqExampleData() {
+  return UQ_EXAMPLE_DATA.map(({ u, q }) => ({ u, q }));
 }
 
 export function parseLocaleNumber(value) {
@@ -69,6 +81,32 @@ export function validatePowerPoints(data, { minRows = 3, maxRows = 30 } = {}) {
   return { valid: errors.length === 0, points: usablePoints, errors };
 }
 
+export function validateUqPoints(data, { minRows = 3, maxRows = 30 } = {}) {
+  const errors = [];
+  if (!Array.isArray(data)) {
+    return { valid: false, points: [], errors: ["Die Messwerttabelle ist nicht lesbar."] };
+  }
+  if (data.length < minRows) errors.push(`Mindestens ${minRows} vollständige Messwertpaare sind nötig.`);
+  if (data.length > maxRows) errors.push(`Höchstens ${maxRows} Messwertpaare sind möglich.`);
+
+  const points = data.map((row, index) => {
+    const u = parseLocaleNumber(row?.u);
+    const q = parseLocaleNumber(row?.q);
+    if (!Number.isFinite(u) || !Number.isFinite(q)) {
+      errors.push(`Zeile ${index + 1}: Beide Felder müssen Zahlen enthalten.`);
+    } else if (u <= 0 || q <= 0) {
+      errors.push(`Zeile ${index + 1}: U und Q müssen größer als 0 sein.`);
+    }
+    return { u, q };
+  });
+
+  const usablePoints = points.filter(({ u, q }) => Number.isFinite(u) && Number.isFinite(q) && u > 0 && q > 0);
+  if (usablePoints.length >= minRows && new Set(usablePoints.map(({ u }) => u)).size < 2) {
+    errors.push("Die U-Werte dürfen nicht alle gleich sein.");
+  }
+  return { valid: errors.length === 0, points: usablePoints, errors };
+}
+
 export function powerRegression(points) {
   if (!Array.isArray(points) || points.length < 2) return null;
   if (points.some(({ r, f }) => !Number.isFinite(r) || !Number.isFinite(f) || r <= 0 || f <= 0)) return null;
@@ -103,6 +141,10 @@ export function powerRegression(points) {
   return { a, b, r2 };
 }
 
+export function uqPowerRegression(points) {
+  return powerRegression(points.map(({ u, q }) => ({ r: u, f: q })));
+}
+
 export function analyzePoints(points, regression) {
   if (!regression) return { rows: [], maxDeviation: null };
 
@@ -117,6 +159,49 @@ export function analyzePoints(points, regression) {
   ), null);
 
   return { rows, maxDeviation };
+}
+
+export function analyzeUqPower(points, regression) {
+  const analysis = analyzePoints(points.map(({ u, q }) => ({ r: u, f: q })), regression);
+  return {
+    rows: analysis.rows.map(({ r, f, predicted, deviation }) => ({ u: r, q: f, predicted, deviation })),
+    maxDeviation: analysis.maxDeviation
+      ? {
+          u: analysis.maxDeviation.r,
+          q: analysis.maxDeviation.f,
+          predicted: analysis.maxDeviation.predicted,
+          deviation: analysis.maxDeviation.deviation
+        }
+      : null
+  };
+}
+
+export function analyzeProportionality(points) {
+  if (!Array.isArray(points) || points.length === 0) return null;
+  if (points.some(({ u, q }) => !Number.isFinite(u) || !Number.isFinite(q) || u <= 0 || q <= 0)) return null;
+
+  const capacities = points.map(({ u, q }) => q / u);
+  const mean = capacities.reduce((sum, value) => sum + value, 0) / capacities.length;
+  const rows = points.map(({ u, q }, index) => {
+    const capacity = capacities[index];
+    const deviation = ((capacity - mean) / mean) * 100;
+    return { u, q, capacity, capacityPf: capacity * 10000, deviation };
+  });
+  const maxDeviation = rows.reduce((largest, row) => (
+    !largest || Math.abs(row.deviation) > Math.abs(largest.deviation) ? row : largest
+  ), null);
+
+  return { rows, mean, meanPf: mean * 10000, maxDeviation };
+}
+
+export function greatestSingleRelativeError(points, deltaU, deltaQ) {
+  if (!Array.isArray(points) || points.length === 0 || !Number.isFinite(deltaU) || !Number.isFinite(deltaQ) || deltaU <= 0 || deltaQ <= 0) return null;
+  const minU = Math.min(...points.map(({ u }) => u));
+  const minQ = Math.min(...points.map(({ q }) => q));
+  if (!(minU > 0) || !(minQ > 0)) return null;
+  const uPercent = (deltaU / minU) * 100;
+  const qPercent = (deltaQ / minQ) * 100;
+  return { uPercent, qPercent, limit: Math.max(uPercent, qPercent), minU, minQ };
 }
 
 export function isWithin(value, expected, tolerance) {

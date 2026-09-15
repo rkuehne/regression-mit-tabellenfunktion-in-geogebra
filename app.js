@@ -1,18 +1,31 @@
-import { LESSON_STEPS } from "./lesson-data.js";
+import { COURSE_IDS, COURSES } from "./lesson-data.js";
 import {
   analyzePoints,
+  analyzeProportionality,
+  analyzeUqPower,
   cloneExampleData,
+  cloneUqExampleData,
   formatNumber,
+  greatestSingleRelativeError,
   isWithin,
   parseLocaleNumber,
   powerRegression,
+  uqPowerRegression,
+  validateUqPoints,
   validatePowerPoints
 } from "./regression.js";
 import { loadState, persistState } from "./state.js";
 
 const els = {
   startCourseBtn: document.getElementById("startCourseBtn"),
+  coursePicker: document.getElementById("coursePicker"),
+  courseChoiceButtons: [...document.querySelectorAll("[data-course-id]")],
+  courseChoiceStatus: document.getElementById("courseChoiceStatus"),
   course: document.getElementById("course"),
+  courseEyebrow: document.getElementById("courseEyebrow"),
+  courseTitle: document.getElementById("course-title"),
+  courseIntro: document.getElementById("courseIntro"),
+  learningMap: document.getElementById("learningMap"),
   progressLabel: document.getElementById("progressLabel"),
   progressPercent: document.getElementById("progressPercent"),
   courseProgress: document.getElementById("courseProgress"),
@@ -49,18 +62,36 @@ const els = {
   previousStepBtn: document.getElementById("previousStepBtn"),
   nextStepBtn: document.getElementById("nextStepBtn"),
   courseComplete: document.getElementById("courseComplete"),
+  completionTitle: document.getElementById("completionTitle"),
+  completionText: document.getElementById("completionText"),
+  transferMethodSelect: document.getElementById("transferMethodSelect"),
+  transferIntro: document.getElementById("transferIntro"),
+  transferInputTitle: document.getElementById("transferInputTitle"),
+  transferXHeader: document.getElementById("transferXHeader"),
+  transferYHeader: document.getElementById("transferYHeader"),
   transferInputRows: document.getElementById("transferInputRows"),
   addTransferRowBtn: document.getElementById("addTransferRowBtn"),
   removeTransferRowBtn: document.getElementById("removeTransferRowBtn"),
   resetTransferBtn: document.getElementById("resetTransferBtn"),
   uncertaintyInput: document.getElementById("uncertaintyInput"),
+  relativeUncertaintyGroup: document.getElementById("relativeUncertaintyGroup"),
+  uqUncertaintyGroup: document.getElementById("uqUncertaintyGroup"),
+  deltaUInput: document.getElementById("deltaUInput"),
+  deltaQInput: document.getElementById("deltaQInput"),
+  uncertaintyNote: document.getElementById("uncertaintyNote"),
   calculateTransferBtn: document.getElementById("calculateTransferBtn"),
   transferFeedback: document.getElementById("transferFeedback"),
   transferResults: document.getElementById("transferResults"),
+  transferResultTitle: document.getElementById("transferResultTitle"),
   transferEquation: document.getElementById("transferEquation"),
   transferMeta: document.getElementById("transferMeta"),
   uncertaintyResult: document.getElementById("uncertaintyResult"),
   transferChart: document.getElementById("transferChart"),
+  chartModelLabel: document.getElementById("chartModelLabel"),
+  resultXHeader: document.getElementById("resultXHeader"),
+  resultYHeader: document.getElementById("resultYHeader"),
+  resultModelHeader: document.getElementById("resultModelHeader"),
+  resultDeviationHeader: document.getElementById("resultDeviationHeader"),
   transferAnalysisRows: document.getElementById("transferAnalysisRows"),
   reflectionInput: document.getElementById("reflectionInput"),
   studentNameInput: document.getElementById("studentNameInput"),
@@ -69,8 +100,10 @@ const els = {
   printCourseName: document.getElementById("printCourseName"),
   summaryDate: document.getElementById("summaryDate"),
   summaryStatus: document.getElementById("summaryStatus"),
+  summarySubtitle: document.getElementById("summarySubtitle"),
   summaryProgress: document.getElementById("summaryProgress"),
   summaryChecklist: document.getElementById("summaryChecklist"),
+  summaryKeyResults: document.getElementById("summaryKeyResults"),
   summaryCompetencies: document.getElementById("summaryCompetencies"),
   summaryConclusion: document.getElementById("summaryConclusion"),
   summaryTransfer: document.getElementById("summaryTransfer"),
@@ -87,6 +120,22 @@ const els = {
 };
 
 let state = loadState(localStorage);
+
+function activeCourse() {
+  return COURSES[state.activeCourseId];
+}
+
+function activeProgress() {
+  return state.courses[state.activeCourseId];
+}
+
+function activeTransfer() {
+  return state.transfer.methods[state.transfer.activeMethod];
+}
+
+function activeTransferCourse() {
+  return COURSES[state.transfer.activeMethod];
+}
 
 function saveState() {
   persistState(localStorage, state);
@@ -106,12 +155,13 @@ function setFeedback(element, text = "", type = "") {
 }
 
 function isComplete(stepId) {
-  return state.completedSteps.includes(stepId);
+  return activeProgress().completedSteps.includes(stepId);
 }
 
 function recommendedStepIndex() {
-  const index = LESSON_STEPS.findIndex(({ id }) => !isComplete(id));
-  return index === -1 ? LESSON_STEPS.length - 1 : index;
+  const steps = activeCourse().steps;
+  const index = steps.findIndex(({ id }) => !isComplete(id));
+  return index === -1 ? steps.length - 1 : index;
 }
 
 function renderLessonMode() {
@@ -129,27 +179,29 @@ function setLessonMode(mode) {
 }
 
 function renderProgress() {
-  const count = state.completedSteps.length;
-  const percent = Math.round((count / LESSON_STEPS.length) * 100);
-  els.progressLabel.textContent = `${count} von ${LESSON_STEPS.length} Kapiteln`;
+  const course = activeCourse();
+  const count = activeProgress().completedSteps.length;
+  const percent = Math.round((count / course.steps.length) * 100);
+  els.progressLabel.textContent = `${count} von ${course.steps.length} Kapiteln`;
   els.progressPercent.textContent = `${percent} %`;
-  els.courseProgress.max = LESSON_STEPS.length;
+  els.courseProgress.max = course.steps.length;
   els.courseProgress.value = count;
-  els.courseProgress.textContent = `${count} von ${LESSON_STEPS.length} Kapiteln`;
-  els.courseComplete.hidden = count !== LESSON_STEPS.length;
+  els.courseProgress.textContent = `${count} von ${course.steps.length} Kapiteln`;
+  els.courseComplete.hidden = count !== course.steps.length;
 }
 
 function renderStepNav() {
   const recommended = recommendedStepIndex();
   els.stepNav.replaceChildren();
 
-  LESSON_STEPS.forEach((step, index) => {
+  const progress = activeProgress();
+  activeCourse().steps.forEach((step, index) => {
     const item = document.createElement("li");
     const button = document.createElement("button");
     button.type = "button";
     button.dataset.stepIndex = String(index);
     button.setAttribute("aria-label", `Kapitel ${index + 1}: ${step.title}${isComplete(step.id) ? ", abgeschlossen" : ""}`);
-    if (index === state.currentStep) button.setAttribute("aria-current", "step");
+    if (index === progress.currentStep) button.setAttribute("aria-current", "step");
     if (index === recommended && !isComplete(step.id)) button.classList.add("is-next");
 
     const number = document.createElement("span");
@@ -186,7 +238,7 @@ function renderSourceData(data) {
   caption.textContent = "Messwerte für den Lernweg";
   const head = document.createElement("thead");
   const headerRow = document.createElement("tr");
-  ["Nr.", "A: r (cm)", "B: F (mN)"].forEach((text) => {
+  ["Nr.", ...activeCourse().dataHeaders].forEach((text) => {
     const th = document.createElement("th");
     th.scope = "col";
     th.textContent = text;
@@ -195,9 +247,10 @@ function renderSourceData(data) {
   head.append(headerRow);
 
   const body = document.createElement("tbody");
-  data.forEach(({ r, f }, index) => {
+  const keys = activeCourse().dataKeys;
+  data.forEach((dataRow, index) => {
     const row = document.createElement("tr");
-    [index + 1, r, f].forEach((value, columnIndex) => {
+    [index + 1, ...keys.map((key) => dataRow[key])].forEach((value, columnIndex) => {
       const cell = document.createElement("td");
       cell.textContent = columnIndex === 0 ? String(value) : formatNumber(value, 3);
       row.append(cell);
@@ -305,7 +358,7 @@ function renderStepImages(images) {
     img.alt = image.alt;
     img.width = image.width;
     img.height = image.height;
-    img.loading = state.currentStep === 0 && imageIndex === 0 ? "eager" : "lazy";
+    img.loading = activeProgress().currentStep === 0 && imageIndex === 0 ? "eager" : "lazy";
     img.decoding = "async";
     button.append(img);
 
@@ -328,12 +381,12 @@ function renderStepImages(images) {
 }
 
 function fieldValue(stepId, fieldId) {
-  return state.answers[stepId]?.[fieldId] ?? "";
+  return activeProgress().answers[stepId]?.[fieldId] ?? "";
 }
 
 function markStepIncomplete(stepId) {
   if (!isComplete(stepId)) return;
-  state.completedSteps = state.completedSteps.filter((id) => id !== stepId);
+  activeProgress().completedSteps = activeProgress().completedSteps.filter((id) => id !== stepId);
   updateCurrentStepState();
   renderProgress();
   renderStepNav();
@@ -341,8 +394,8 @@ function markStepIncomplete(stepId) {
 }
 
 function storeCheckpointValue(stepId, field, control) {
-  state.answers[stepId] ||= {};
-  state.answers[stepId][field.id] = field.type === "checkbox" ? control.checked : control.value;
+  activeProgress().answers[stepId] ||= {};
+  activeProgress().answers[stepId][field.id] = field.type === "checkbox" ? control.checked : control.value;
   control.removeAttribute("aria-invalid");
   const feedback = document.getElementById(`field-feedback-${stepId}-${field.id}`);
   if (feedback) {
@@ -442,15 +495,17 @@ function renderCheckpoint(step) {
 }
 
 function updateCurrentStepState() {
-  const step = LESSON_STEPS[state.currentStep];
+  const step = activeCourse().steps[activeProgress().currentStep];
   const complete = isComplete(step.id);
   els.stepStateBadge.textContent = complete ? "Abgeschlossen" : "Noch offen";
   els.stepStateBadge.className = `state-badge${complete ? " complete" : ""}`;
 }
 
 function renderLesson() {
-  const step = LESSON_STEPS[state.currentStep];
-  els.stepEyebrow.textContent = `Kapitel ${state.currentStep + 1} von ${LESSON_STEPS.length}`;
+  const course = activeCourse();
+  const progress = activeProgress();
+  const step = course.steps[progress.currentStep];
+  els.stepEyebrow.textContent = `Kapitel ${progress.currentStep + 1} von ${course.steps.length}`;
   els.stepTitle.textContent = step.title;
   els.stepGoal.textContent = step.goal;
   updateCurrentStepState();
@@ -473,18 +528,41 @@ function renderLesson() {
   els.lessonGrid.classList.toggle("no-images", step.images.length === 0);
   renderCheckpoint(step);
 
-  els.previousStepBtn.disabled = state.currentStep === 0;
-  els.nextStepBtn.textContent = state.currentStep === LESSON_STEPS.length - 1 ? "Zum Transfer ↓" : "Weiter →";
+  els.previousStepBtn.disabled = progress.currentStep === 0;
+  els.nextStepBtn.textContent = progress.currentStep === course.steps.length - 1 ? "Zum Transfer ↓" : "Weiter →";
+}
+
+function renderCourseIdentity() {
+  const course = activeCourse();
+  els.courseEyebrow.textContent = course.eyebrow;
+  els.courseTitle.textContent = course.title;
+  els.courseIntro.textContent = `${course.subtitle} · ${course.duration}. Alle Kapitel bleiben frei erreichbar.`;
+  els.learningMap.replaceChildren();
+  course.stages.forEach((stage, index) => {
+    const item = document.createElement("li");
+    const number = document.createElement("span");
+    number.textContent = String(index + 1);
+    item.append(number, document.createTextNode(stage));
+    els.learningMap.append(item);
+  });
+  els.completionTitle.textContent = `${course.title} abgeschlossen`;
+  els.completionText.textContent = "Du kannst den Auswertungsweg fachlich begründen, auf eigene Messdaten übertragen und im Lernnachweis dokumentieren.";
+  els.courseChoiceButtons.forEach((button) => {
+    const selected = button.dataset.courseId === state.activeCourseId;
+    button.setAttribute("aria-pressed", String(selected));
+  });
 }
 
 function renderCourse() {
+  renderCourseIdentity();
   renderProgress();
   renderStepNav();
   renderLesson();
 }
 
 function setCurrentStep(index, shouldScroll = true) {
-  state.currentStep = Math.max(0, Math.min(LESSON_STEPS.length - 1, index));
+  const progress = activeProgress();
+  progress.currentStep = Math.max(0, Math.min(activeCourse().steps.length - 1, index));
   saveState();
   renderCourse();
   if (shouldScroll) scrollToElement(els.course);
@@ -506,7 +584,7 @@ function validateCheckpoint(step) {
 }
 
 async function copyCurrentFormula() {
-  const formula = LESSON_STEPS[state.currentStep].formula;
+  const formula = activeCourse().steps[activeProgress().currentStep].formula;
   if (!formula) return;
   try {
     await navigator.clipboard.writeText(formula);
@@ -527,32 +605,76 @@ async function copyCurrentFormula() {
   window.setTimeout(() => { els.copyFormulaBtn.textContent = original; }, 1400);
 }
 
+const TRANSFER_CONFIG = Object.freeze({
+  "inverse-square": {
+    keys: ["r", "f"], symbols: ["r", "F"], headers: ["r (cm)", "F (mN)"],
+    inputTitle: "r und F eingeben", resultTitle: "Deine Potenzregression",
+    button: "Potenzregression berechnen", modelLabel: "Potenzregression"
+  },
+  "proportional-power": {
+    keys: ["u", "q"], symbols: ["U", "Q"], headers: ["U (V)", "Q/(10⁻⁸ C)"],
+    inputTitle: "U und Q eingeben", resultTitle: "Deine U-Q-Potenzregression",
+    button: "Potenzregression berechnen", modelLabel: "Potenzregression"
+  },
+  "proportional-constants": {
+    keys: ["u", "q"], symbols: ["U", "Q"], headers: ["U (V)", "Q/(10⁻⁸ C)"],
+    inputTitle: "U und Q eingeben", resultTitle: "Deine Kapazitätsauswertung",
+    button: "Konstanten auswerten", modelLabel: "Q = C̄ · U"
+  }
+});
+
+function transferConfig() {
+  return TRANSFER_CONFIG[state.transfer.activeMethod];
+}
+
 function clearTransferResult() {
-  state.transfer.result = null;
+  activeTransfer().result = null;
   els.transferResults.hidden = true;
   els.transferAnalysisRows.replaceChildren();
   els.transferChart.replaceChildren();
   renderSummary();
 }
 
+function renderTransferIdentity() {
+  const config = transferConfig();
+  const uq = state.transfer.activeMethod !== "inverse-square";
+  els.transferMethodSelect.value = state.transfer.activeMethod;
+  els.transferInputTitle.textContent = config.inputTitle;
+  els.transferXHeader.textContent = config.headers[0];
+  els.transferYHeader.textContent = config.headers[1];
+  els.calculateTransferBtn.textContent = config.button;
+  els.transferResultTitle.textContent = config.resultTitle;
+  els.chartModelLabel.textContent = config.modelLabel;
+  els.relativeUncertaintyGroup.hidden = uq;
+  els.uqUncertaintyGroup.hidden = !uq;
+  els.uncertaintyNote.textContent = uq
+    ? "Aus ΔU und ΔQ wird bewusst vereinfacht der größere relative Einzelwert als gemeinsame Vergleichsgrenze verwendet. Ohne beide Angaben erfolgt kein automatisches Urteil."
+    : "Ohne Unsicherheitsangabe zeigt der Rechner Ergebnisse, fällt aber kein Urteil über die Vereinbarkeit.";
+  els.transferIntro.textContent = uq
+    ? "Gib drei bis dreißig positive U-Q-Messpaare ein. Die voreingestellten Unsicherheiten gehören zum beschriebenen Kondensatorversuch."
+    : "Gib drei bis dreißig positive r-F-Messpaare ein. TrendPot benötigt positive Punkte mit verschiedenen r-Werten.";
+}
+
 function renderTransferRows() {
+  const transfer = activeTransfer();
+  const config = transferConfig();
   els.transferInputRows.replaceChildren();
-  state.transfer.data.forEach((dataRow, index) => {
+  transfer.data.forEach((dataRow, index) => {
     const row = document.createElement("tr");
     const numberCell = document.createElement("td");
     numberCell.textContent = String(index + 1);
     row.append(numberCell);
 
-    ["r", "f"].forEach((key) => {
+    config.keys.forEach((key, keyIndex) => {
       const cell = document.createElement("td");
       const input = document.createElement("input");
       input.type = "text";
       input.inputMode = "decimal";
       input.className = "cell-input";
       input.value = String(dataRow[key] ?? "");
-      input.setAttribute("aria-label", `${key === "r" ? "r" : "F"} in Zeile ${index + 1}`);
+        input.setAttribute("aria-label", `${config.headers[keyIndex]} in Zeile ${index + 1}`);
       input.addEventListener("input", () => {
-        state.transfer.data[index][key] = input.value;
+        transfer.data[index][key] = input.value;
         clearTransferResult();
         setFeedback(els.transferFeedback);
         saveState();
@@ -563,8 +685,8 @@ function renderTransferRows() {
     els.transferInputRows.append(row);
   });
 
-  els.addTransferRowBtn.disabled = state.transfer.data.length >= 30;
-  els.removeTransferRowBtn.disabled = state.transfer.data.length <= 3;
+  els.addTransferRowBtn.disabled = transfer.data.length >= 30;
+  els.removeTransferRowBtn.disabled = transfer.data.length <= 3;
 }
 
 function createSvgElement(name, attributes = {}) {
@@ -580,13 +702,13 @@ function addSvgText(svg, x, y, content, attributes = {}) {
   return text;
 }
 
-function renderTransferChart(points, regression) {
+function renderTransferChart(points, model, config, modelDescription) {
   const svg = els.transferChart;
   svg.replaceChildren();
   const title = createSvgElement("title");
-  title.textContent = "Eigene Messwerte und berechnete Potenzregression";
+  title.textContent = `Eigene Messwerte und ${config.modelLabel}`;
   const description = createSvgElement("desc");
-  description.textContent = `Streudiagramm mit ${points.length} Messpunkten und der Funktion F von r gleich ${formatNumber(regression.a, 4)} mal r hoch ${formatNumber(regression.b, 4)}.`;
+  description.textContent = `Streudiagramm mit ${points.length} Messpunkten. ${modelDescription}`;
   svg.append(title, description);
 
   const width = 760;
@@ -594,15 +716,15 @@ function renderTransferChart(points, regression) {
   const margin = { left: 68, right: 28, top: 24, bottom: 58 };
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
-  const rValues = points.map(({ r }) => r);
-  const fValues = points.map(({ f }) => f);
-  let minX = Math.min(...rValues) * 0.9;
-  let maxX = Math.max(...rValues) * 1.08;
+  const xValues = points.map(({ x }) => x);
+  const yValues = points.map(({ y }) => y);
+  let minX = Math.min(...xValues) * 0.9;
+  let maxX = Math.max(...xValues) * 1.08;
   if (minX === maxX) {
     minX *= 0.9;
     maxX *= 1.1;
   }
-  const maxY = Math.max(...fValues) * 1.14 || 1;
+  const maxY = Math.max(...yValues, ...xValues.map(model)) * 1.14 || 1;
   const x = (value) => margin.left + ((value - minX) / (maxX - minX)) * plotWidth;
   const y = (value) => margin.top + plotHeight - (value / maxY) * plotHeight;
 
@@ -622,45 +744,54 @@ function renderTransferChart(points, regression) {
 
   svg.append(createSvgElement("line", { x1: margin.left, y1: margin.top + plotHeight, x2: margin.left + plotWidth, y2: margin.top + plotHeight, stroke: "#504b5f", "stroke-width": 1.5 }));
   svg.append(createSvgElement("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: margin.top + plotHeight, stroke: "#504b5f", "stroke-width": 1.5 }));
-  addSvgText(svg, margin.left + plotWidth / 2, height - 7, "r (cm)", { "text-anchor": "middle", fill: "#242236", "font-size": 15, "font-weight": 700 });
-  addSvgText(svg, 18, margin.top + plotHeight / 2, "F (mN)", { "text-anchor": "middle", fill: "#242236", "font-size": 15, "font-weight": 700, transform: `rotate(-90 18 ${margin.top + plotHeight / 2})` });
+  addSvgText(svg, margin.left + plotWidth / 2, height - 7, config.headers[0], { "text-anchor": "middle", fill: "#242236", "font-size": 15, "font-weight": 700 });
+  addSvgText(svg, 18, margin.top + plotHeight / 2, config.headers[1], { "text-anchor": "middle", fill: "#242236", "font-size": 15, "font-weight": 700, transform: `rotate(-90 18 ${margin.top + plotHeight / 2})` });
 
   let pathData = "";
   const samples = 180;
   for (let index = 0; index <= samples; index += 1) {
-    const r = minX + ((maxX - minX) * index) / samples;
-    const f = regression.a * (r ** regression.b);
-    pathData += `${index === 0 ? "M" : "L"}${x(r).toFixed(2)},${y(f).toFixed(2)} `;
+    const xValue = minX + ((maxX - minX) * index) / samples;
+    const yValue = model(xValue);
+    pathData += `${index === 0 ? "M" : "L"}${x(xValue).toFixed(2)},${y(yValue).toFixed(2)} `;
   }
   svg.append(createSvgElement("path", { d: pathData, fill: "none", stroke: "#6552c8", "stroke-width": 3 }));
 
-  points.forEach(({ r, f }, index) => {
-    const circle = createSvgElement("circle", { cx: x(r), cy: y(f), r: 6, fill: "#242236", stroke: "#fff", "stroke-width": 2 });
+  points.forEach(({ x: xValue, y: yValue }, index) => {
+    const circle = createSvgElement("circle", { cx: x(xValue), cy: y(yValue), r: 6, fill: "#242236", stroke: "#fff", "stroke-width": 2 });
     const pointTitle = createSvgElement("title");
-    pointTitle.textContent = `Messpunkt ${index + 1}: r = ${formatNumber(r, 3)} cm, F = ${formatNumber(f, 4)} mN`;
+    pointTitle.textContent = `Messpunkt ${index + 1}: ${config.symbols[0]} = ${formatNumber(xValue, 3)}, ${config.symbols[1]} = ${formatNumber(yValue, 4)}`;
     circle.append(pointTitle);
     svg.append(circle);
   });
 }
 
-function renderTransferResult(points, regression, analysis, uncertainty) {
+function renderPowerTransferResult(points, regression, analysis, uncertainty, isUq) {
+  const config = transferConfig();
   els.transferResults.hidden = false;
-  els.transferEquation.textContent = `F(r) ≈ ${formatNumber(regression.a, 5)} · r^(${formatNumber(regression.b, 5)})`;
+  const functionText = isUq ? "Q(U)" : "F(r)";
+  const variable = isUq ? "U" : "r";
+  els.transferEquation.textContent = `${functionText} ≈ ${formatNumber(regression.a, 6)} · ${variable}^(${formatNumber(regression.b, 6)})`;
   els.transferMeta.textContent = `Exponent b ≈ ${formatNumber(regression.b, 5)} · Bestimmtheitsmaß R² ≈ ${formatNumber(regression.r2, 4)} · größte Modellabweichung ≈ ${formatNumber(Math.abs(analysis.maxDeviation.deviation), 2)} %`;
 
   if (uncertainty === null) {
     els.uncertaintyResult.textContent = "Ohne angegebene Messunsicherheit wird keine automatische Aussage zur Vereinbarkeit getroffen. Beurteile Exponent und Streuung in deiner Reflexion.";
   } else {
     const within = Math.abs(analysis.maxDeviation.deviation) <= uncertainty;
-    els.uncertaintyResult.textContent = `Als grobe Orientierung liegt die größte Modellabweichung ${within ? "innerhalb" : "oberhalb"} deiner angegebenen Messunsicherheit von ${formatNumber(uncertainty, 2)} %. Das ersetzt keine vollständige Fehlerrechnung.`;
+    els.uncertaintyResult.textContent = isUq
+      ? `Die größte Modellabweichung liegt ${within ? "innerhalb" : "oberhalb"} der bewusst vereinfachten Vergleichsgrenze von ${formatNumber(uncertainty, 2)} %. Vergleiche b zusätzlich mit dem theoretischen Wert 1; die Prozentgrenze ist keine Unsicherheit von b.`
+      : `Als grobe Orientierung liegt die größte Modellabweichung ${within ? "innerhalb" : "oberhalb"} deiner angegebenen Messunsicherheit von ${formatNumber(uncertainty, 2)} %. Das ersetzt keine vollständige Unsicherheitsrechnung.`;
   }
 
+  els.resultXHeader.textContent = config.headers[0];
+  els.resultYHeader.textContent = `Messwert ${config.headers[1]}`;
+  els.resultModelHeader.textContent = `Modellwert ${config.symbols[1]}`;
+  els.resultDeviationHeader.textContent = "Modellabweichung";
   els.transferAnalysisRows.replaceChildren();
   analysis.rows.forEach((rowData) => {
     const row = document.createElement("tr");
     [
-      formatNumber(rowData.r, 3),
-      formatNumber(rowData.f, 5),
+      formatNumber(isUq ? rowData.u : rowData.r, 3),
+      formatNumber(isUq ? rowData.q : rowData.f, 5),
       formatNumber(rowData.predicted, 6),
       `${formatNumber(rowData.deviation, 2)} %`
     ].forEach((value) => {
@@ -670,59 +801,140 @@ function renderTransferResult(points, regression, analysis, uncertainty) {
     });
     els.transferAnalysisRows.append(row);
   });
-  renderTransferChart(points, regression);
+  const chartPoints = points.map((point) => ({ x: isUq ? point.u : point.r, y: isUq ? point.q : point.f }));
+  renderTransferChart(chartPoints, (value) => regression.a * (value ** regression.b), config,
+    `${functionText} ist ${formatNumber(regression.a, 5)} mal ${variable} hoch ${formatNumber(regression.b, 5)}.`);
 }
 
 function calculateTransfer() {
-  const validation = validatePowerPoints(state.transfer.data);
+  const methodId = state.transfer.activeMethod;
+  const transfer = activeTransfer();
+  const isUq = methodId !== "inverse-square";
+  const validation = isUq ? validateUqPoints(transfer.data) : validatePowerPoints(transfer.data);
   if (!validation.valid) {
     setFeedback(els.transferFeedback, validation.errors.join(" "), "bad");
     els.transferResults.hidden = true;
-    state.transfer.result = null;
+    transfer.result = null;
     saveState();
     renderSummary();
     return;
   }
 
-  const uncertaintyText = state.transfer.uncertainty.trim();
-  const uncertainty = uncertaintyText === "" ? null : parseLocaleNumber(uncertaintyText);
-  if (uncertainty !== null && (!Number.isFinite(uncertainty) || uncertainty <= 0)) {
-    setFeedback(els.transferFeedback, "Die Messunsicherheit muss eine positive Prozentzahl sein oder leer bleiben.", "bad");
-    els.uncertaintyInput.setAttribute("aria-invalid", "true");
-    return;
+  let uncertainty = null;
+  if (isUq) {
+    const deltaUText = transfer.deltaU.trim();
+    const deltaQText = transfer.deltaQ.trim();
+    if ((deltaUText === "") !== (deltaQText === "")) {
+      setFeedback(els.transferFeedback, "Gib für ein automatisches Urteil sowohl ΔU als auch ΔQ an – oder lasse beide Felder leer.", "bad");
+      return;
+    }
+    if (deltaUText !== "") {
+      const deltaU = parseLocaleNumber(deltaUText);
+      const deltaQ = parseLocaleNumber(deltaQText);
+      if (!Number.isFinite(deltaU) || !Number.isFinite(deltaQ) || deltaU <= 0 || deltaQ <= 0) {
+        setFeedback(els.transferFeedback, "ΔU und ΔQ müssen positive Zahlen sein.", "bad");
+        return;
+      }
+      uncertainty = greatestSingleRelativeError(validation.points, deltaU, deltaQ);
+    }
+  } else {
+    const uncertaintyText = transfer.uncertainty.trim();
+    uncertainty = uncertaintyText === "" ? null : parseLocaleNumber(uncertaintyText);
+    if (uncertainty !== null && (!Number.isFinite(uncertainty) || uncertainty <= 0)) {
+      setFeedback(els.transferFeedback, "Die Messunsicherheit muss eine positive Prozentzahl sein oder leer bleiben.", "bad");
+      els.uncertaintyInput.setAttribute("aria-invalid", "true");
+      return;
+    }
+    els.uncertaintyInput.removeAttribute("aria-invalid");
   }
-  els.uncertaintyInput.removeAttribute("aria-invalid");
 
-  const regression = powerRegression(validation.points);
-  if (!regression) {
-    setFeedback(els.transferFeedback, "Aus diesen Daten konnte keine Potenzregression bestimmt werden.", "bad");
-    return;
+  if (methodId === "proportional-constants") {
+    const analysis = analyzeProportionality(validation.points);
+    transfer.result = { type: "constants", mean: analysis.mean, meanPf: analysis.meanPf, maxDeviation: analysis.maxDeviation.deviation, uncertainty };
+    saveState();
+    renderConstantTransferResult(validation.points, analysis, uncertainty);
+  } else {
+    const regression = isUq ? uqPowerRegression(validation.points) : powerRegression(validation.points);
+    if (!regression) {
+      setFeedback(els.transferFeedback, "Aus diesen Daten konnte keine Potenzregression bestimmt werden.", "bad");
+      return;
+    }
+    const analysis = isUq ? analyzeUqPower(validation.points, regression) : analyzePoints(validation.points, regression);
+    transfer.result = { type: "power", a: regression.a, b: regression.b, r2: regression.r2, maxDeviation: analysis.maxDeviation.deviation, uncertainty };
+    saveState();
+    renderPowerTransferResult(validation.points, regression, analysis, isUq ? uncertainty?.limit ?? null : uncertainty, isUq);
   }
-
-  const analysis = analyzePoints(validation.points, regression);
-  state.transfer.result = {
-    a: regression.a,
-    b: regression.b,
-    r2: regression.r2,
-    maxDeviation: analysis.maxDeviation.deviation,
-    uncertainty
-  };
-  saveState();
-  renderTransferResult(validation.points, regression, analysis, uncertainty);
-  setFeedback(els.transferFeedback, "Die Messreihe wurde erfolgreich ausgewertet.", "good");
+  setFeedback(els.transferFeedback, "Die mathematische Auswertung ist abgeschlossen. Formuliere nun deine fachliche Beurteilung.", "good");
   renderSummary();
 }
 
+function renderConstantTransferResult(points, analysis, uncertainty) {
+  const config = transferConfig();
+  els.transferResults.hidden = false;
+  els.transferEquation.textContent = `C̄ ≈ ${formatNumber(analysis.mean, 7)} · 10⁻⁸ F ≈ ${formatNumber(analysis.meanPf, 2)} pF`;
+  els.transferMeta.textContent = `Größte Konstantenabweichung ≈ ${formatNumber(Math.abs(analysis.maxDeviation.deviation), 2)} % bei U = ${formatNumber(analysis.maxDeviation.u, 2)} V`;
+  if (!uncertainty) {
+    els.uncertaintyResult.textContent = "Ohne ΔU und ΔQ wird keine automatische Vereinbarkeitsaussage getroffen.";
+  } else {
+    const within = Math.abs(analysis.maxDeviation.deviation) <= uncertainty.limit;
+    els.uncertaintyResult.textContent = `Der größere der beiden geschätzten relativen Einzelwerte beträgt ${formatNumber(uncertainty.limit, 2)} % (U: ${formatNumber(uncertainty.uPercent, 2)} %, Q: ${formatNumber(uncertainty.qPercent, 2)} %). Die Konstantenabweichung liegt ${within ? "innerhalb" : "oberhalb"} dieser bewusst vereinfachten Vergleichsgrenze; eine Fehlerfortpflanzung für C ist damit nicht berechnet.`;
+  }
+  els.resultXHeader.textContent = config.headers[0];
+  els.resultYHeader.textContent = config.headers[1];
+  els.resultModelHeader.textContent = "Kapazität C (pF)";
+  els.resultDeviationHeader.textContent = "Abweichung von C̄";
+  els.transferAnalysisRows.replaceChildren();
+  analysis.rows.forEach((rowData) => {
+    const row = document.createElement("tr");
+    [formatNumber(rowData.u, 3), formatNumber(rowData.q, 5), formatNumber(rowData.capacityPf, 2), `${formatNumber(rowData.deviation, 2)} %`].forEach((value) => {
+      const cell = document.createElement("td");
+      cell.textContent = value;
+      row.append(cell);
+    });
+    els.transferAnalysisRows.append(row);
+  });
+  renderTransferChart(points.map(({ u, q }) => ({ x: u, y: q })), (value) => analysis.mean * value, config,
+    `Die mittlere Kapazität ist ${formatNumber(analysis.meanPf, 2)} Pikofarad.`);
+}
+
 function restoreTransferResult() {
-  if (!state.transfer.result) return;
-  const validation = validatePowerPoints(state.transfer.data);
-  const regression = validation.valid ? powerRegression(validation.points) : null;
-  if (!validation.valid || !regression) {
-    state.transfer.result = null;
+  const methodId = state.transfer.activeMethod;
+  const transfer = activeTransfer();
+  if (!transfer.result) {
+    els.transferResults.hidden = true;
     return;
   }
-  const analysis = analyzePoints(validation.points, regression);
-  renderTransferResult(validation.points, regression, analysis, state.transfer.result.uncertainty ?? null);
+  const isUq = methodId !== "inverse-square";
+  const validation = isUq ? validateUqPoints(transfer.data) : validatePowerPoints(transfer.data);
+  if (!validation.valid) {
+    transfer.result = null;
+    els.transferResults.hidden = true;
+    return;
+  }
+  if (methodId === "proportional-constants") {
+    renderConstantTransferResult(validation.points, analyzeProportionality(validation.points), transfer.result.uncertainty ?? null);
+    return;
+  }
+  const regression = isUq ? uqPowerRegression(validation.points) : powerRegression(validation.points);
+  const analysis = isUq ? analyzeUqPower(validation.points, regression) : analyzePoints(validation.points, regression);
+  const uncertainty = isUq ? transfer.result.uncertainty?.limit ?? null : transfer.result.uncertainty ?? null;
+  renderPowerTransferResult(validation.points, regression, analysis, uncertainty, isUq);
+}
+
+function syncTransferInputs() {
+  const transfer = activeTransfer();
+  els.uncertaintyInput.value = transfer.uncertainty;
+  els.deltaUInput.value = transfer.deltaU;
+  els.deltaQInput.value = transfer.deltaQ;
+  els.reflectionInput.value = transfer.reflection;
+}
+
+function renderTransfer() {
+  renderTransferIdentity();
+  syncTransferInputs();
+  renderTransferRows();
+  setFeedback(els.transferFeedback);
+  restoreTransferResult();
 }
 
 function isCheckpointKindComplete(step, kind) {
@@ -731,26 +943,21 @@ function isCheckpointKindComplete(step, kind) {
     .every((field) => isFieldAnswerValid(field, fieldValue(step.id, field.id)));
 }
 
-const COMPETENCIES = Object.freeze([
-  { label: "Ich kann Messgrößen, Einheiten und Messpaare erklären.", steps: ["context", "table"] },
-  { label: "Ich kann Messwerte in GeoGebra als Punkte darstellen.", steps: ["setup", "first-point", "fill-points"] },
-  { label: "Ich kann eine Potenzregression erklären, berechnen und ihre Parameter deuten.", steps: ["regression-concept", "regression"] },
-  { label: "Ich kann Messwerte, Modellwerte und Modellabweichungen unterscheiden.", steps: ["predictions", "deviations"] },
-  { label: "Ich kann ein Modell unter Berücksichtigung der Messunsicherheit vorsichtig beurteilen.", steps: ["conclusion"] }
-]);
-
 function renderSummary() {
-  const completeCount = state.completedSteps.length;
-  const courseComplete = completeCount === LESSON_STEPS.length;
+  const course = activeCourse();
+  const progress = activeProgress();
+  const completeCount = progress.completedSteps.length;
+  const courseComplete = completeCount === course.steps.length;
   els.summaryStatus.textContent = courseComplete ? "Abgeschlossen" : "In Bearbeitung";
   els.summaryStatus.className = `summary-status${courseComplete ? " complete" : ""}`;
-  els.summaryProgress.textContent = `${completeCount} von ${LESSON_STEPS.length} Kapiteln abgeschlossen`;
+  els.summarySubtitle.textContent = `GeoGebra-Begleitkurs · ${course.title}`;
+  els.summaryProgress.textContent = `${completeCount} von ${course.steps.length} Kapiteln abgeschlossen`;
   els.printStudentName.textContent = state.student.name.trim() || "–";
   els.printCourseName.textContent = state.student.course.trim() || "–";
   els.summaryDate.textContent = new Intl.DateTimeFormat("de-DE", { dateStyle: "long" }).format(new Date());
 
   els.summaryChecklist.replaceChildren();
-  LESSON_STEPS.forEach((step, index) => {
+  course.steps.forEach((step, index) => {
     const item = document.createElement("li");
     const resultComplete = isCheckpointKindComplete(step, "result");
     const understandingComplete = isCheckpointKindComplete(step, "understanding");
@@ -763,7 +970,7 @@ function renderSummary() {
   });
 
   els.summaryCompetencies.replaceChildren();
-  COMPETENCIES.forEach((competency) => {
+  course.competencies.forEach((competency) => {
     const item = document.createElement("li");
     const complete = competency.steps.every((stepId) => isComplete(stepId));
     if (complete) item.className = "complete";
@@ -771,50 +978,82 @@ function renderSummary() {
     els.summaryCompetencies.append(item);
   });
 
-  els.summaryConclusion.textContent = courseComplete
-    ? "Der Regressions-Exponent −2,075 liegt nahe bei −2. Die größte Modellabweichung beträgt etwa 15,7 %; die grob abgeschätzte relative Unsicherheit des kleinsten Kraftwertes beträgt rund 16,7 %. Die Messwerte sind daher mit einem 1/r²-Modell vereinbar, beweisen es aber nicht. Die 16,7 % sind keine Unsicherheit des Regressions-Exponenten."
-    : "Die abschließende Beurteilung wird nach den Ergebnis- und Verständnisprüfungen in Kapitel 10 eingetragen.";
+  els.summaryKeyResults.replaceChildren();
+  course.referenceResults.forEach(([term, value]) => {
+    const item = document.createElement("div");
+    const name = document.createElement("dt");
+    const description = document.createElement("dd");
+    name.textContent = term;
+    description.textContent = value;
+    item.append(name, description);
+    els.summaryKeyResults.append(item);
+  });
 
-  const hasTransfer = Boolean(state.transfer.result) || Boolean(state.transfer.reflection.trim());
+  els.summaryConclusion.textContent = courseComplete
+    ? course.conclusion
+    : "Die abschließende Beurteilung wird eingetragen, sobald alle Ergebnis- und Verständnisprüfungen dieses Lernwegs abgeschlossen sind.";
+
+  const transfer = state.transfer.methods[state.activeCourseId];
+  const hasTransfer = Boolean(transfer.result) || Boolean(transfer.reflection.trim());
   els.summaryTransfer.hidden = !hasTransfer;
-  if (state.transfer.result) {
-    const result = state.transfer.result;
-    els.summaryTransferResult.textContent = `Eigene Regression: F(r) ≈ ${formatNumber(result.a, 5)} · r^(${formatNumber(result.b, 5)}), größte Modellabweichung ≈ ${formatNumber(Math.abs(result.maxDeviation), 2)} %.`;
+  if (transfer.result) {
+    const result = transfer.result;
+    if (result.type === "constants") {
+      els.summaryTransferResult.textContent = `Eigene Konstantenauswertung: C̄ ≈ ${formatNumber(result.meanPf, 2)} pF, größte Konstantenabweichung ≈ ${formatNumber(Math.abs(result.maxDeviation), 2)} %.`;
+    } else {
+      const functionName = state.activeCourseId === "inverse-square" ? "F(r)" : "Q(U)";
+      const variable = state.activeCourseId === "inverse-square" ? "r" : "U";
+      els.summaryTransferResult.textContent = `Eigene Regression: ${functionName} ≈ ${formatNumber(result.a, 5)} · ${variable}^(${formatNumber(result.b, 5)}), größte Modellabweichung ≈ ${formatNumber(Math.abs(result.maxDeviation), 2)} %.`;
+    }
   } else {
-    els.summaryTransferResult.textContent = "Für die eigene Messreihe wurde noch keine Regression gespeichert.";
+    els.summaryTransferResult.textContent = "Für die eigene Messreihe wurde noch keine Auswertung gespeichert.";
   }
-  els.summaryReflection.textContent = state.transfer.reflection.trim()
-    ? `Reflexion: ${state.transfer.reflection.trim()}`
+  els.summaryReflection.textContent = transfer.reflection.trim()
+    ? `Reflexion: ${transfer.reflection.trim()}`
     : "Keine zusätzliche Reflexion eingetragen.";
 }
 
-els.startCourseBtn.addEventListener("click", () => scrollToElement(els.course));
+function selectCourse(courseId, { scroll = true } = {}) {
+  if (!COURSE_IDS.includes(courseId)) return;
+  state.activeCourseId = courseId;
+  state.transfer.activeMethod = courseId;
+  saveState();
+  renderCourse();
+  renderTransfer();
+  renderSummary();
+  els.courseChoiceStatus.textContent = `${activeCourse().title} ist ausgewählt.`;
+  if (scroll) scrollToElement(els.course);
+}
+
+els.startCourseBtn.addEventListener("click", () => scrollToElement(els.coursePicker));
+els.courseChoiceButtons.forEach((button) => {
+  button.addEventListener("click", () => selectCourse(button.dataset.courseId));
+});
 els.resetCourseBtn.addEventListener("click", () => {
-  if (!window.confirm("Möchtest du alle zehn Kapitelkontrollen und ihre Antworten zurücksetzen? Deine Transferdaten bleiben erhalten.")) return;
-  state.currentStep = 0;
-  state.completedSteps = [];
-  state.answers = {};
+  const course = activeCourse();
+  if (!window.confirm(`Möchtest du die ${course.steps.length} Kapitelkontrollen dieses Lernwegs und ihre Antworten zurücksetzen? Deine anderen Lernwege und Transferdaten bleiben erhalten.`)) return;
+  state.courses[state.activeCourseId] = { currentStep: 0, completedSteps: [], answers: {} };
   saveState();
   renderCourse();
   renderSummary();
   scrollToElement(els.course);
 });
 
-els.previousStepBtn.addEventListener("click", () => setCurrentStep(state.currentStep - 1));
+els.previousStepBtn.addEventListener("click", () => setCurrentStep(activeProgress().currentStep - 1));
 els.nextStepBtn.addEventListener("click", () => {
-  if (state.currentStep === LESSON_STEPS.length - 1) {
+  if (activeProgress().currentStep === activeCourse().steps.length - 1) {
     scrollToElement(document.getElementById("transfer"));
   } else {
-    setCurrentStep(state.currentStep + 1);
+    setCurrentStep(activeProgress().currentStep + 1);
   }
 });
 
 els.checkpointForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  const step = LESSON_STEPS[state.currentStep];
+  const step = activeCourse().steps[activeProgress().currentStep];
   const validation = validateCheckpoint(step);
   if (validation.valid) {
-    if (!isComplete(step.id)) state.completedSteps.push(step.id);
+    if (!isComplete(step.id)) activeProgress().completedSteps.push(step.id);
     saveState();
     setFeedback(els.checkpointFeedback, step.check.success, "good");
     updateCurrentStepState();
@@ -842,27 +1081,34 @@ els.imageDialog.addEventListener("click", (event) => {
 });
 
 els.addTransferRowBtn.addEventListener("click", () => {
-  if (state.transfer.data.length >= 30) return;
-  state.transfer.data.push({ r: "", f: "" });
+  const transfer = activeTransfer();
+  if (transfer.data.length >= 30) return;
+  const [xKey, yKey] = transferConfig().keys;
+  transfer.data.push({ [xKey]: "", [yKey]: "" });
   clearTransferResult();
   renderTransferRows();
   saveState();
 });
 
 els.removeTransferRowBtn.addEventListener("click", () => {
-  if (state.transfer.data.length <= 3) return;
-  state.transfer.data.pop();
+  const transfer = activeTransfer();
+  if (transfer.data.length <= 3) return;
+  transfer.data.pop();
   clearTransferResult();
   renderTransferRows();
   saveState();
 });
 
 els.resetTransferBtn.addEventListener("click", () => {
-  if (!window.confirm("Möchtest du deine Transferdaten durch die sechs Beispieldaten ersetzen?")) return;
-  state.transfer.data = cloneExampleData();
-  state.transfer.uncertainty = "";
-  state.transfer.result = null;
-  els.uncertaintyInput.value = "";
+  const isUq = state.transfer.activeMethod !== "inverse-square";
+  if (!window.confirm(`Möchtest du deine Transferdaten durch die ${isUq ? "fünf U-Q" : "sechs r-F"}-Beispieldaten ersetzen?`)) return;
+  const transfer = activeTransfer();
+  transfer.data = isUq ? cloneUqExampleData() : cloneExampleData();
+  transfer.uncertainty = "";
+  transfer.deltaU = isUq ? "5" : "";
+  transfer.deltaQ = isUq ? "0,1" : "";
+  transfer.result = null;
+  syncTransferInputs();
   renderTransferRows();
   els.transferResults.hidden = true;
   setFeedback(els.transferFeedback, "Die Beispieldaten wurden eingesetzt.", "good");
@@ -871,16 +1117,36 @@ els.resetTransferBtn.addEventListener("click", () => {
 });
 
 els.uncertaintyInput.addEventListener("input", () => {
-  state.transfer.uncertainty = els.uncertaintyInput.value;
+  activeTransfer().uncertainty = els.uncertaintyInput.value;
   els.uncertaintyInput.removeAttribute("aria-invalid");
   clearTransferResult();
   setFeedback(els.transferFeedback);
   saveState();
 });
 
+els.deltaUInput.addEventListener("input", () => {
+  activeTransfer().deltaU = els.deltaUInput.value;
+  clearTransferResult();
+  setFeedback(els.transferFeedback);
+  saveState();
+});
+
+els.deltaQInput.addEventListener("input", () => {
+  activeTransfer().deltaQ = els.deltaQInput.value;
+  clearTransferResult();
+  setFeedback(els.transferFeedback);
+  saveState();
+});
+
+els.transferMethodSelect.addEventListener("change", () => {
+  state.transfer.activeMethod = els.transferMethodSelect.value;
+  saveState();
+  renderTransfer();
+});
+
 els.calculateTransferBtn.addEventListener("click", calculateTransfer);
 els.reflectionInput.addEventListener("input", () => {
-  state.transfer.reflection = els.reflectionInput.value;
+  activeTransfer().reflection = els.reflectionInput.value;
   saveState();
   renderSummary();
 });
@@ -904,13 +1170,10 @@ els.printSummaryBtn.addEventListener("click", () => {
 window.addEventListener("beforeprint", renderSummary);
 
 function initialize() {
-  els.uncertaintyInput.value = state.transfer.uncertainty;
-  els.reflectionInput.value = state.transfer.reflection;
   els.studentNameInput.value = state.student.name;
   els.courseNameInput.value = state.student.course;
   renderCourse();
-  renderTransferRows();
-  restoreTransferResult();
+  renderTransfer();
   renderSummary();
   saveState();
 }

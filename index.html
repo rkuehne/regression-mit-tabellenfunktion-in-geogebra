@@ -5,19 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#6552c8">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
-  <meta name="description" content="Geführter GeoGebra-Lernkurs: Bedienung, Potenzregression und Modellbeurteilung auf dem iPad.">
-  <meta property="og:title" content="GeoGebra-Begleitkurs · Regression auf dem iPad">
-  <meta property="og:description" content="Geführter Begleitkurs mit iPad-Anleitungen, Kontrollpunkten und Potenzregression.">
+  <meta name="description" content="Drei geführte GeoGebra-Lernwege: Potenzregression, Proportionalität und Messunsicherheit auf dem iPad.">
+  <meta property="og:title" content="GeoGebra-Begleitkurs · Messdaten auswerten">
+  <meta property="og:description" content="Geführte iPad-Lernwege zu Potenzregression und direkter Proportionalität.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="./assets/og.png">
   <meta property="og:image:width" content="1733">
   <meta property="og:image:height" content="907">
-  <meta property="og:image:alt" content="GeoGebra-Begleitkurs – Regression Schritt für Schritt">
+  <meta property="og:image:alt" content="GeoGebra-Begleitkurs – Messdaten Schritt für Schritt auswerten">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="GeoGebra-Begleitkurs · Regression auf dem iPad">
-  <meta name="twitter:description" content="Geführter Begleitkurs mit iPad-Anleitungen, Kontrollpunkten und Potenzregression.">
+  <meta name="twitter:title" content="GeoGebra-Begleitkurs · Messdaten auswerten">
+  <meta name="twitter:description" content="Geführte iPad-Lernwege zu Potenzregression und direkter Proportionalität.">
   <meta name="twitter:image" content="./assets/og.png">
-  <title>GeoGebra-Begleitkurs · Regression auf dem iPad</title>
+  <title>GeoGebra-Begleitkurs · Messdaten auswerten</title>
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -28,18 +28,19 @@
       <div class="hero-copy">
         <p class="brand-line"><span class="brand-mark" aria-hidden="true">∑</span> GeoGebra-Begleitkurs</p>
         <p class="eyebrow">Oberstufe Physik · selbstständig auf dem iPad</p>
-        <h1>Regression Schritt für Schritt</h1>
+        <h1>Messdaten auswerten – Schritt für Schritt</h1>
         <p class="hero-lead">
-          Arbeite in der GeoGebra Rechner Suite und nutze diese Seite als Lernbuch und Wegweiser.
-          Du erfährst nicht nur, was du antippen musst, sondern auch, warum jeder Schritt sinnvoll ist.
+          Arbeite in der GeoGebra Rechner Suite und nutze diese Seite als digitales Lernbuch und Arbeitsanleitung.
+          Du wählst den vermuteten physikalischen Zusammenhang und erfährst nicht nur, was du antippen musst,
+          sondern auch, warum die Auswertung sinnvoll ist.
         </p>
         <div class="hero-actions">
           <button id="startCourseBtn" class="button primary" type="button">Lernweg starten</button>
           <a class="button secondary" href="https://www.geogebra.org/calculator" target="_blank" rel="noopener">GeoGebra-Webversion öffnen <span aria-hidden="true">↗</span></a>
         </div>
         <ul class="hero-facts" aria-label="Kursinformationen">
-          <li>10 Kapitel</li>
-          <li>etwa 20–35 Minuten, je nach Ansicht</li>
+          <li>3 wählbare Lernwege</li>
+          <li>je 8–10 Kapitel</li>
           <li>Fortschritt nur auf diesem Gerät</li>
         </ul>
       </div>
@@ -50,7 +51,7 @@
         <ol class="setup-list">
           <li><span>1</span><div><strong>GeoGebra öffnen</strong><small>Starte die Rechner Suite auf dem iPad.</small></div></li>
           <li><span>2</span><div><strong>Nebeneinander anordnen</strong><small>Öffne das Dock und ziehe die zweite App an den linken oder rechten Rand. Auf älteren iPads heißt diese Ansicht Split View.</small></div></li>
-          <li><span>3</span><div><strong>Schrittweise wechseln</strong><small>Ausführen, Ergebnis übertragen, prüfen.</small></div></li>
+          <li><span>3</span><div><strong>Schrittweise wechseln</strong><small>Führe die Anweisung in GeoGebra aus, übertrage das Ergebnis und prüfe dein Verständnis.</small></div></li>
         </ol>
         <p class="privacy-note">Keine Anmeldung: Antworten und Name verlassen dein iPad nicht.</p>
       </aside>
@@ -58,23 +59,52 @@
   </header>
 
   <main id="main">
+    <section id="coursePicker" class="wrap course-picker" aria-labelledby="course-picker-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Vor der Auswertung</p>
+          <h2 id="course-picker-title">Welchen Zusammenhang vermutest du?</h2>
+        </div>
+        <p class="section-intro">Wähle den Lernweg, der zu deiner theoretischen Erwartung und zur Messreihe passt. Du kannst später jederzeit wechseln.</p>
+      </div>
+      <div class="course-choice-grid">
+        <article class="course-choice-group inverse">
+          <p class="mini-label">Coulomb-Versuch · r und F</p>
+          <h3>Umgekehrtes Quadratgesetz</h3>
+          <p class="choice-equation">F ∝ 1/r²</p>
+          <p>Prüfe mit einer Potenzregression, ob Verlauf, Exponent und Abweichungen mit b = −2 vereinbar sind.</p>
+          <button class="course-choice-button" type="button" data-course-id="inverse-square">
+            <span>Potenzregression wählen</span><small>10 Kapitel · r–F</small>
+          </button>
+        </article>
+        <article class="course-choice-group proportional">
+          <p class="mini-label">Kondensator-Versuch · U und Q</p>
+          <h3>Direkte Proportionalität</h3>
+          <p class="choice-equation">Q = C · U</p>
+          <p>Wähle, ob du den Exponenten des Potenzmodells oder die annähernd konstanten Quotienten Q/U untersuchen möchtest.</p>
+          <div class="choice-button-stack">
+            <button class="course-choice-button" type="button" data-course-id="proportional-power">
+              <span>Potenzregression wählen</span><small>8 Kapitel · b mit 1 vergleichen</small>
+            </button>
+            <button class="course-choice-button" type="button" data-course-id="proportional-constants">
+              <span>Konstantenverfahren wählen</span><small>8 Kapitel · Kapazitäten vergleichen</small>
+            </button>
+          </div>
+        </article>
+      </div>
+      <p id="courseChoiceStatus" class="choice-status" role="status" aria-live="polite"></p>
+    </section>
+
     <section id="course" class="wrap course-section" aria-labelledby="course-title">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">Geführter Lernweg</p>
+          <p id="courseEyebrow" class="eyebrow">Geführter Lernweg</p>
           <h2 id="course-title">Vom Messwert zum begründeten Urteil</h2>
         </div>
-        <p class="section-intro">Alle Kapitel bleiben offen. Wähle zwischen ausführlicher Erklärung und kompakter Wiederholung.</p>
+        <p id="courseIntro" class="section-intro">Alle Kapitel bleiben offen. Wähle zwischen ausführlicher Erklärung und kompakter Wiederholung.</p>
       </div>
 
-      <ol class="learning-map" aria-label="Lernweg in sechs Etappen">
-        <li><span>1</span>Messwerte</li>
-        <li><span>2</span>Punkte</li>
-        <li><span>3</span>Modell</li>
-        <li><span>4</span>Modellwerte</li>
-        <li><span>5</span>Abweichungen</li>
-        <li><span>6</span>Urteil</li>
-      </ol>
+      <ol id="learningMap" class="learning-map" aria-label="Etappen des gewählten Lernwegs"></ol>
 
       <div class="course-tools" aria-label="Kursansicht und Begriffshilfe">
         <div class="mode-control">
@@ -197,8 +227,8 @@
         <div aria-hidden="true" class="completion-mark">✓</div>
         <div>
           <p class="eyebrow">Lernweg abgeschlossen</p>
-          <h3>Du kannst den gesamten Weg erklären und auf eigene Messdaten übertragen.</h3>
-          <p>Öffne den Transferrechner oder erstelle direkt deinen Lernnachweis.</p>
+          <h3 id="completionTitle">Du kannst den gesamten Weg erklären und auf eigene Messdaten übertragen.</h3>
+          <p id="completionText">Öffne den Transferrechner oder erstelle direkt deinen Lernnachweis.</p>
         </div>
         <a class="button light" href="#transfer">Zum Transfer</a>
       </div>
@@ -211,15 +241,23 @@
             <p class="eyebrow">Optionaler Transfer</p>
             <h2 id="transfer-title">Eigene Messreihe prüfen</h2>
           </div>
-          <p class="section-intro">Gib mindestens drei positive Wertepaare ein. Der Rechner bestimmt dieselbe Potenzregression wie im Lernweg.</p>
+          <p id="transferIntro" class="section-intro">Gib mindestens drei positive Wertepaare ein und wähle das passende Auswertungsverfahren.</p>
         </div>
 
         <div class="transfer-card">
           <div class="transfer-inputs">
+            <label class="field transfer-method-field" for="transferMethodSelect">
+              <span>Auswertungsverfahren</span>
+              <select id="transferMethodSelect">
+                <option value="inverse-square">F ∝ 1/r² · Potenzregression</option>
+                <option value="proportional-power">Q ∝ U · Potenzregression</option>
+                <option value="proportional-constants">Q ∝ U · Quotienten Q/U</option>
+              </select>
+            </label>
             <div class="panel-heading">
               <div>
                 <p class="mini-label">Messdaten</p>
-                <h3>r und F eingeben</h3>
+                <h3 id="transferInputTitle">r und F eingeben</h3>
               </div>
               <button id="resetTransferBtn" class="text-button" type="button">Beispieldaten einsetzen</button>
             </div>
@@ -227,7 +265,7 @@
             <div class="table-scroll">
               <table class="data-table input-table">
                 <thead>
-                  <tr><th scope="col">Nr.</th><th scope="col">r (cm)</th><th scope="col">F (mN)</th></tr>
+                  <tr><th scope="col">Nr.</th><th id="transferXHeader" scope="col">r (cm)</th><th id="transferYHeader" scope="col">F (mN)</th></tr>
                 </thead>
                 <tbody id="transferInputRows"></tbody>
               </table>
@@ -237,11 +275,15 @@
               <button id="removeTransferRowBtn" class="button secondary compact" type="button">− Zeile</button>
             </div>
 
-            <label class="field uncertainty-field" for="uncertaintyInput">
+            <label id="relativeUncertaintyGroup" class="field uncertainty-field" for="uncertaintyInput">
               <span>Geschätzte relative Messunsicherheit von F in % <small>(optional)</small></span>
               <input id="uncertaintyInput" type="text" inputmode="decimal" placeholder="z. B. 10">
             </label>
-            <p class="field-note">Ohne Unsicherheitsangabe zeigt der Rechner Ergebnisse, fällt aber kein Urteil über die Vereinbarkeit.</p>
+            <div id="uqUncertaintyGroup" class="uncertainty-pair" hidden>
+              <label class="field" for="deltaUInput"><span>ΔU in V <small>(optional)</small></span><input id="deltaUInput" type="text" inputmode="decimal" placeholder="5"></label>
+              <label class="field" for="deltaQInput"><span>ΔQ/(10⁻⁸ C) <small>(optional)</small></span><input id="deltaQInput" type="text" inputmode="decimal" placeholder="0,1"></label>
+            </div>
+            <p id="uncertaintyNote" class="field-note">Ohne Unsicherheitsangabe zeigt der Rechner Ergebnisse, fällt aber kein Urteil über die Vereinbarkeit.</p>
 
             <button id="calculateTransferBtn" class="button primary wide" type="button">Potenzregression berechnen</button>
             <div id="transferFeedback" class="feedback" role="status" aria-live="polite"></div>
@@ -251,7 +293,7 @@
             <div class="result-heading">
               <div>
                 <p class="mini-label">Auswertung</p>
-                <h3>Deine Potenzregression</h3>
+                <h3 id="transferResultTitle">Deine Potenzregression</h3>
               </div>
               <span class="result-dot" aria-hidden="true"></span>
             </div>
@@ -260,14 +302,14 @@
             <p id="uncertaintyResult" class="interpretation"></p>
 
             <div class="chart-card">
-              <div class="chart-legend"><span><i class="legend-point"></i> Messwerte</span><span><i class="legend-line"></i> Potenzregression</span></div>
+              <div class="chart-legend"><span><i class="legend-point"></i> Messwerte</span><span><i class="legend-line"></i> <span id="chartModelLabel">Potenzregression</span></span></div>
               <svg id="transferChart" viewBox="0 0 760 420" role="img"></svg>
             </div>
 
             <div class="table-scroll result-table-wrap">
               <table class="data-table">
                 <thead>
-                  <tr><th scope="col">r (cm)</th><th scope="col">Messwert F (mN)</th><th scope="col">Modellwert F̂ (mN)</th><th scope="col">Modellabweichung</th></tr>
+                  <tr><th id="resultXHeader" scope="col">r (cm)</th><th id="resultYHeader" scope="col">Messwert F (mN)</th><th id="resultModelHeader" scope="col">Modellwert F̂ (mN)</th><th id="resultDeviationHeader" scope="col">Modellabweichung</th></tr>
                 </thead>
                 <tbody id="transferAnalysisRows"></tbody>
               </table>
@@ -278,7 +320,7 @@
         <label class="reflection-card" for="reflectionInput">
           <span class="mini-label">Deine Reflexion</span>
           <strong>Was sagt deine Messreihe aus?</strong>
-          <textarea id="reflectionInput" rows="4" placeholder="Beschreibe den Exponenten, die Streuung und die Bedeutung der Messunsicherheit …"></textarea>
+            <textarea id="reflectionInput" rows="4" placeholder="Nenne das Ergebnis, beurteile die Abweichungen und berücksichtige die Messunsicherheit …"></textarea>
         </label>
       </div>
     </section>
@@ -289,13 +331,13 @@
           <p class="eyebrow">Lernnachweis</p>
           <h2 id="summary-title">Deine Zusammenfassung</h2>
         </div>
-        <p class="section-intro">Ergänze bei Bedarf Name und Kurs. Beim Drucken werden nur die Ergebnisse angezeigt.</p>
+        <p class="section-intro">Ergänze bei Bedarf Name und Kurs. Die Druckansicht fasst Lernstand, Ergebnisse und Beurteilung übersichtlich zusammen.</p>
       </div>
 
       <div id="printSummary" class="summary-sheet">
         <header class="summary-header">
           <div>
-            <span class="summary-subtitle">GeoGebra-Begleitkurs · Potenzregression</span>
+            <span id="summarySubtitle" class="summary-subtitle">GeoGebra-Begleitkurs · Potenzregression</span>
             <h3>Lernnachweis</h3>
           </div>
           <span id="summaryStatus" class="summary-status"></span>
@@ -319,11 +361,7 @@
           </section>
           <section>
             <p class="mini-label">Referenzergebnisse</p>
-            <dl class="key-results">
-              <div><dt>Potenzfunktion</dt><dd>F(r) ≈ 28,9022 · r<sup>−2,075</sup></dd></div>
-              <div><dt>Größte Modellabweichung</dt><dd>≈ 15,7 % bei r = 12,4 cm</dd></div>
-              <div><dt>Grobe relative Unsicherheit</dt><dd>≈ 16,7 % beim kleinsten F-Wert</dd></div>
-            </dl>
+            <dl id="summaryKeyResults" class="key-results"></dl>
           </section>
         </div>
 
@@ -355,8 +393,8 @@
 
   <footer class="site-footer">
     <div class="wrap footer-inner">
-      <p><strong>GeoGebra-Begleitkurs</strong><br>Potenzregression verstehen und beurteilen · ohne Anmeldung</p>
-      <p>Der Kurs ist ein unabhängiges Lernangebot. GeoGebra ist eine Marke der International GeoGebra Institute.</p>
+      <p><strong>GeoGebra-Begleitkurs</strong><br>Messdaten auswerten und Modelle beurteilen · ohne Anmeldung</p>
+      <p>Dieser Kurs ist unabhängig von GeoGebra entstanden und steht in keiner offiziellen Verbindung zum Anbieter der GeoGebra-Software.</p>
     </div>
   </footer>
 
@@ -365,16 +403,26 @@
     <p class="mini-label">Zum Nachschlagen</p>
     <h2 id="glossaryTitle">Begriffshilfe</h2>
     <dl class="glossary-list">
-      <div><dt>Messwert</dt><dd>Ein beobachteter Wert mit Einheit, hier zum Beispiel F = 0,37 mN.</dd></div>
-      <div><dt>Messpaar</dt><dd>Die zusammengehörigen Werte r und F aus einer Messung.</dd></div>
-      <div><dt>Punkt</dt><dd>Die Darstellung eines Messpaares als (x, y) = (r, F).</dd></div>
-      <div><dt>Potenzfunktion</dt><dd>Eine Funktion der Form F(r) = a · rᵇ.</dd></div>
-      <div><dt>Regression</dt><dd>Ein Verfahren, das eine möglichst gut passende Modellfunktion zu mehreren Messpunkten findet.</dd></div>
+      <div><dt>Hypothese</dt><dd>Eine theoretisch begründete Erwartung, die anhand von Messdaten geprüft wird.</dd></div>
+      <div><dt>Physikalisches Modell</dt><dd>Eine vereinfachte mathematische Beschreibung eines realen Vorgangs, zum Beispiel F ∝ 1/r² oder Q = C · U.</dd></div>
+      <div><dt>Messwert</dt><dd>Der Zahlenwert einer Messgröße mit Einheit, zum Beispiel F = 0,37 mN.</dd></div>
+      <div><dt>Messergebnis</dt><dd>Die vollständige Angabe eines Messwertes einschließlich seiner Messunsicherheit.</dd></div>
+      <div><dt>Messpaar</dt><dd>Die zusammengehörigen Werte zweier Messgrößen aus derselben Einzelmessung.</dd></div>
+      <div><dt>Punkt</dt><dd>Die Darstellung eines Messpaares im Koordinatensystem, zum Beispiel (x, y) = (r, F) oder (U, Q).</dd></div>
+      <div><dt>Potenzfunktion</dt><dd>Eine Funktion der Form y = a · xᵇ. Der Exponent b bestimmt die Art des Zusammenhangs.</dd></div>
+      <div><dt>Regression</dt><dd>Ein mathematisches Verfahren, das die Parameter einer gewählten Modellfunktion an mehrere Messpunkte anpasst.</dd></div>
       <div><dt>Modellwert</dt><dd>Ein von der Regressionsfunktion berechneter Wert, nicht ein neuer Messwert.</dd></div>
       <div><dt>Modellabweichung</dt><dd>Die prozentuale Differenz zwischen Messwert und Modellwert, bezogen auf den Modellwert.</dd></div>
       <div><dt>Betrag</dt><dd>Die Größe einer Zahl ohne ihr Vorzeichen.</dd></div>
-      <div><dt>Messunsicherheit</dt><dd>Ein Bereich, in dem ein Messwert wegen begrenzter Genauigkeit schwanken kann.</dd></div>
+      <div><dt>Messunsicherheit</dt><dd>Eine Angabe dazu, wie genau ein Messergebnis aufgrund von Messverfahren und Geräten sinnvoll angegeben werden kann.</dd></div>
+      <div><dt>Vereinbarkeit</dt><dd>Die Messdaten liefern im Rahmen der betrachteten Unsicherheiten keinen erkennbaren Widerspruch zum Modell.</dd></div>
       <div><dt>R²</dt><dd>Ein Maß für die Güte der Modellanpassung; kein Beweis für ein Naturgesetz.</dd></div>
+      <div><dt>Spannung U</dt><dd>Die elektrische Spannung in Volt; beim Kondensator ist sie die unabhängige Größe.</dd></div>
+      <div><dt>Elektrische Ladung Q</dt><dd>Die auf dem Kondensator gespeicherte Ladung in Coulomb.</dd></div>
+      <div><dt>Kapazität C</dt><dd>Der Quotient Q/U. Seine Einheit ist Farad; hier ergeben sich Werte um 416 pF.</dd></div>
+      <div><dt>Direkte Proportionalität</dt><dd>Ein Zusammenhang der Form y = k · x; bei realen Messdaten bleibt der Quotient y/x innerhalb der Messunsicherheit annähernd konstant.</dd></div>
+      <div><dt>Proportionalitätskonstante</dt><dd>Der feste Faktor k; bei Q = C · U ist dies die Kapazität C.</dd></div>
+      <div><dt>Vereinfachte Vergleichsgrenze</dt><dd>Hier der größere relative Einzelwert aus ΔU/U und ΔQ/Q. Sie dient nur zur groben Orientierung und ersetzt keine Fehlerfortpflanzung.</dd></div>
     </dl>
   </dialog>
 

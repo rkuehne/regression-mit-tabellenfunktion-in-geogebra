@@ -2,10 +2,16 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   EXAMPLE_DATA,
+  UQ_EXAMPLE_DATA,
   analyzePoints,
+  analyzeProportionality,
+  analyzeUqPower,
+  greatestSingleRelativeError,
   isWithin,
   parseLocaleNumber,
   powerRegression,
+  uqPowerRegression,
+  validateUqPoints,
   validatePowerPoints
 } from "../regression.js";
 
@@ -55,4 +61,39 @@ test("akzeptiert drei bis dreißig positive Messwertpaare mit verschiedenen r-We
 
   const thirtyRows = Array.from({ length: 30 }, (_, index) => ({ r: index + 1, f: index + 2 }));
   assert.equal(validatePowerPoints(thirtyRows).valid, true);
+});
+
+test("berechnet die U-Q-Potenzregression und ihre Modellabweichungen wie GeoGebra", () => {
+  const regression = uqPowerRegression(UQ_EXAMPLE_DATA);
+  assert.ok(Math.abs(regression.a - 0.03930111363751862) < 1e-12);
+  assert.ok(Math.abs(regression.b - 1.0115661789610593) < 1e-12);
+  assert.ok(Math.abs(regression.r2 - 0.9969190267646549) < 1e-12);
+
+  const analysis = analyzeUqPower(UQ_EXAMPLE_DATA, regression);
+  assert.equal(analysis.maxDeviation.u, 100);
+  assert.ok(Math.abs(analysis.maxDeviation.deviation - 3.736416356841002) < 1e-10);
+});
+
+test("berechnet Kapazitäten, Mittelwert und Konstantenabweichungen", () => {
+  const analysis = analyzeProportionality(UQ_EXAMPLE_DATA);
+  assert.deepEqual(analysis.rows.map(({ capacity }) => capacity), [
+    0.04, 0.043, 0.04266666666666667, 0.0415, 0.040799999999999996
+  ]);
+  assert.ok(Math.abs(analysis.mean - 0.04159333333333333) < 1e-14);
+  assert.ok(Math.abs(analysis.meanPf - 415.9333333333333) < 1e-10);
+  assert.equal(analysis.maxDeviation.u, 50);
+  assert.ok(Math.abs(analysis.maxDeviation.deviation - (-3.8307421061067366)) < 1e-12);
+});
+
+test("verwendet für U-Q bewusst den größten relativen Einzelwert als grobe Grenze", () => {
+  assert.deepEqual(greatestSingleRelativeError(UQ_EXAMPLE_DATA, 5, 0.1), {
+    uPercent: 10, qPercent: 5, limit: 10, minU: 50, minQ: 2
+  });
+});
+
+test("validiert positive U-Q-Paare und verschiedene Spannungswerte", () => {
+  assert.equal(validateUqPoints([{ u: 1, q: 2 }, { u: 2, q: 4 }]).valid, false);
+  assert.equal(validateUqPoints([{ u: 1, q: 2 }, { u: 1, q: 3 }, { u: 1, q: 4 }]).valid, false);
+  assert.equal(validateUqPoints([{ u: 1, q: 2 }, { u: 2, q: 4 }, { u: 3, q: 6 }]).valid, true);
+  assert.equal(validateUqPoints([{ u: 1, q: 2 }, { u: 2, q: 0 }, { u: 3, q: 6 }]).valid, false);
 });

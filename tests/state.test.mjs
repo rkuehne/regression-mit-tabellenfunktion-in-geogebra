@@ -4,6 +4,7 @@ import {
   LEGACY_STORAGE_KEY,
   STORAGE_KEY,
   V2_STORAGE_KEY,
+  V3_STORAGE_KEY,
   loadState,
   persistState,
   sanitizeState
@@ -18,79 +19,88 @@ function memoryStorage(initial = {}) {
   };
 }
 
-test("übernimmt v1-Messdaten, aber keine alten Quizflags", () => {
-  const storage = memoryStorage({
-    [LEGACY_STORAGE_KEY]: JSON.stringify({
-      data: [{ r: 1, f: 3 }, { r: 2, f: 1.5 }, { r: 4, f: 0.75 }],
-      modelChecked: true,
-      exponentCorrect: true,
-      errorCorrect: true
-    })
-  });
-
-  const state = loadState(storage);
-  assert.equal(state.version, 3);
-  assert.equal(state.lessonMode, "explain");
-  assert.deepEqual(state.transfer.data, [{ r: 1, f: 3 }, { r: 2, f: 1.5 }, { r: 4, f: 0.75 }]);
-  assert.deepEqual(state.completedSteps, []);
-  assert.deepEqual(state.answers, {});
+test("erzeugt drei getrennte Lern- und Transferstände", () => {
+  const state = loadState(memoryStorage());
+  assert.equal(state.version, 4);
+  assert.equal(state.activeCourseId, "inverse-square");
+  assert.deepEqual(Object.keys(state.courses), ["inverse-square", "proportional-power", "proportional-constants"]);
+  assert.equal(state.transfer.methods["proportional-power"].deltaU, "5");
+  assert.equal(state.transfer.methods["proportional-power"].deltaQ, "0,1");
+  assert.equal(state.transfer.methods["proportional-constants"].data.length, 5);
 });
 
-test("übernimmt aus v2 Transfer und Nachweisdaten, setzt aber den Kurs zurück", () => {
-  const transferResult = { a: 3, b: -2, r2: 0.99, maxDeviation: 4, uncertainty: 5 };
+test("migriert v3-Kursfortschritt und Transfer in den 1/r²-Weg", () => {
   const storage = memoryStorage({
-    [V2_STORAGE_KEY]: JSON.stringify({
-      version: 2,
+    [V3_STORAGE_KEY]: JSON.stringify({
+      version: 3,
+      lessonMode: "compact",
       currentStep: 7,
-      completedSteps: ["table", "conclusion"],
+      completedSteps: ["context", "table"],
       answers: { table: { a6: "18,6" } },
       transfer: {
         data: [{ r: 1, f: 3 }, { r: 2, f: 1.5 }, { r: 4, f: 0.75 }],
         uncertainty: "5",
-        reflection: "Das Modell passt grob.",
-        result: transferResult
+        reflection: "Passt grob.",
+        result: { a: 3, b: -2 }
       },
       student: { name: "Ada", course: "Q1" }
     })
   });
-
   const state = loadState(storage);
-  assert.equal(state.currentStep, 0);
-  assert.deepEqual(state.completedSteps, []);
-  assert.deepEqual(state.answers, {});
-  assert.equal(state.lessonMode, "explain");
+  assert.equal(state.version, 4);
+  assert.equal(state.lessonMode, "compact");
+  assert.equal(state.courses["inverse-square"].currentStep, 7);
+  assert.deepEqual(state.courses["inverse-square"].completedSteps, ["context", "table"]);
+  assert.deepEqual(state.courses["proportional-power"].completedSteps, []);
+  assert.equal(state.transfer.methods["inverse-square"].reflection, "Passt grob.");
   assert.equal(state.student.name, "Ada");
-  assert.equal(state.student.course, "Q1");
-  assert.equal(state.transfer.uncertainty, "5");
-  assert.equal(state.transfer.reflection, "Das Modell passt grob.");
-  assert.deepEqual(state.transfer.result, transferResult);
 });
 
-test("bereinigt einen v3-Zustand und begrenzt das aktuelle Kapitel", () => {
+test("v2 und v1 behalten Messdaten, aber übernehmen keine alten Quizflags", () => {
+  const v2 = loadState(memoryStorage({
+    [V2_STORAGE_KEY]: JSON.stringify({
+      version: 2,
+      currentStep: 7,
+      completedSteps: ["table"],
+      data: [{ r: 1, f: 3 }, { r: 2, f: 1.5 }, { r: 4, f: 0.75 }]
+    })
+  }));
+  assert.deepEqual(v2.courses["inverse-square"].completedSteps, []);
+  assert.deepEqual(v2.transfer.methods["inverse-square"].data, [{ r: 1, f: 3 }, { r: 2, f: 1.5 }, { r: 4, f: 0.75 }]);
+
+  const v1 = loadState(memoryStorage({
+    [LEGACY_STORAGE_KEY]: JSON.stringify({
+      data: [{ r: 1, f: 3 }, { r: 2, f: 1.5 }, { r: 4, f: 0.75 }],
+      modelChecked: true
+    })
+  }));
+  assert.deepEqual(v1.courses["inverse-square"].completedSteps, []);
+});
+
+test("bereinigt v4-Auswahl, Kapitel und unbekannte IDs", () => {
   const state = sanitizeState({
-    version: 3,
-    lessonMode: "compact",
-    currentStep: 99,
-    completedSteps: ["context", "context", "conclusion", "unbekannt"],
-    answers: { context: { trend: "decreases" } },
-    transfer: { data: [{ r: 1, f: 2 }, { r: 2, f: 1 }, { r: 3, f: 0.5 }] },
+    version: 4,
+    activeCourseId: "proportional-power",
+    lessonMode: "unknown",
+    courses: {
+      "proportional-power": {
+        currentStep: 99,
+        completedSteps: ["uq-power-context", "uq-power-context", "unbekannt"],
+        answers: { "uq-power-context": { q100: "4,3" } }
+      }
+    },
+    transfer: { activeMethod: "unbekannt", methods: {} },
     student: { name: "Ada", course: "Q1" }
   });
-
-  assert.equal(state.currentStep, 9);
-  assert.equal(state.lessonMode, "compact");
-  assert.deepEqual(state.completedSteps, ["context", "conclusion"]);
-  assert.equal(state.student.name, "Ada");
-});
-
-test("unbekannter Modus wird als Erklärmodus geladen", () => {
-  const state = sanitizeState({ version: 3, lessonMode: "unknown" });
   assert.equal(state.lessonMode, "explain");
+  assert.equal(state.courses["proportional-power"].currentStep, 7);
+  assert.deepEqual(state.courses["proportional-power"].completedSteps, ["uq-power-context"]);
+  assert.equal(state.transfer.activeMethod, "proportional-power");
 });
 
-test("speichert den Zustand unter dem v3-Schlüssel", () => {
+test("speichert unter dem v4-Schlüssel", () => {
   const storage = memoryStorage();
   const state = loadState(storage);
   assert.equal(persistState(storage, state), true);
-  assert.equal(JSON.parse(storage.value(STORAGE_KEY)).version, 3);
+  assert.equal(JSON.parse(storage.value(STORAGE_KEY)).version, 4);
 });
