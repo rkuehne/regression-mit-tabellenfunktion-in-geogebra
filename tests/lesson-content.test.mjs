@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
-import { COURSE_IDS, COURSES, LESSON_STEPS, UQ_CONSTANT_STEPS, UQ_LINEAR_STEPS, UQ_POWER_STEPS } from "../lesson-data.js";
+import { COURSE_IDS, COURSES, LESSON_STEPS, UQ_CONSTANT_STEPS, UQ_LINEAR_STEPS, UQ_POWER_STEPS, UQ_SHARED_REQUIREMENT_ID } from "../lesson-data.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const expectedIds = [
@@ -172,7 +172,8 @@ test("enthält die zentralen U-Q-Eingaben und vorsichtige Fachsprache", () => {
   const courses = JSON.stringify(COURSES);
   assert.match(power, /Q\(x\)=TrendPot\(C1:C5\)/);
   assert.match(power, /=Q\(A1\)/);
-  assert.match(power, /keine Unsicherheit von b|nicht.*Unsicherheit.*b/i);
+  assert.match(power, /Methode des größten Einzelfehlers/i);
+  assert.match(power, /1,16 %/);
   assert.match(power, /theoretischen Wert 1/i);
   assert.match(constants, /=B1\/A1/);
   assert.match(constants, /Mittel\(C1:C5\)/);
@@ -180,21 +181,47 @@ test("enthält die zentralen U-Q-Eingaben und vorsichtige Fachsprache", () => {
   assert.match(constants, /10 %/);
   assert.match(constants, /keine.*Unsicherheit von C|keine vollständige Fehlerfortpflanzung/i);
   assert.doesNotMatch(constants, /wechsle freundlich/i);
-  assert.match(linear, /Q\(x\)=TrendPoly\(C1:C5,1\)/);
+  assert.match(linear, /Q=Trendlinie\(C1:C5\)/);
   assert.match(linear, /=Q\(A1\)/);
   assert.match(linear, /408 pF/);
   assert.match(linear, /7,41 %/);
   assert.match(linear, /Extrapolation/i);
-  assert.match(linear, /Parameterunsicherheit/i);
-  assert.doesNotMatch(linear, /d = 0 (?:ist|wird) (?:damit )?bestätigt/i);
+  assert.match(linear, /statistische.*b = 0|statistisch.*b = 0/i);
+  assert.match(linear, /\|b\|\/Qmin|Anteil.*6 %/i);
+  assert.doesNotMatch(linear, /Achsenabschnitt d|Q\(U\) = m · U \+ d|TrendPoly/);
   assert.match(courses, /Q\/\(10⁻⁸ C\)/);
   assert.match(power + constants + linear, /vereinbar/i);
   assert.match(power + constants + linear, /beweis/i);
 });
 
+test("verknüpft alle drei Q-U-Wege mit derselben Pflichtseite", () => {
+  for (const courseId of ["proportional-power", "proportional-constants", "proportional-linear"]) {
+    assert.equal(COURSES[courseId].sharedRequirement, UQ_SHARED_REQUIREMENT_ID);
+    assert.equal(COURSES[courseId].steps.some((step) => step.sharedRequirement === true), true);
+  }
+  assert.equal(COURSES["inverse-square"].sharedRequirement, undefined);
+});
+
+test("enthält die gemeinsame Fehlerseite mit Herleitung, Anwendungen und Pflichtkontrolle", () => {
+  const root = resolve(here, "..");
+  const html = readFileSync(resolve(root, "groesster-einzelfehler.html"), "utf8");
+  assert.match(html, /5\/50 · 100 = 10 %/);
+  assert.match(html, /0,1\/2,0 · 100 = 5 %/);
+  assert.match(html, /f<sub>max<\/sub> = max\(10 %, 5 %\) = 10 %/);
+  assert.match(html, /1,16 %/);
+  assert.match(html, /3,74 %/);
+  assert.match(html, /3,83 %/);
+  assert.match(html, /7,41 %/);
+  assert.match(html, /0,12\/2,0 · 100 = 6 %/);
+  assert.match(html, /Q=Trendlinie\(C1:C5\)/);
+  assert.match(html, /durch die Messfehler erklärt werden/);
+  assert.match(html, /name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"/);
+  assert.match(html, /src="\.\/groesster-einzelfehler\.js"/);
+});
+
 test("entfernt das Bestimmtheitsmaß aus Schüleransicht und Programmlogik", () => {
   const root = resolve(here, "..");
-  for (const file of ["index.html", "lesson-data.js", "app.js", "regression.js", "README.md"]) {
+  for (const file of ["index.html", "groesster-einzelfehler.html", "lesson-data.js", "app.js", "regression.js", "README.md"]) {
     const content = readFileSync(resolve(root, file), "utf8");
     assert.doesNotMatch(content, /R²|RQuadrat|\br2\b/, file);
   }

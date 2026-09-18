@@ -205,7 +205,29 @@ export function analyzeUqLinear(points, regression) {
   const maxDeviation = rows.reduce((largest, row) => (
     !largest || Math.abs(row.deviation) > Math.abs(largest.deviation) ? row : largest
   ), null);
-  return { rows, maxDeviation, invalidPrediction: false };
+  const interceptShare = relativeInterceptShare(points, regression.intercept);
+  return { rows, maxDeviation, interceptShare, invalidPrediction: false };
+}
+
+export function relativeExponentDeviation(exponent, expected = 1) {
+  if (!Number.isFinite(exponent) || !Number.isFinite(expected) || expected === 0) return null;
+  return Math.abs((exponent - expected) / expected) * 100;
+}
+
+export function relativeInterceptShare(points, intercept) {
+  if (!Array.isArray(points) || points.length === 0 || !Number.isFinite(intercept)) return null;
+  const minQ = Math.min(...points.map(({ q }) => q));
+  if (!(minQ > 0)) return null;
+  return { percent: (Math.abs(intercept) / minQ) * 100, minQ };
+}
+
+export function deviationsWithinLimit(deviations, limit) {
+  return Array.isArray(deviations)
+    && deviations.length > 0
+    && deviations.every(Number.isFinite)
+    && Number.isFinite(limit)
+    && limit > 0
+    && deviations.every((value) => Math.abs(value) < limit);
 }
 
 export function analyzeProportionality(points) {

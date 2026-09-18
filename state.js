@@ -1,4 +1,4 @@
-import { COURSE_IDS, COURSES } from "./lesson-data.js";
+import { COURSE_IDS, COURSES, UQ_SHARED_REQUIREMENT_ID } from "./lesson-data.js";
 import { cloneExampleData, cloneUqExampleData } from "./regression.js";
 
 export const STORAGE_KEY = "geogebra-begleitkurs-state-v4";
@@ -8,6 +8,12 @@ export const LEGACY_STORAGE_KEY = "regressionstrainer-state-v1";
 
 function blankProgress() {
   return { currentStep: 0, completedSteps: [], answers: {} };
+}
+
+function defaultSharedModules() {
+  return {
+    [UQ_SHARED_REQUIREMENT_ID]: { completed: false, answers: {} }
+  };
 }
 
 function defaultTransferMethods() {
@@ -25,6 +31,7 @@ export function createDefaultState() {
     activeCourseId: "inverse-square",
     lessonMode: "explain",
     courses: Object.fromEntries(COURSE_IDS.map((id) => [id, blankProgress()])),
+    sharedModules: defaultSharedModules(),
     transfer: { activeMethod: "inverse-square", methods: defaultTransferMethods() },
     student: { name: "", course: "" },
     updatedAt: new Date().toISOString()
@@ -83,6 +90,13 @@ function preservedStudent(candidate) {
   };
 }
 
+function sanitizeSharedModule(candidate) {
+  const answers = candidate?.answers && typeof candidate.answers === "object" && !Array.isArray(candidate.answers)
+    ? candidate.answers
+    : {};
+  return { completed: candidate?.completed === true, answers };
+}
+
 export function migratePreviousState(candidate) {
   const state = createDefaultState();
   const oldTransfer = candidate?.transfer ?? candidate ?? {};
@@ -114,6 +128,9 @@ export function sanitizeState(candidate) {
     activeCourseId,
     lessonMode: candidate.lessonMode === "compact" ? "compact" : "explain",
     courses: Object.fromEntries(COURSE_IDS.map((id) => [id, sanitizeProgress(candidate?.courses?.[id], id)])),
+    sharedModules: {
+      [UQ_SHARED_REQUIREMENT_ID]: sanitizeSharedModule(candidate?.sharedModules?.[UQ_SHARED_REQUIREMENT_ID])
+    },
     transfer: {
       activeMethod,
       methods: Object.fromEntries(COURSE_IDS.map((id) => [id, sanitizeTransferMethod(candidate?.transfer?.methods?.[id], id)]))

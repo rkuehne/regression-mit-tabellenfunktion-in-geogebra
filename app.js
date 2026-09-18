@@ -6,12 +6,14 @@ import {
   analyzeUqPower,
   cloneExampleData,
   cloneUqExampleData,
+  deviationsWithinLimit,
   formatNumber,
   greatestSingleRelativeError,
   isWithin,
   linearRegression,
   parseLocaleNumber,
   powerRegression,
+  relativeExponentDeviation,
   uqPowerRegression,
   validateUqPoints,
   validatePowerPoints
@@ -66,6 +68,10 @@ const els = {
   courseComplete: document.getElementById("courseComplete"),
   completionTitle: document.getElementById("completionTitle"),
   completionText: document.getElementById("completionText"),
+  completionActionLink: document.getElementById("completionActionLink"),
+  sharedRequirementCard: document.getElementById("sharedRequirementCard"),
+  sharedRequirementText: document.getElementById("sharedRequirementText"),
+  sharedRequirementLink: document.getElementById("sharedRequirementLink"),
   transferMethodSelect: document.getElementById("transferMethodSelect"),
   transferIntro: document.getElementById("transferIntro"),
   transferInputTitle: document.getElementById("transferInputTitle"),
@@ -81,6 +87,8 @@ const els = {
   deltaUInput: document.getElementById("deltaUInput"),
   deltaQInput: document.getElementById("deltaQInput"),
   uncertaintyNote: document.getElementById("uncertaintyNote"),
+  transferSharedErrorLinkWrap: document.getElementById("transferSharedErrorLinkWrap"),
+  transferSharedErrorLink: document.getElementById("transferSharedErrorLink"),
   calculateTransferBtn: document.getElementById("calculateTransferBtn"),
   transferFeedback: document.getElementById("transferFeedback"),
   transferResults: document.getElementById("transferResults"),
@@ -139,6 +147,18 @@ function activeTransferCourse() {
   return COURSES[state.transfer.activeMethod];
 }
 
+function sharedRequirementState(course = activeCourse()) {
+  return course.sharedRequirement ? state.sharedModules?.[course.sharedRequirement] : null;
+}
+
+function isSharedRequirementComplete(course = activeCourse()) {
+  return !course.sharedRequirement || sharedRequirementState(course)?.completed === true;
+}
+
+function isCourseComplete(course = activeCourse(), progress = activeProgress()) {
+  return progress.completedSteps.length === course.steps.length && isSharedRequirementComplete(course);
+}
+
 function saveState() {
   persistState(localStorage, state);
 }
@@ -189,7 +209,21 @@ function renderProgress() {
   els.courseProgress.max = course.steps.length;
   els.courseProgress.value = count;
   els.courseProgress.textContent = `${count} von ${course.steps.length} Kapiteln`;
-  els.courseComplete.hidden = count !== course.steps.length;
+  const chaptersComplete = count === course.steps.length;
+  const sharedComplete = isSharedRequirementComplete(course);
+  els.courseComplete.hidden = !chaptersComplete;
+  els.courseComplete.classList.toggle("pending", chaptersComplete && !sharedComplete);
+  if (chaptersComplete && !sharedComplete) {
+    els.completionTitle.textContent = "Noch ein gemeinsamer Pflichtschritt";
+    els.completionText.textContent = "Schließe die Methode des größten Einzelfehlers einmal ab. Danach gilt sie für alle drei Q–U-Lernwege.";
+    els.completionActionLink.href = `./groesster-einzelfehler.html?course=${encodeURIComponent(course.id)}`;
+    els.completionActionLink.textContent = "Fehlerseite abschließen";
+  } else if (chaptersComplete) {
+    els.completionTitle.textContent = `${course.title} abgeschlossen`;
+    els.completionText.textContent = "Du kannst den Auswertungsweg fachlich begründen, auf eigene Messdaten übertragen und im Lernnachweis dokumentieren.";
+    els.completionActionLink.href = "#transfer";
+    els.completionActionLink.textContent = "Zum Transfer";
+  }
 }
 
 function renderStepNav() {
@@ -503,6 +537,21 @@ function updateCurrentStepState() {
   els.stepStateBadge.className = `state-badge${complete ? " complete" : ""}`;
 }
 
+function renderSharedRequirement(step) {
+  const course = activeCourse();
+  const visible = Boolean(course.sharedRequirement && step.sharedRequirement);
+  els.sharedRequirementCard.hidden = !visible;
+  if (!visible) return;
+
+  const complete = isSharedRequirementComplete(course);
+  els.sharedRequirementCard.classList.toggle("complete", complete);
+  els.sharedRequirementText.textContent = complete
+    ? "Abgeschlossen: Deine Kontrolle gilt automatisch für alle drei Q–U-Auswertungswege. Du kannst die Herleitung und Klausurformulierungen jederzeit erneut öffnen."
+    : "Leite 10 %, 5 % und fmax = 10 % einmal vollständig her. Dieser gemeinsame Abschluss ist für alle drei Q–U-Lernwege verpflichtend.";
+  els.sharedRequirementLink.href = `./groesster-einzelfehler.html?course=${encodeURIComponent(course.id)}`;
+  els.sharedRequirementLink.textContent = complete ? "Fehlerseite erneut öffnen" : "Fehlerseite bearbeiten";
+}
+
 function renderLesson() {
   const course = activeCourse();
   const progress = activeProgress();
@@ -528,6 +577,7 @@ function renderLesson() {
   document.querySelector(".help-box").open = false;
   renderStepImages(step.images);
   els.lessonGrid.classList.toggle("no-images", step.images.length === 0);
+  renderSharedRequirement(step);
   renderCheckpoint(step);
 
   els.previousStepBtn.disabled = progress.currentStep === 0;
@@ -654,14 +704,16 @@ function renderTransferIdentity() {
   els.chartModelLabel.textContent = config.modelLabel;
   els.relativeUncertaintyGroup.hidden = uq;
   els.uqUncertaintyGroup.hidden = !uq;
+  els.transferSharedErrorLinkWrap.hidden = !uq;
+  if (uq) els.transferSharedErrorLink.href = `./groesster-einzelfehler.html?course=${encodeURIComponent(state.transfer.activeMethod)}`;
   els.uncertaintyNote.textContent = uq
     ? state.transfer.activeMethod === "proportional-linear"
-      ? "Aus ΔU und ΔQ wird bewusst vereinfacht der größere relative Einzelwert als Vergleichsgrenze für die Modellabweichungen verwendet. Diese Grenze ist keine Unsicherheit des Achsenabschnitts d."
-      : "Aus ΔU und ΔQ wird bewusst vereinfacht der größere relative Einzelwert als gemeinsame Vergleichsgrenze verwendet. Ohne beide Angaben erfolgt kein automatisches Urteil."
+      ? "Nach der Methode des größten Einzelfehlers werden Modellabweichung und relativer Anteil des y-Achsenabschnitts mit fmax verglichen. Ohne ΔU und ΔQ erfolgt kein automatisches Urteil."
+      : "Nach der Methode des größten Einzelfehlers wird der größte relative Einzelfehler auf alle für das Verfahren relevanten Abweichungen übertragen. Ohne ΔU und ΔQ erfolgt kein automatisches Urteil."
     : "Ohne Unsicherheitsangabe zeigt der Rechner Ergebnisse, fällt aber kein Urteil über die Vereinbarkeit.";
   els.transferIntro.textContent = uq
     ? state.transfer.activeMethod === "proportional-linear"
-      ? "Gib drei bis dreißig positive U-Q-Messpaare mit verschiedenen Spannungswerten ein. Die Regressionsgerade erhält einen frei bestimmten Achsenabschnitt."
+      ? "Gib drei bis dreißig positive U-Q-Messpaare mit verschiedenen Spannungswerten ein. Die Regressionsgerade erhält einen frei bestimmten y-Achsenabschnitt b."
       : "Gib drei bis dreißig positive U-Q-Messpaare ein. Die voreingestellten Unsicherheiten gehören zum beschriebenen Kondensatorversuch."
     : "Gib drei bis dreißig positive r-F-Messpaare ein. TrendPot benötigt positive Punkte mit verschiedenen r-Werten.";
 }
@@ -782,15 +834,21 @@ function renderPowerTransferResult(points, regression, analysis, uncertainty, is
   const functionText = isUq ? "Q(U)" : "F(r)";
   const variable = isUq ? "U" : "r";
   els.transferEquation.textContent = `${functionText} ≈ ${formatNumber(regression.a, 6)} · ${variable}^(${formatNumber(regression.b, 6)})`;
-  els.transferMeta.textContent = `Exponent b ≈ ${formatNumber(regression.b, 5)} · größte Modellabweichung ≈ ${formatNumber(Math.abs(analysis.maxDeviation.deviation), 2)} %`;
+  const exponentDeviation = isUq ? relativeExponentDeviation(regression.b, 1) : null;
+  els.transferMeta.textContent = isUq
+    ? `Exponent n ≈ ${formatNumber(regression.b, 5)} · relative Exponentabweichung ≈ ${formatNumber(exponentDeviation, 2)} % · größte Modellabweichung ≈ ${formatNumber(Math.abs(analysis.maxDeviation.deviation), 2)} %`
+    : `Exponent b ≈ ${formatNumber(regression.b, 5)} · größte Modellabweichung ≈ ${formatNumber(Math.abs(analysis.maxDeviation.deviation), 2)} %`;
 
   if (uncertainty === null) {
     els.uncertaintyResult.textContent = "Ohne angegebene Messunsicherheit wird keine automatische Aussage zur Vereinbarkeit getroffen. Beurteile Exponent und Streuung in deiner Reflexion.";
   } else {
-    const within = Math.abs(analysis.maxDeviation.deviation) <= uncertainty;
-    els.uncertaintyResult.textContent = isUq
-      ? `Die größte Modellabweichung liegt ${within ? "innerhalb" : "oberhalb"} der bewusst vereinfachten Vergleichsgrenze von ${formatNumber(uncertainty, 2)} %. Vergleiche b zusätzlich mit dem theoretischen Wert 1; die Prozentgrenze ist keine Unsicherheit von b.`
-      : `Als grobe Orientierung liegt die größte Modellabweichung ${within ? "innerhalb" : "oberhalb"} deiner angegebenen Messunsicherheit von ${formatNumber(uncertainty, 2)} %. Das ersetzt keine vollständige Unsicherheitsrechnung.`;
+    if (isUq) {
+      const within = deviationsWithinLimit([exponentDeviation, analysis.maxDeviation.deviation], uncertainty.limit);
+      els.uncertaintyResult.textContent = `Methode des größten Einzelfehlers: fmax = ${formatNumber(uncertainty.limit, 2)} % (U: ${formatNumber(uncertainty.uPercent, 2)} %, Q: ${formatNumber(uncertainty.qPercent, 2)} %). ${within ? "Exponent- und Modellabweichung liegen unterhalb dieser Fehlergrenze. Die Abweichungen können durch die Messfehler erklärt werden." : "Mindestens eine der beiden Abweichungen liegt nicht unterhalb dieser Fehlergrenze und kann mit der Methode nicht allein durch die angegebenen Messfehler erklärt werden."}`;
+    } else {
+      const within = Math.abs(analysis.maxDeviation.deviation) <= uncertainty;
+      els.uncertaintyResult.textContent = `Als grobe Orientierung liegt die größte Modellabweichung ${within ? "innerhalb" : "oberhalb"} deiner angegebenen Messunsicherheit von ${formatNumber(uncertainty, 2)} %. Das ersetzt keine vollständige Unsicherheitsrechnung.`;
+    }
   }
 
   els.resultXHeader.textContent = config.headers[0];
@@ -823,13 +881,13 @@ function renderLinearTransferResult(points, regression, analysis, uncertainty) {
   const capacityPf = regression.slope * 10000;
   els.transferResults.hidden = false;
   els.transferEquation.textContent = `Q(U) ≈ ${formatNumber(regression.slope, 7)} · U ${interceptOperator} ${formatNumber(Math.abs(regression.intercept), 7)}`;
-  els.transferMeta.textContent = `Steigung m ≈ ${formatNumber(regression.slope, 7)} · 10⁻⁸ F (≈ ${formatNumber(capacityPf, 2)} pF) · Achsenabschnitt d ≈ ${formatNumber(regression.intercept, 7)} · 10⁻⁸ C · größte Modellabweichung ≈ ${formatNumber(Math.abs(analysis.maxDeviation.deviation), 2)} % bei U = ${formatNumber(analysis.maxDeviation.u, 2)} V`;
+  els.transferMeta.textContent = `Steigung m ≈ ${formatNumber(regression.slope, 7)} · 10⁻⁸ F (≈ ${formatNumber(capacityPf, 2)} pF) · y-Achsenabschnitt b ≈ ${formatNumber(regression.intercept, 7)} · 10⁻⁸ C · Anteil |b|/Qmin ≈ ${formatNumber(analysis.interceptShare.percent, 2)} % · größte Modellabweichung ≈ ${formatNumber(Math.abs(analysis.maxDeviation.deviation), 2)} % bei U = ${formatNumber(analysis.maxDeviation.u, 2)} V`;
 
   if (!uncertainty) {
-    els.uncertaintyResult.textContent = "Ohne ΔU und ΔQ wird keine automatische Vereinbarkeitsaussage getroffen. Für eine Aussage darüber, ob d mit null vereinbar ist, wäre außerdem die Unsicherheit des Regressionsparameters nötig.";
+    els.uncertaintyResult.textContent = "Ohne ΔU und ΔQ wird keine automatische Fehlerbeurteilung vorgenommen. Eine statistische Bestätigung von b = 0 würde zusätzlich eine Unsicherheit des Regressionsparameters erfordern.";
   } else {
-    const within = Math.abs(analysis.maxDeviation.deviation) <= uncertainty.limit;
-    els.uncertaintyResult.textContent = `Der größere der beiden geschätzten relativen Einzelwerte beträgt ${formatNumber(uncertainty.limit, 2)} % (U: ${formatNumber(uncertainty.uPercent, 2)} %, Q: ${formatNumber(uncertainty.qPercent, 2)} %). Die größte Modellabweichung liegt ${within ? "innerhalb" : "oberhalb"} dieser bewusst vereinfachten Vergleichsgrenze. Diese Grenze ist keine Unsicherheit des Achsenabschnitts d und bestätigt daher nicht d = 0.`;
+    const within = deviationsWithinLimit([analysis.maxDeviation.deviation, analysis.interceptShare.percent], uncertainty.limit);
+    els.uncertaintyResult.textContent = `Methode des größten Einzelfehlers: fmax = ${formatNumber(uncertainty.limit, 2)} % (U: ${formatNumber(uncertainty.uPercent, 2)} %, Q: ${formatNumber(uncertainty.qPercent, 2)} %). ${within ? "Modellabweichung und Anteil des y-Achsenabschnitts liegen unterhalb dieser Fehlergrenze. Die Abweichungen können durch die Messfehler erklärt und b kann näherungsweise vernachlässigt werden." : "Mindestens eine der beiden Abweichungen liegt nicht unterhalb dieser Fehlergrenze und kann mit der Methode nicht allein durch die angegebenen Messfehler erklärt werden."} Das ist keine statistische Bestätigung von b = 0.`;
   }
 
   els.resultXHeader.textContent = config.headers[0];
@@ -854,7 +912,7 @@ function renderLinearTransferResult(points, regression, analysis, uncertainty) {
   renderTransferChart(points.map(({ u, q }) => ({ x: u, y: q })),
     (value) => regression.slope * value + regression.intercept,
     config,
-    `Die Regressionsgerade hat die Steigung ${formatNumber(regression.slope, 5)} und den Achsenabschnitt ${formatNumber(regression.intercept, 5)}.`);
+    `Die Regressionsgerade hat die Steigung ${formatNumber(regression.slope, 5)} und den y-Achsenabschnitt ${formatNumber(regression.intercept, 5)}.`);
 }
 
 function calculateTransfer() {
@@ -926,6 +984,7 @@ function calculateTransfer() {
       slope: regression.slope,
       intercept: regression.intercept,
       maxDeviation: analysis.maxDeviation.deviation,
+      interceptShare: analysis.interceptShare.percent,
       uncertainty
     };
     saveState();
@@ -937,9 +996,16 @@ function calculateTransfer() {
       return;
     }
     const analysis = isUq ? analyzeUqPower(validation.points, regression) : analyzePoints(validation.points, regression);
-    transfer.result = { type: "power", a: regression.a, b: regression.b, maxDeviation: analysis.maxDeviation.deviation, uncertainty };
+    transfer.result = {
+      type: "power",
+      a: regression.a,
+      b: regression.b,
+      maxDeviation: analysis.maxDeviation.deviation,
+      exponentDeviation: isUq ? relativeExponentDeviation(regression.b, 1) : null,
+      uncertainty
+    };
     saveState();
-    renderPowerTransferResult(validation.points, regression, analysis, isUq ? uncertainty?.limit ?? null : uncertainty, isUq);
+    renderPowerTransferResult(validation.points, regression, analysis, uncertainty, isUq);
   }
   setFeedback(els.transferFeedback, "Die mathematische Auswertung ist abgeschlossen. Formuliere nun deine fachliche Beurteilung.", "good");
   renderSummary();
@@ -953,8 +1019,8 @@ function renderConstantTransferResult(points, analysis, uncertainty) {
   if (!uncertainty) {
     els.uncertaintyResult.textContent = "Ohne ΔU und ΔQ wird keine automatische Vereinbarkeitsaussage getroffen.";
   } else {
-    const within = Math.abs(analysis.maxDeviation.deviation) <= uncertainty.limit;
-    els.uncertaintyResult.textContent = `Der größere der beiden geschätzten relativen Einzelwerte beträgt ${formatNumber(uncertainty.limit, 2)} % (U: ${formatNumber(uncertainty.uPercent, 2)} %, Q: ${formatNumber(uncertainty.qPercent, 2)} %). Die Konstantenabweichung liegt ${within ? "innerhalb" : "oberhalb"} dieser bewusst vereinfachten Vergleichsgrenze; eine Fehlerfortpflanzung für C ist damit nicht berechnet.`;
+    const within = deviationsWithinLimit([analysis.maxDeviation.deviation], uncertainty.limit);
+    els.uncertaintyResult.textContent = `Methode des größten Einzelfehlers: fmax = ${formatNumber(uncertainty.limit, 2)} % (U: ${formatNumber(uncertainty.uPercent, 2)} %, Q: ${formatNumber(uncertainty.qPercent, 2)} %). ${within ? "Die Konstantenabweichung liegt unterhalb dieser Fehlergrenze. Die Abweichung kann durch die Messfehler erklärt werden." : "Die Konstantenabweichung liegt nicht unterhalb dieser Fehlergrenze und kann mit der Methode nicht allein durch die angegebenen Messfehler erklärt werden."}`;
   }
   els.resultXHeader.textContent = config.headers[0];
   els.resultYHeader.textContent = config.headers[1];
@@ -1000,12 +1066,14 @@ function restoreTransferResult() {
       els.transferResults.hidden = true;
       return;
     }
+    transfer.result.interceptShare = analysis.interceptShare.percent;
     renderLinearTransferResult(validation.points, regression, analysis, transfer.result.uncertainty ?? null);
     return;
   }
   const regression = isUq ? uqPowerRegression(validation.points) : powerRegression(validation.points);
   const analysis = isUq ? analyzeUqPower(validation.points, regression) : analyzePoints(validation.points, regression);
-  const uncertainty = isUq ? transfer.result.uncertainty?.limit ?? null : transfer.result.uncertainty ?? null;
+  if (isUq) transfer.result.exponentDeviation = relativeExponentDeviation(regression.b, 1);
+  const uncertainty = transfer.result.uncertainty ?? null;
   renderPowerTransferResult(validation.points, regression, analysis, uncertainty, isUq);
 }
 
@@ -1035,11 +1103,14 @@ function renderSummary() {
   const course = activeCourse();
   const progress = activeProgress();
   const completeCount = progress.completedSteps.length;
-  const courseComplete = completeCount === course.steps.length;
+  const sharedComplete = isSharedRequirementComplete(course);
+  const courseComplete = isCourseComplete(course, progress);
   els.summaryStatus.textContent = courseComplete ? "Abgeschlossen" : "In Bearbeitung";
   els.summaryStatus.className = `summary-status${courseComplete ? " complete" : ""}`;
   els.summarySubtitle.textContent = `GeoGebra-Begleitkurs · ${course.title}`;
-  els.summaryProgress.textContent = `${completeCount} von ${course.steps.length} Kapiteln abgeschlossen`;
+  els.summaryProgress.textContent = course.sharedRequirement
+    ? `${completeCount} von ${course.steps.length} Kapiteln · Methode des größten Einzelfehlers: ${sharedComplete ? "abgeschlossen" : "offen"}`
+    : `${completeCount} von ${course.steps.length} Kapiteln abgeschlossen`;
   els.printStudentName.textContent = state.student.name.trim() || "–";
   els.printCourseName.textContent = state.student.course.trim() || "–";
   els.summaryDate.textContent = new Intl.DateTimeFormat("de-DE", { dateStyle: "long" }).format(new Date());
@@ -1056,6 +1127,12 @@ function renderSummary() {
     item.textContent = `${index + 1}. ${step.title}${missing.length ? ` – ${missing.join(", ")}` : " – vollständig"}`;
     els.summaryChecklist.append(item);
   });
+  if (course.sharedRequirement) {
+    const item = document.createElement("li");
+    if (sharedComplete) item.className = "complete";
+    item.textContent = `Gemeinsame Pflichtseite: Methode des größten Einzelfehlers – ${sharedComplete ? "vollständig" : "Kontrolle offen"}`;
+    els.summaryChecklist.append(item);
+  }
 
   els.summaryCompetencies.replaceChildren();
   course.competencies.forEach((competency) => {
@@ -1065,9 +1142,22 @@ function renderSummary() {
     item.textContent = `${complete ? "✓" : "○"} ${competency.label}`;
     els.summaryCompetencies.append(item);
   });
+  if (course.sharedRequirement) {
+    const item = document.createElement("li");
+    if (sharedComplete) item.className = "complete";
+    item.textContent = `${sharedComplete ? "✓" : "○"} Ich kann die Methode des größten Einzelfehlers herleiten und auf Abweichungen anwenden.`;
+    els.summaryCompetencies.append(item);
+  }
 
   els.summaryKeyResults.replaceChildren();
-  course.referenceResults.forEach(([term, value]) => {
+  const referenceResults = [...course.referenceResults];
+  if (course.sharedRequirement) {
+    referenceResults.push(
+      ["Methode des größten Einzelfehlers", sharedComplete ? "abgeschlossen" : "noch offen"],
+      ["Relative Einzelfehler", "U: 10 % · Q: 5 % · fmax = 10 %"]
+    );
+  }
+  referenceResults.forEach(([term, value]) => {
     const item = document.createElement("div");
     const name = document.createElement("dt");
     const description = document.createElement("dd");
@@ -1079,7 +1169,9 @@ function renderSummary() {
 
   els.summaryConclusion.textContent = courseComplete
     ? course.conclusion
-    : "Die abschließende Beurteilung wird eingetragen, sobald alle Ergebnis- und Verständnisprüfungen dieses Lernwegs abgeschlossen sind.";
+    : course.sharedRequirement && !sharedComplete && completeCount === course.steps.length
+      ? "Die acht Kapitel sind abgeschlossen. Die abschließende Beurteilung wird eingetragen, sobald auch die gemeinsame Kontrolle zur Methode des größten Einzelfehlers abgeschlossen ist."
+      : "Die abschließende Beurteilung wird eingetragen, sobald alle Ergebnis- und Verständnisprüfungen dieses Lernwegs abgeschlossen sind.";
 
   const transfer = state.transfer.methods[state.activeCourseId];
   const hasTransfer = Boolean(transfer.result) || Boolean(transfer.reflection.trim());
@@ -1087,17 +1179,32 @@ function renderSummary() {
   if (transfer.result) {
     const result = transfer.result;
     if (result.type === "constants") {
-      els.summaryTransferResult.textContent = `Eigene Konstantenauswertung: C̄ ≈ ${formatNumber(result.meanPf, 2)} pF, größte Konstantenabweichung ≈ ${formatNumber(Math.abs(result.maxDeviation), 2)} %.`;
+      const judgement = result.uncertainty?.limit
+        ? deviationsWithinLimit([result.maxDeviation], result.uncertainty.limit)
+          ? ` Die Abweichung liegt unter fmax = ${formatNumber(result.uncertainty.limit, 2)} % und kann durch die Messfehler erklärt werden.`
+          : ` Die Abweichung liegt nicht unter fmax = ${formatNumber(result.uncertainty.limit, 2)} % und kann mit der Methode nicht allein durch die Messfehler erklärt werden.`
+        : " Ohne vollständige Fehlerangaben erfolgt keine automatische Fehlerbeurteilung.";
+      els.summaryTransferResult.textContent = `Eigene Konstantenauswertung: C̄ ≈ ${formatNumber(result.meanPf, 2)} pF, größte Konstantenabweichung ≈ ${formatNumber(Math.abs(result.maxDeviation), 2)} %.${judgement}`;
     } else if (result.type === "linear") {
       const interceptOperator = result.intercept < 0 ? "−" : "+";
-      const limitText = result.uncertainty?.limit
-        ? `, vereinfachte Vergleichsgrenze ${formatNumber(result.uncertainty.limit, 2)} %`
-        : "";
-      els.summaryTransferResult.textContent = `Eigene lineare Regression: Q(U) ≈ ${formatNumber(result.slope, 6)} · U ${interceptOperator} ${formatNumber(Math.abs(result.intercept), 6)}, Kapazität aus der Steigung ≈ ${formatNumber(result.slope * 10000, 2)} pF, größte Modellabweichung ≈ ${formatNumber(Math.abs(result.maxDeviation), 2)} %${limitText}. Der Achsenabschnitt ist ohne Parameterunsicherheit nicht statistisch mit null verglichen.`;
+      const assessment = result.uncertainty?.limit
+        ? deviationsWithinLimit([result.maxDeviation, result.interceptShare], result.uncertainty.limit)
+          ? ` Beide Abweichungen liegen unter fmax = ${formatNumber(result.uncertainty.limit, 2)} % und können durch die Messfehler erklärt werden; b kann näherungsweise vernachlässigt werden.`
+          : ` Mindestens eine Abweichung liegt nicht unter fmax = ${formatNumber(result.uncertainty.limit, 2)} % und kann mit der Methode nicht allein durch Messfehler erklärt werden.`
+        : " Ohne vollständige Fehlerangaben erfolgt keine automatische Fehlerbeurteilung.";
+      els.summaryTransferResult.textContent = `Eigene lineare Regression: Q(U) ≈ ${formatNumber(result.slope, 6)} · U ${interceptOperator} ${formatNumber(Math.abs(result.intercept), 6)}, Kapazität aus der Steigung ≈ ${formatNumber(result.slope * 10000, 2)} pF, y-Achsenabschnitt b ≈ ${formatNumber(result.intercept, 4)} · 10⁻⁸ C, Anteil |b|/Qmin ≈ ${formatNumber(result.interceptShare, 2)} %, größte Modellabweichung ≈ ${formatNumber(Math.abs(result.maxDeviation), 2)} %.${assessment} Das ist keine statistische Bestätigung von b = 0.`;
     } else {
       const functionName = state.activeCourseId === "inverse-square" ? "F(r)" : "Q(U)";
       const variable = state.activeCourseId === "inverse-square" ? "r" : "U";
-      els.summaryTransferResult.textContent = `Eigene Regression: ${functionName} ≈ ${formatNumber(result.a, 5)} · ${variable}^(${formatNumber(result.b, 5)}), größte Modellabweichung ≈ ${formatNumber(Math.abs(result.maxDeviation), 2)} %.`;
+      const uqAssessment = state.activeCourseId === "proportional-power"
+        ? result.uncertainty?.limit
+          ? deviationsWithinLimit([result.maxDeviation, result.exponentDeviation], result.uncertainty.limit)
+            ? ` Relative Exponent- und Modellabweichung liegen unter fmax = ${formatNumber(result.uncertainty.limit, 2)} % und können durch die Messfehler erklärt werden.`
+            : ` Mindestens eine Abweichung liegt nicht unter fmax = ${formatNumber(result.uncertainty.limit, 2)} % und kann mit der Methode nicht allein durch Messfehler erklärt werden.`
+          : " Ohne vollständige Fehlerangaben erfolgt keine automatische Fehlerbeurteilung."
+        : "";
+      const exponentText = state.activeCourseId === "proportional-power" ? `, relative Exponentabweichung ≈ ${formatNumber(result.exponentDeviation, 2)} %` : "";
+      els.summaryTransferResult.textContent = `Eigene Regression: ${functionName} ≈ ${formatNumber(result.a, 5)} · ${variable}^(${formatNumber(result.b, 5)})${exponentText}, größte Modellabweichung ≈ ${formatNumber(Math.abs(result.maxDeviation), 2)} %.${uqAssessment}`;
     }
   } else {
     els.summaryTransferResult.textContent = "Für die eigene Messreihe wurde noch keine Auswertung gespeichert.";
@@ -1273,3 +1380,4 @@ function initialize() {
 }
 
 initialize();
+  deviationsWithinLimit,

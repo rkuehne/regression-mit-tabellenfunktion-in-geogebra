@@ -173,8 +173,8 @@ Save-Shot "10-potenzregression-u-q.png" 900 500 { param($g,$w,$h)
 } -Algebra
 Save-Shot "11-modellwerte-u-q.png" 1040 500 { param($g,$w,$h) Draw-Table $g $w $h @("A","B","C","D","E") $modelRows 3 0 4 }
 Save-Shot "12-lineare-regression-u-q.png" 900 500 { param($g,$w,$h)
-  Draw-Text $g "Q(x) = TrendPoly(C1:C5, 1)" 176 88 23 $ink
-  Draw-Text $g "=   0.0408 x + 0.12" 176 137 22 $ink
+  Draw-Text $g "Q = Trendlinie(C1:C5)" 176 88 23 $ink
+  Draw-Text $g "y = 0.0408 x + 0.12" 176 137 22 $ink
   $g.DrawLine([System.Drawing.Pen]::new($violet,1), 84, 174, $w, 174)
 } -Algebra
 Save-Shot "13-lineare-modellwerte-u-q.png" 1040 500 { param($g,$w,$h) Draw-Table $g $w $h @("A","B","C","D","E") $linearModelRows 3 0 4 }

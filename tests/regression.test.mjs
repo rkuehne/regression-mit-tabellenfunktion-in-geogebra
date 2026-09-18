@@ -7,11 +7,14 @@ import {
   analyzeProportionality,
   analyzeUqLinear,
   analyzeUqPower,
+  deviationsWithinLimit,
   greatestSingleRelativeError,
   isWithin,
   linearRegression,
   parseLocaleNumber,
   powerRegression,
+  relativeExponentDeviation,
+  relativeInterceptShare,
   uqPowerRegression,
   validateUqPoints,
   validatePowerPoints
@@ -89,6 +92,8 @@ test("berechnet die lineare U-Q-Regression und ihre Modellabweichungen", () => {
   });
   assert.equal(analysis.maxDeviation.u, 50);
   assert.ok(Math.abs(analysis.maxDeviation.deviation - (-7.407407407407414)) < 1e-12);
+  assert.equal(analysis.interceptShare.minQ, 2);
+  assert.ok(Math.abs(analysis.interceptShare.percent - 6) < 1e-12);
 });
 
 test("verwirft lineare Modellabweichungen mit nicht positivem Modellwert", () => {
@@ -110,10 +115,25 @@ test("berechnet Kapazitäten, Mittelwert und Konstantenabweichungen", () => {
   assert.ok(Math.abs(analysis.maxDeviation.deviation - (-3.8307421061067366)) < 1e-12);
 });
 
-test("verwendet für U-Q bewusst den größten relativen Einzelwert als grobe Grenze", () => {
+test("bestimmt für U-Q den größten relativen Einzelfehler", () => {
   assert.deepEqual(greatestSingleRelativeError(UQ_EXAMPLE_DATA, 5, 0.1), {
     uPercent: 10, qPercent: 5, limit: 10, minU: 50, minQ: 2
   });
+});
+
+test("berechnet die methodenspezifischen Abweichungen zur Fehlergrenze", () => {
+  assert.ok(Math.abs(relativeExponentDeviation(1.0115661789610593) - 1.1566178961059326) < 1e-12);
+  assert.deepEqual(relativeInterceptShare(UQ_EXAMPLE_DATA, 0.12), { percent: 6, minQ: 2 });
+  assert.equal(relativeExponentDeviation(1, 0), null);
+  assert.equal(relativeInterceptShare([], 0.12), null);
+});
+
+test("wertet Abweichungen unterhalb, gleich und oberhalb des größten Einzelfehlers aus", () => {
+  assert.equal(deviationsWithinLimit([1.16, 3.74], 10), true);
+  assert.equal(deviationsWithinLimit([10], 10), false);
+  assert.equal(deviationsWithinLimit([10.01], 10), false);
+  assert.equal(deviationsWithinLimit([3.83], Number.NaN), false);
+  assert.equal(deviationsWithinLimit([], 10), false);
 });
 
 test("validiert positive U-Q-Paare und verschiedene Spannungswerte", () => {

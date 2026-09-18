@@ -29,6 +29,7 @@ test("erzeugt vier getrennte Lern- und Transferstände", () => {
   assert.equal(state.transfer.methods["proportional-constants"].data.length, 5);
   assert.equal(state.transfer.methods["proportional-linear"].data.length, 5);
   assert.equal(state.transfer.methods["proportional-linear"].deltaU, "5");
+  assert.deepEqual(state.sharedModules["uq-largest-single-error"], { completed: false, answers: {} });
 });
 
 test("migriert v3-Kursfortschritt und Transfer in den 1/r²-Weg", () => {
@@ -108,6 +109,25 @@ test("speichert unter dem v4-Schlüssel", () => {
   assert.equal(JSON.parse(storage.value(STORAGE_KEY)).version, 4);
 });
 
+test("speichert den gemeinsamen Fehlerabschluss einmal für alle Q-U-Wege", () => {
+  const state = sanitizeState({
+    version: 4,
+    activeCourseId: "proportional-linear",
+    courses: {},
+    sharedModules: {
+      "uq-largest-single-error": {
+        completed: true,
+        answers: { uError: "10", qError: "5", maxError: "10", minimumReason: "largest-relative", methodMeaning: "explainable" }
+      }
+    },
+    transfer: { activeMethod: "proportional-linear", methods: {} },
+    student: {}
+  });
+  assert.equal(state.sharedModules["uq-largest-single-error"].completed, true);
+  assert.equal(state.sharedModules["uq-largest-single-error"].answers.qError, "5");
+  assert.equal(Object.keys(state.sharedModules).length, 1);
+});
+
 test("ergänzt einen bestehenden v4-Stand um den linearen Lernweg und entfernt alte r2-Werte", () => {
   const state = sanitizeState({
     version: 4,
@@ -133,6 +153,7 @@ test("ergänzt einen bestehenden v4-Stand um den linearen Lernweg und entfernt a
   assert.deepEqual(state.courses["proportional-power"].completedSteps, ["uq-power-context"]);
   assert.deepEqual(state.courses["proportional-linear"].completedSteps, []);
   assert.equal(state.transfer.methods["proportional-linear"].data.length, 5);
+  assert.deepEqual(state.sharedModules["uq-largest-single-error"], { completed: false, answers: {} });
   assert.equal("r2" in state.transfer.methods["proportional-power"].result, false);
   assert.equal(state.student.name, "Ada");
 });

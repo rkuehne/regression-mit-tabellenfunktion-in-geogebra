@@ -7,6 +7,8 @@ Eine statische, für GitHub Pages geeignete Lernanwendung für die Oberstufe. Di
 - Kondensatorladung Q ∝ U mit dem Konstantenverfahren C = Q/U
 - Kondensatorladung Q ∝ U mit linearer Regression und freiem Achsenabschnitt
 
+Die drei Kondensatorwege verwenden gemeinsam die verpflichtende Unterseite „Methode des größten Einzelfehlers“. Dort werden die relativen Einzelfehler einmal hergeleitet und anschließend auf die jeweils relevanten Abweichungen übertragen.
+
 ## Enthaltene Funktionen
 
 - vier frei wählbare Lernwege mit jeweils 8–10 Kapiteln und iPad-Anweisungen
@@ -17,17 +19,19 @@ Eine statische, für GitHub Pages geeignete Lernanwendung für die Oberstufe. Di
 - getrennte Ergebnis- und Verständnisprüfungen mit feldbezogenem Feedback
 - Dezimalkomma- und Dezimalpunkt-Unterstützung
 - getrennter lokaler Lernfortschritt je Lernweg
+- einmalig gespeicherte gemeinsame Pflichtkontrolle zur Methode des größten Einzelfehlers
 - optionaler Transferrechner mit denselben vier Auswertungsverfahren
 - dynamischer Lernnachweis, der auf dem iPad als PDF gesichert werden kann
 - Übernahme des bisherigen v3-Kursstands in den 1/r²-Lernweg sowie ältere Migrationen
 
 ## Dateien
 
-- index.html – vollständige Seitenstruktur
+- index.html – Kursauswahl, Lernwege, Transferrechner und Lernnachweis
+- groesster-einzelfehler.html / groesster-einzelfehler.js – gemeinsame Fehlerseite mit Pflichtkontrolle und Klausurformulierungen
 - style.css – Gestaltung, iPad-/Split-View-Anpassungen und Drucklayout
 - app.js – Lernwege, lokaler Zustand, Bedienung und Ausgaben
 - lesson-data.js – vier Kursmodelle, Inhalte, Abbildungen und Prüfregeln
-- regression.js – Potenzregression, lineare Regression, Kapazitätsauswertung, Abweichungen und vereinfachte Vergleichsgrenzen
+- regression.js – Potenzregression, lineare Regression, Kapazitätsauswertung, Abweichungen und Methode des größten Einzelfehlers
 - state.js – getrennte lokale Lernstände und Migration bisheriger Speicherstände
 - assets/steps/ – Abbildungen des Coulomb-Kurses und der drei U-Q-Verfahren
 - generate-uq-screenshots.ps1 – erzeugt die austauschbaren U-Q-Anleitungsgrafiken erneut

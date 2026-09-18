@@ -1,5 +1,7 @@
 import { EXAMPLE_DATA, UQ_EXAMPLE_DATA } from "./regression.js";
 
+export const UQ_SHARED_REQUIREMENT_ID = "uq-largest-single-error";
+
 const IMAGES = Object.freeze({
   table: Object.freeze({
     src: "./assets/steps/01-messwerte.png",
@@ -349,9 +351,9 @@ const UQ_IMAGES = Object.freeze({
     "D enthält die Modellwerte, E die Abweichungen der Messwerte vom Regressionsmodell.",
     [{ x: 65.6, y: 35, width: 34, height: 45, label: "D und E" }]),
   linearRegression: uqImage("12-lineare-regression-u-q.png", 900, 500,
-    "GeoGebra-Algebraansicht mit einer linearen Regression ersten Grades für die fünf U-Q-Punkte.",
-    "TrendPoly mit Grad 1 liefert Q(x) = 0,0408 · x + 0,12.",
-    [{ x: 18, y: 16, width: 77, height: 18, label: "Q(x)" }]),
+    "GeoGebra-Algebraansicht mit dem Befehl Q gleich Trendlinie für die fünf U-Q-Punkte.",
+    "Trendlinie liefert die Regressionsgerade Q: y = 0,0408 · x + 0,12.",
+    [{ x: 18, y: 16, width: 77, height: 18, label: "Q" }]),
   linearModelTable: uqImage("13-lineare-modellwerte-u-q.png", 1040, 500,
     "GeoGebra-Tabelle mit U-Q-Punkten, Modellwerten der linearen Regression und prozentualen Modellabweichungen.",
     "D enthält die Werte der Regressionsgeraden, E die relativen Modellabweichungen.",
@@ -484,19 +486,20 @@ export const UQ_POWER_STEPS = Object.freeze([
   },
   {
     id: "uq-power-conclusion", shortTitle: "Urteil", title: "Die Proportionalitätsvermutung beurteilen",
-    goal: "Du verbindest Exponent, Modellabweichungen und die vereinfachte 10-%-Vergleichsgrenze zu einem vorsichtigen Urteil.",
-    why: "Eine fachlich tragfähige Aussage stützt sich nicht nur darauf, dass der Exponent nahe bei 1 liegt. Auch die Abweichungen der Messpunkte und die Messgenauigkeit müssen gemeinsam betrachtet werden.",
-    concepts: [{ term: "ΔU = 5 V", text: "Bei 10-V-Skalenteilen wird hier ein halber Skalenteil, also 5 V, als Ableseunsicherheit angenommen." }, { term: "ΔQ = 0,1 · 10⁻⁸ C", text: "Für diesen Kurs wird die letzte angegebene Stelle der Ladungswerte als absolute Unsicherheit angesetzt." }, { term: "Vergleichsgrenze", text: "Der größere der beiden relativen Einzelwerte wird bewusst vereinfachend als gemeinsame 10-%-Grenze verwendet." }],
-    workedExample: { title: "Die größte Einzelunsicherheit", lines: ["Für U: 5/50 · 100 = 10 %.", "Für Q: 0,1/2,0 · 100 = 5 %.", "Die größere Einzelunsicherheit beträgt 10 %; die größte Modellabweichung 3,74 % liegt darunter."] },
-    remember: "b ≈ 1 und kleine Modellabweichungen stützen Q ∝ U; sie beweisen die Proportionalität nicht.",
-    actionHeading: "Jetzt urteilen", actions: ["Vergleiche b = 1,0116 mit dem theoretischen Wert 1.", "Vergleiche 3,74 % mit der vereinfachten Vergleichsgrenze von 10 %.", "Formuliere eine Vereinbarkeitsaussage.", "Bezeichne 10 % nicht als Unsicherheit von b."],
+    goal: "Du wendest die Methode des größten Einzelfehlers auf Exponent und Modellabweichungen an und formulierst ein vorsichtiges Urteil.",
+    why: "Eine fachlich tragfähige Aussage stützt sich nicht nur darauf, dass der Exponent nahe bei 1 liegt. Auch die Modellabweichungen werden mit dem größten relativen Einzelfehler verglichen. Die gemeinsame Pflichtseite leitet diese schulische Methode einmal ausführlich her.",
+    concepts: [{ term: "Exponent n", text: "Im Vergleich nennen wir den Potenzexponenten n, damit er nicht mit dem y-Achsenabschnitt b einer Geraden verwechselt wird." }, { term: "Exponentabweichung", text: "|1,011566 − 1|/1 · 100 ≈ 1,16 %." }, { term: "Größter Einzelfehler", text: "Aus ΔU und ΔQ ergibt sich auf der gemeinsamen Fehlerseite fmax = 10 %." }],
+    workedExample: { title: "Beide Abweichungen vergleichen", lines: ["Die relative Exponentabweichung beträgt etwa 1,16 %.", "Die größte Modellabweichung beträgt etwa 3,74 %.", "Beide Werte liegen unter fmax = 10 % und können nach dieser Methode durch die Messfehler erklärt werden."] },
+    remember: "n ≈ 1 und die Modellabweichungen sind im Rahmen der Methode des größten Einzelfehlers durch Messfehler erklärbar; bewiesen ist Q ∝ U damit nicht.",
+    actionHeading: "Jetzt urteilen", actions: ["Bearbeite die gemeinsame Seite zur Methode des größten Einzelfehlers.", "Vergleiche 1,16 % und 3,74 % jeweils mit fmax = 10 %.", "Behandle den Exponenten näherungsweise als n ≈ 1.", "Formuliere eine Vereinbarkeitsaussage ohne Beweisbehauptung."],
     formula: null, images: [UQ_IMAGES.regression, UQ_IMAGES.modelTable],
-    troubleshooting: "Die 10-%-Grenze ist eine vereinfachte schulische Vergleichsgröße. Sie ist weder eine vollständige Fehlerfortpflanzung noch eine Unsicherheit des Exponenten b.",
-    mistake: "b wird nicht deshalb auf 1 gesetzt, weil 1,0116 nahe bei 1 liegt. Vielmehr gibt die Theorie für direkte Proportionalität unabhängig von der Messung b = 1 vor; die Regression prüft, ob die Messdaten mit dieser Erwartung vereinbar sind.",
-    check: { prompt: "Prüfe Vergleichsgrenze und Schlussfolgerung.", fields: [
-      { id: "limit", kind: "result", type: "number", label: "Vereinfachte Vergleichsgrenze in %", placeholder: "10", expected: 10, tolerance: 0.05, feedback: { correct: "Die vereinfachte Grenze beträgt 10 %.", incorrect: "Vergleiche 5/50 mit 0,1/2,0." } },
-      { id: "distance", kind: "result", type: "number", label: "Abstand von b zu 1", placeholder: "0,0116", expected: 0.011566179, tolerance: 0.002, feedback: { correct: "Der Abstand passt.", incorrect: "Berechne |1,011566 − 1|." } },
-      { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist angemessen?", expected: "compatible", options: [option("", "Bitte auswählen …"), option("compatible", "Die Daten sind mit Q ∝ U vereinbar, beweisen es aber nicht."), option("proven", "Die Proportionalität ist exakt bewiesen."), option("b-error", "10 % ist die Unsicherheit von b.")], feedback: { correct: "Genau: vereinbar, aber nicht bewiesen.", incorrect: "Unterscheide Vergleichsgrenze, Modellabweichung und Exponent." } }
+    troubleshooting: "fmax = 10 % ist eine übertragene schulische Fehlergrenze. Sie ist weder eine vollständige Fehlerfortpflanzung noch eine statistisch bestimmte Unsicherheit des Exponenten.",
+    mistake: "n wird nicht willkürlich gleich 1 gesetzt. Die Theorie erwartet n = 1; weil die relative Exponentabweichung 1,16 % unter fmax liegt, darf n im Rahmen dieser Methode näherungsweise als 1 behandelt werden.",
+    sharedRequirement: true,
+    check: { prompt: "Prüfe die beiden Abweichungen und die Schlussfolgerung.", fields: [
+      { id: "limit", kind: "result", type: "number", label: "Größter relativer Einzelfehler in %", placeholder: "10", expected: 10, tolerance: 0.05, feedback: { correct: "fmax beträgt 10 %.", incorrect: "Bearbeite die gemeinsame Fehlerseite und vergleiche dort 10 % mit 5 %." } },
+      { id: "distance", kind: "result", type: "number", label: "Relative Abweichung von n zu 1 in %", placeholder: "1,16", expected: 1.1566178961, tolerance: 0.08, feedback: { correct: "Die relative Exponentabweichung passt.", incorrect: "Berechne |1,011566 − 1|/1 · 100." } },
+      { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist angemessen?", expected: "compatible", options: [option("", "Bitte auswählen …"), option("compatible", "Die Daten sind mit Q ∝ U vereinbar, beweisen es aber nicht."), option("proven", "Die Proportionalität ist exakt bewiesen."), option("b-error", "10 % ist die statistische Unsicherheit des Exponenten.")], feedback: { correct: "Genau: vereinbar, aber nicht bewiesen.", incorrect: "Unterscheide größten Einzelfehler, Modellabweichung und Exponent." } }
     ], success: "Du hast die Proportionalität fachlich vorsichtig beurteilt.", retry: "Nutze Exponent und Abweichungen gemeinsam." }
   }
 ]);
@@ -603,37 +606,39 @@ export const UQ_CONSTANT_STEPS = Object.freeze([
     ], success: "Du hast die Streuung der Kapazitätswerte bestimmt.", retry: "Nutze Betrag und Vorzeichen getrennt." }
   },
   {
-    id: "uq-constant-uncertainty", shortTitle: "Vergleichsgrenze", title: "Eine vereinfachte Vergleichsgrenze abschätzen",
-    goal: "Du bestimmst aus ΔU und ΔQ die größte relative Einzelunsicherheit und kennst die Grenzen dieser Abschätzung.",
-    why: "Der Vergleich mit den relativen Messunsicherheiten hilft einzuschätzen, ob die beobachtete Streuung auffällig groß ist. Der hier verwendete größte Einzelwert ist jedoch nur eine vereinfachte Vergleichsgröße und noch keine Unsicherheit des Quotienten Q/U.",
-    concepts: [{ term: "ΔU = 5 V", text: "Bei 10-V-Skalenteilen wird hier ein halber Skalenteil, also 5 V, als Ableseunsicherheit angenommen." }, { term: "ΔQ = 0,1 · 10⁻⁸ C", text: "Für diesen Kurs wird die letzte angegebene Stelle als absolute Unsicherheit der Ladung angesetzt." }, { term: "Relative Einzelunsicherheit", text: "Für die vereinfachte Abschätzung verwenden wir den größeren der beiden relativen Einzelwerte als gemeinsame Vergleichsgrenze." }],
-    workedExample: { title: "Warum 10 %?", lines: ["Die größte relative U-Unsicherheit liegt beim kleinsten U: 5/50 · 100 = 10 %.", "Die größte relative Q-Unsicherheit liegt beim kleinsten Q: 0,1/2,0 · 100 = 5 %.", "Der größere Einzelwert und damit die grobe Vergleichsgrenze ist 10 %."] },
-    remember: "10 % ist eine bewusst vereinfachte Vergleichsgrenze – nicht die berechnete Unsicherheit von C und keine vollständige Fehlerfortpflanzung.",
-    actionHeading: "Jetzt vergleichen", actions: ["Berechne die relative U-Unsicherheit bei 50 V.", "Berechne die relative Q-Unsicherheit bei 2,0 · 10⁻⁸ C.", "Wähle den größeren Wert.", "Vergleiche ihn mit 3,83 %."],
+    id: "uq-constant-uncertainty", shortTitle: "Fehlervergleich", title: "Die Methode des größten Einzelfehlers anwenden",
+    goal: "Du überträgst den größten relativen Einzelfehler auf die Streuung der Kapazitätswerte.",
+    why: "Die gemeinsame Fehlerseite zeigt, wie aus ΔU und ΔQ der größte relative Einzelfehler fmax = 10 % entsteht. Hier wenden wir dieses Ergebnis auf die größte Konstantenabweichung an.",
+    concepts: [{ term: "Methode", text: "Der größte relative Einzelfehler wird als Fehlergrenze auf die untersuchten Abweichungen übertragen." }, { term: "fmax = 10 %", text: "Der Spannungswert 50 V liefert mit 5 V den größten relativen Einzelfehler." }, { term: "Erklärbar", text: "Liegt eine Abweichung unter fmax, kann sie im Rahmen der Methode durch die Messfehler erklärt werden." }],
+    workedExample: { title: "Konstantenabweichung vergleichen", lines: ["Die größte Abweichung einer Einzelkapazität vom Mittelwert beträgt 3,83 %.", "Es gilt 3,83 % < fmax = 10 %.", "Die Streuung kann nach dieser schulischen Methode durch die Messfehler erklärt werden."] },
+    remember: "Weil 3,83 % < 10 % gilt, darf die Kapazität im Rahmen der Methode als konstant angesehen werden.",
+    actionHeading: "Jetzt vergleichen", actions: ["Bearbeite die gemeinsame Seite zur Methode des größten Einzelfehlers.", "Übernimm fmax = 10 %.", "Vergleiche 3,83 % mit fmax.", "Formuliere: Die Abweichung kann durch die Messfehler erklärt werden."],
     formula: null, images: [UQ_IMAGES.table, UQ_IMAGES.constantDeviations],
-    troubleshooting: "Absolute Unsicherheiten besitzen Einheiten. Erst nach der Division durch den jeweiligen Messwert entstehen vergleichbare Prozentwerte.",
-    mistake: "Die 10-%-Grenze ist weder die Unsicherheit jeder einzelnen Kapazität noch das Ergebnis einer Fehlerfortpflanzung. Sie dient in diesem Lernweg nur als grober Vergleichswert.",
-    check: { prompt: "Berechne beide relativen Einzelunsicherheiten.", fields: [
-      { id: "u-error", kind: "result", type: "number", label: "Größte relative U-Unsicherheit in %", placeholder: "10", expected: 10, tolerance: 0.05, feedback: { correct: "10 % stimmt.", incorrect: "Berechne 5/50 · 100." } },
-      { id: "q-error", kind: "result", type: "number", label: "Größte relative Q-Unsicherheit in %", placeholder: "5", expected: 5, tolerance: 0.05, feedback: { correct: "5 % stimmt.", incorrect: "Berechne 0,1/2,0 · 100." } },
-      { id: "choice", kind: "understanding", type: "choice", label: "Welche Grenze wird vereinfachend verwendet?", expected: "ten", options: [option("", "Bitte auswählen …"), option("ten", "Der größere Einzelwert 10 %."), option("sum", "Immer die Summe 15 %."), option("mean", "Der Mittelwert 7,5 %.")], feedback: { correct: "Richtig: Der Kurs verwendet bewusst 10 %.", incorrect: "Gesucht ist der größte einzelne relative Wert." } }
-    ], success: "Du kannst die vereinfachte 10-%-Vergleichsgrenze erklären.", retry: "Vergleiche 10 % und 5 % und beachte die Grenzen der Abschätzung." }
+    troubleshooting: "Falls dir die 10 % noch unklar sind, öffne die gemeinsame Fehlerseite. Dort werden absolute Fehler, relative Einzelfehler und die Wahl des größten Werts Schritt für Schritt getrennt.",
+    mistake: "Die 10 % sind nicht die berechnete Unsicherheit jeder Kapazität und keine vollständige Fehlerfortpflanzung. Sie werden in dieser Unterrichtsmethode bewusst als gemeinsame Fehlergrenze übertragen.",
+    sharedRequirement: true,
+    check: { prompt: "Wende den größten relativen Einzelfehler auf die Konstantenabweichung an.", fields: [
+      { id: "u-error", kind: "result", type: "number", label: "Größter relativer Einzelfehler in %", placeholder: "10", expected: 10, tolerance: 0.05, feedback: { correct: "fmax = 10 % stimmt.", incorrect: "Bearbeite die gemeinsame Fehlerseite." } },
+      { id: "q-error", kind: "result", type: "number", label: "Größte Konstantenabweichung in %", placeholder: "3,83", expected: 3.8307421061, tolerance: 0.08, feedback: { correct: "3,83 % stimmt.", incorrect: "Vergleiche die Beträge der Kapazitätsabweichungen." } },
+      { id: "choice", kind: "understanding", type: "choice", label: "Was folgt aus 3,83 % < 10 %?", expected: "explainable", options: [option("", "Bitte auswählen …"), option("explainable", "Die Streuung kann durch Messfehler erklärt werden."), option("proven", "Die Proportionalität ist mathematisch bewiesen."), option("sum", "Die Fehler müssen zu 15 % addiert werden.")], feedback: { correct: "Richtig: Die Streuung ist mit den Messfehlern erklärbar.", incorrect: "Die Methode überträgt den größten, nicht die Summe der Einzelfehler." } }
+    ], success: "Du hast die Methode des größten Einzelfehlers auf das Konstantenverfahren angewendet.", retry: "Vergleiche 3,83 % mit fmax = 10 %." }
   },
   {
     id: "uq-constant-conclusion", shortTitle: "Urteil", title: "Kapazität und Proportionalität beurteilen",
-    goal: "Du formulierst aus Mittelwert, Streuung und vereinfachter Vergleichsgrenze eine vorsichtige Schlussfolgerung.",
+    goal: "Du formulierst aus Mittelwert, Streuung und der Methode des größten Einzelfehlers eine vorsichtige Schlussfolgerung.",
     why: "Ein gutes Ergebnis nennt sowohl den bestimmten Kapazitätswert als auch die Aussagekraft und Begrenzung des Experiments.",
     concepts: [{ term: "Vereinbar", text: "Die Messwerte widersprechen der theoretischen Erwartung innerhalb der verwendeten Abschätzung nicht." }, { term: "Gestützt", text: "Die Messreihe liefert Hinweise zugunsten des Modells." }, { term: "Bewiesen", text: "Eine stärkere Aussage, die aus einer endlichen fehlerbehafteten Messreihe nicht folgt." }],
-    workedExample: { title: "Eine angemessene Schlussfolgerung", lines: ["Die mittlere Kapazität beträgt etwa 416 pF.", "Die größte Konstantenabweichung von 3,83 % liegt unter der vereinfachten 10-%-Vergleichsgrenze.", "In dieser vereinfachten Betrachtung ist die Messreihe daher mit Q = C · U vereinbar und stützt die Annahme direkter Proportionalität; sie beweist sie jedoch nicht."] },
+    workedExample: { title: "Eine angemessene Schlussfolgerung", lines: ["Die mittlere Kapazität beträgt etwa 416 pF.", "Die größte Konstantenabweichung von 3,83 % liegt unter dem größten relativen Einzelfehler von 10 % und kann deshalb durch die Messfehler erklärt werden.", "Im Rahmen dieser schulischen Methode ist die Messreihe mit Q = C · U vereinbar; sie beweist die Proportionalität jedoch nicht."] },
     remember: "Ergebnis: C ≈ 416 pF; die Daten sind mit Q ∝ U vereinbar.",
-    actionHeading: "Jetzt formulieren", actions: ["Nenne den Kapazitätsmittelwert mit Einheit.", "Nenne die größte Abweichung und die vereinfachte Vergleichsgrenze.", "Verwende das Wort vereinbar.", "Weise auf die vereinfachte Unsicherheitsbetrachtung hin."],
+    actionHeading: "Jetzt formulieren", actions: ["Nenne den Kapazitätsmittelwert mit Einheit.", "Nenne 3,83 % und den größten relativen Einzelfehler 10 %.", "Erkläre die Streuung durch die Messfehler.", "Verwende das Wort vereinbar und vermeide eine Beweisbehauptung."],
     formula: null, images: [UQ_IMAGES.mean, UQ_IMAGES.constantDeviations],
     troubleshooting: "Eine passende Formulierung lautet: Die Messwerte stützen die Proportionalitätsvermutung, beweisen sie aber nicht.",
-    mistake: "Aus 3,83 % < 10 % folgt keine exakte Bestätigung. Es folgt nur, dass die beobachtete Streuung im Rahmen der vereinfachten Betrachtung nicht auffällig groß ist.",
+    mistake: "Aus 3,83 % < 10 % folgt keine exakte Bestätigung. Es folgt nach der vereinfachten Unterrichtsmethode, dass die beobachtete Streuung durch die angegebenen Messfehler erklärt werden kann.",
+    sharedRequirement: true,
     check: { prompt: "Prüfe Ergebnis und Schlussfolgerung.", fields: [
       { id: "capacity", kind: "result", type: "number", label: "Mittlere Kapazität in pF", placeholder: "416", expected: 415.9333333, tolerance: 1, feedback: { correct: "Etwa 416 pF stimmt.", incorrect: "Nutze den Mittelwert aus C1:C5." } },
       { id: "deviation", kind: "result", type: "number", label: "Größte Konstantenabweichung in %", placeholder: "3,83", expected: 3.8307421061, tolerance: 0.08, feedback: { correct: "3,83 % stimmt.", incorrect: "Vergleiche die Beträge in E1:E5." } },
-      { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist fachlich angemessen?", expected: "compatible", options: [option("", "Bitte auswählen …"), option("compatible", "Q ∝ U ist mit den Messdaten vereinbar, aber nicht bewiesen."), option("exact", "Alle Kapazitäten sind exakt gleich."), option("failed", "Jede Streuung widerlegt Proportionalität.")], feedback: { correct: "Genau: vereinbar, nicht bewiesen.", incorrect: "Berücksichtige Messstreuung und die vereinfachte Vergleichsgrenze." } }
+      { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist fachlich angemessen?", expected: "compatible", options: [option("", "Bitte auswählen …"), option("compatible", "Q ∝ U ist mit den Messdaten vereinbar, aber nicht bewiesen."), option("exact", "Alle Kapazitäten sind exakt gleich."), option("failed", "Jede Streuung widerlegt Proportionalität.")], feedback: { correct: "Genau: vereinbar, nicht bewiesen.", incorrect: "Berücksichtige Messstreuung und die Methode des größten Einzelfehlers." } }
     ], success: "Du hast Kapazität und Proportionalität angemessen beurteilt.", retry: "Verbinde 416 pF, 3,83 % und 10 %." }
   }
 ]);
@@ -690,37 +695,37 @@ export const UQ_LINEAR_STEPS = Object.freeze([
   },
   {
     id: "uq-linear-concept", shortTitle: "Geradenmodell", title: "Lineare Regression und Proportionalität unterscheiden",
-    goal: "Du erklärst die Parameter der Geraden Q(U) = m · U + d und erkennst direkte Proportionalität als Sonderfall d = 0.",
+    goal: "Du erklärst die Parameter der Geraden Q(U) = m · U + b und erkennst direkte Proportionalität als Sonderfall b = 0.",
     why: "Eine lineare Regression bestimmt die Gerade, die insgesamt möglichst gut zu den Messpunkten passt. Der freie Achsenabschnitt erlaubt zu prüfen, ob die Daten auf eine Ursprungsgerade hindeuten, statt diese Eigenschaft bereits vorauszusetzen.",
-    concepts: [{ term: "Steigung m", text: "Sie gibt die Änderung von Q je Änderung von U an. Im Modell Q = C · U entspricht sie der Kapazität C." }, { term: "Achsenabschnitt d", text: "Der vom Modell vorhergesagte Q-Wert bei U = 0." }, { term: "Ursprungsgerade", text: "Eine Gerade mit d = 0; nur dieser lineare Sonderfall ist direkt proportional." }, { term: "Extrapolation", text: "Eine Aussage außerhalb des Messbereichs; hier liegt U = 0 außerhalb der Messwerte von 50 bis 250 V." }],
-    workedExample: { title: "Warum der Achsenabschnitt wichtig ist", lines: ["Q(U) = 0,04 · U ist direkt proportional, weil d = 0 gilt.", "Q(U) = 0,04 · U + 1 ist zwar linear, aber nicht direkt proportional.", "Eine Verdopplung von U verdoppelt Q bei einem von null verschiedenen d nicht exakt."] },
-    remember: "Linear bedeutet nicht automatisch proportional: Direkte Proportionalität verlangt zusätzlich d = 0.",
-    actionHeading: "Vor der Regression", actions: ["Vergleiche Q = C · U mit Q = m · U + d.", "Ordne m der Kapazität C zu.", "Notiere die theoretische Erwartung d = 0."],
+    concepts: [{ term: "Steigung m", text: "Sie gibt die Änderung von Q je Änderung von U an. Im Modell Q = C · U entspricht sie der Kapazität C." }, { term: "y-Achsenabschnitt b", text: "Der vom Modell vorhergesagte Q-Wert bei U = 0." }, { term: "Ursprungsgerade", text: "Eine Gerade mit b = 0; nur dieser lineare Sonderfall ist direkt proportional." }, { term: "Extrapolation", text: "Eine Aussage außerhalb des Messbereichs; hier liegt U = 0 außerhalb der Messwerte von 50 bis 250 V." }],
+    workedExample: { title: "Warum der y-Achsenabschnitt wichtig ist", lines: ["Q(U) = 0,04 · U ist direkt proportional, weil b = 0 gilt.", "Q(U) = 0,04 · U + 1 ist zwar linear, aber nicht direkt proportional.", "Eine Verdopplung von U verdoppelt Q bei einem von null verschiedenen b nicht exakt."] },
+    remember: "Linear bedeutet nicht automatisch proportional: Direkte Proportionalität verlangt zusätzlich b = 0.",
+    actionHeading: "Vor der Regression", actions: ["Vergleiche Q = C · U mit der Schulform y = m · x + b.", "Ordne m der Kapazität C zu.", "Notiere die theoretische Erwartung b = 0."],
     formula: null, images: [],
     troubleshooting: "Der Achsenabschnitt ist der Funktionswert bei U = 0. Er ist nicht mit dem ersten gemessenen Q-Wert zu verwechseln.",
     mistake: "Eine Gerade mit hohem Anstieg oder kleinen Punktabständen ist nicht allein deshalb proportional. Entscheidend ist auch ihr Verlauf durch den Ursprung.",
     check: { prompt: "Prüfe die Bedingungen direkter Proportionalität.", fields: [
-      { id: "ideal-intercept", kind: "result", type: "number", label: "Theoretisch erwarteter Achsenabschnitt d", placeholder: "0", expected: 0, tolerance: 0.0001, feedback: { correct: "Für direkte Proportionalität gilt d = 0.", incorrect: "Setze U = 0 in Q = C · U ein." } },
-      { id: "slope", kind: "understanding", type: "choice", label: "Welche physikalische Größe entspricht der Steigung?", expected: "capacity", options: [option("", "Bitte auswählen …"), option("capacity", "Die Kapazität C."), option("charge", "Die Ladung Q."), option("uncertainty", "Die Messunsicherheit.")], feedback: { correct: "Richtig: C = ΔQ/ΔU entspricht der Steigung.", incorrect: "Vergleiche Q = C · U mit Q = m · U + d." } }
+      { id: "ideal-intercept", kind: "result", type: "number", label: "Theoretisch erwarteter y-Achsenabschnitt b", placeholder: "0", expected: 0, tolerance: 0.0001, feedback: { correct: "Für direkte Proportionalität gilt b = 0.", incorrect: "Setze U = 0 in Q = C · U ein." } },
+      { id: "slope", kind: "understanding", type: "choice", label: "Welche physikalische Größe entspricht der Steigung?", expected: "capacity", options: [option("", "Bitte auswählen …"), option("capacity", "Die Kapazität C."), option("charge", "Die Ladung Q."), option("uncertainty", "Die Messunsicherheit.")], feedback: { correct: "Richtig: C = ΔQ/ΔU entspricht der Steigung.", incorrect: "Vergleiche Q = C · U mit Q = m · U + b." } }
     ], success: "Du kannst lineare und direkt proportionale Zusammenhänge unterscheiden.", retry: "Vergleiche insbesondere die Achsenabschnitte beider Gleichungen." }
   },
   {
-    id: "uq-linear-fit", shortTitle: "TrendPoly", title: "Die lineare Regression in GeoGebra berechnen",
+    id: "uq-linear-fit", shortTitle: "Trendlinie", title: "Die lineare Regression in GeoGebra berechnen",
     goal: "Du erzeugst eine lineare Regressionsfunktion und liest Steigung sowie Achsenabschnitt ab.",
-    why: "TrendPoly mit Grad 1 passt ein Polynom ersten Grades – also eine Gerade – an alle fünf Messpunkte an. Durch den Funktionsnamen Q können wir anschließend für jede Spannung einen Modellwert berechnen.",
-    concepts: [{ term: "TrendPoly", text: "GeoGebras Befehl für eine Polynomregression." }, { term: "Grad 1", text: "Ein Polynom ersten Grades hat die Form m · x + d und ist eine Gerade." }, { term: "Q(x)", text: "Q ist der gewählte Funktionsname; GeoGebra verwendet x als Variable, die hier für U steht." }],
-    workedExample: { title: "Die Ausgabe lesen", lines: ["GeoGebra liefert Q(x) = 0,0408 · x + 0,12.", "Damit ist m = 0,0408 und d = 0,12 in der verwendeten Skalierung.", "Die Steigung entspricht 0,0408 · 10⁻⁸ F = 408 pF."] },
-    remember: "Steigung m ≈ 408 pF; Achsenabschnitt d = 0,12 · 10⁻⁸ C.",
-    actionHeading: "Jetzt in GeoGebra", actions: ["Wechsle zur Algebraansicht.", "Gib den Befehl vollständig ein und bestätige.", "Lies die Zahl vor x als Steigung m ab.", "Lies den konstanten Summanden als Achsenabschnitt d ab."],
-    formula: "Q(x)=TrendPoly(C1:C5,1)", images: [UQ_IMAGES.linearRegression],
-    troubleshooting: "Prüfe bei einer Fehlermeldung, ob C1:C5 tatsächlich fünf Punkte enthalten und nach dem Befehl eine 1 für den Polynomgrad steht.",
-    mistake: "d = 0,12 ist kein bei U = 0 gemessener Wert. Die Regression extrapoliert die aus 50 bis 250 V gewonnene Gerade bis zur y-Achse.",
+    why: "Trendlinie passt unmittelbar eine Gerade an alle fünf Messpunkte an. Der kurze Befehl benötigt keinen Polynomgrad. Durch den Namen Q kann die Gerade anschließend mit Q(A1) ausgewertet werden.",
+    concepts: [{ term: "Trendlinie", text: "GeoGebras Befehl für die lineare Regressionsgerade einer Punktliste." }, { term: "y = m · x + b", text: "Die in der Schule verwendete Form einer linearen Funktion." }, { term: "Q", text: "Q ist der gewählte Name der Geraden; x steht in GeoGebra inhaltlich für die Spannung U." }],
+    workedExample: { title: "Die Ausgabe lesen", lines: ["GeoGebra liefert Q: y = 0,0408 · x + 0,12.", "Damit ist m = 0,0408 und b = 0,12 in der verwendeten Skalierung.", "Die Steigung entspricht 0,0408 · 10⁻⁸ F = 408 pF."] },
+    remember: "Steigung m ≈ 408 pF; y-Achsenabschnitt b = 0,12 · 10⁻⁸ C.",
+    actionHeading: "Jetzt in GeoGebra", actions: ["Wechsle zur Algebraansicht.", "Gib Q=Trendlinie(C1:C5) ein und bestätige.", "Lies die Zahl vor x als Steigung m ab.", "Lies den konstanten Summanden als y-Achsenabschnitt b ab."],
+    formula: "Q=Trendlinie(C1:C5)", images: [UQ_IMAGES.linearRegression],
+    troubleshooting: "Prüfe bei einer Fehlermeldung, ob C1:C5 tatsächlich fünf Punkte enthalten. Verwende den Namen Q vor dem Gleichheitszeichen, damit du die Gerade später mit Q(A1) auswerten kannst.",
+    mistake: "b = 0,12 ist kein bei U = 0 gemessener Wert. Die Regression extrapoliert die aus 50 bis 250 V gewonnene Gerade bis zur y-Achse.",
     check: { prompt: "Übertrage und deute die Regressionsparameter.", fields: [
       { id: "slope", kind: "result", type: "number", label: "Steigung m", placeholder: "0,0408", expected: 0.0408, tolerance: 0.0001, feedback: { correct: "Die Steigung stimmt.", incorrect: "m ist die Zahl vor x: 0,0408." } },
-      { id: "intercept", kind: "result", type: "number", label: "Achsenabschnitt d", placeholder: "0,12", expected: 0.12, tolerance: 0.01, feedback: { correct: "Der Achsenabschnitt stimmt.", incorrect: "d ist der konstante Summand +0,12." } },
+      { id: "intercept", kind: "result", type: "number", label: "y-Achsenabschnitt b", placeholder: "0,12", expected: 0.12, tolerance: 0.01, feedback: { correct: "Der y-Achsenabschnitt stimmt.", incorrect: "b ist der konstante Summand +0,12." } },
       { id: "capacity", kind: "result", type: "number", label: "Kapazität aus m in pF", placeholder: "408", expected: 408, tolerance: 1, feedback: { correct: "Die Steigung entspricht etwa 408 pF.", incorrect: "Multipliziere 0,0408 mit 10 000." } },
-      { id: "degree", kind: "understanding", type: "choice", label: "Warum steht im Befehl der Grad 1?", expected: "line", options: [option("", "Bitte auswählen …"), option("line", "Ein Polynom ersten Grades ist eine Gerade."), option("point", "Es wird nur ein Punkt verwendet."), option("exact", "Die Messwerte werden dadurch exakt.")], feedback: { correct: "Richtig: Grad 1 erzeugt das lineare Modell.", incorrect: "Vergleiche m · x + d mit einem Polynom ersten Grades." } }
-    ], success: "Du hast Regressionsgerade, Steigung und Achsenabschnitt richtig bestimmt.", retry: "Lies die Ausgabe als m · x + d." }
+      { id: "degree", kind: "understanding", type: "choice", label: "Was berechnet Trendlinie?", expected: "line", options: [option("", "Bitte auswählen …"), option("line", "Eine möglichst gut passende Regressionsgerade."), option("point", "Nur den ersten Messpunkt."), option("exact", "Eine Gerade durch jeden Messpunkt.")], feedback: { correct: "Richtig: Trendlinie passt eine Gerade an alle Punkte an.", incorrect: "Die Regression sucht eine gemeinsame, möglichst gut passende Gerade." } }
+    ], success: "Du hast Regressionsgerade, Steigung und y-Achsenabschnitt richtig bestimmt.", retry: "Lies die Ausgabe in der Form y = m · x + b." }
   },
   {
     id: "uq-linear-model", shortTitle: "Modellwerte", title: "Werte der Regressionsgeraden berechnen",
@@ -758,20 +763,21 @@ export const UQ_LINEAR_STEPS = Object.freeze([
   },
   {
     id: "uq-linear-conclusion", shortTitle: "Urteil", title: "Die lineare Auswertung vorsichtig beurteilen",
-    goal: "Du verbindest Steigung, Achsenabschnitt, Modellabweichungen und Messunsicherheit zu einem fachlich angemessenen Urteil.",
-    why: "Eine lineare Messreihe ist nicht automatisch direkt proportional. Das Urteil muss deshalb sowohl die gute Anpassung der Geraden als auch den von null verschiedenen, extrapolierten Achsenabschnitt und die Grenzen der Unsicherheitsbetrachtung nennen.",
-    concepts: [{ term: "Vergleichsgrenze", text: "Der größere relative Einzelwert aus ΔU/U und ΔQ/Q wird hier vereinfacht als 10-%-Grenze verwendet." }, { term: "Parameterunsicherheit", text: "Sie würde angeben, wie genau m und d durch die Regression bestimmt sind; sie wird in diesem Kurs nicht berechnet." }, { term: "Vereinbar", text: "Die Daten liefern im Rahmen der vereinfachten Betrachtung keinen deutlichen Widerspruch zur theoretischen Erwartung." }],
-    workedExample: { title: "Eine angemessene Schlussfolgerung", lines: ["Die Steigung entspricht etwa 408 pF; die größte Modellabweichung 7,41 % liegt unter der vereinfachten 10-%-Vergleichsgrenze.", "Der Achsenabschnitt d = 0,12 · 10⁻⁸ C liegt nahe bei null, ist aber extrapoliert und besitzt hier keine berechnete Parameterunsicherheit.", "Die Daten sind deshalb in dieser vereinfachten Betrachtung mit Q ∝ U vereinbar, beweisen direkte Proportionalität jedoch nicht."] },
-    remember: "Linearer Verlauf und kleiner Achsenabschnitt stützen Q ∝ U; eine statistisch abgesicherte Aussage über d = 0 wird nicht getroffen.",
-    actionHeading: "Jetzt urteilen", actions: ["Nenne die Steigung als Kapazität von etwa 408 pF.", "Nenne d = 0,12 · 10⁻⁸ C und die Extrapolation auf U = 0.", "Vergleiche 7,41 % mit der vereinfachten Grenze von 10 %.", "Formuliere eine Vereinbarkeitsaussage mit Einschränkung."],
+    goal: "Du verbindest Steigung, y-Achsenabschnitt, Modellabweichungen und die Methode des größten Einzelfehlers zu einem fachlich angemessenen Urteil.",
+    why: "Eine lineare Messreihe ist nicht automatisch direkt proportional. Neben der Modellabweichung muss deshalb auch der Einfluss des von null verschiedenen, extrapolierten y-Achsenabschnitts beurteilt werden. Die gemeinsame Fehlerseite zeigt dafür das schulische Vorgehen.",
+    concepts: [{ term: "Größter Einzelfehler", text: "Aus ΔU und ΔQ ergibt sich nach der gemeinsamen Methode fmax = 10 %." }, { term: "Anteil von b", text: "Da eine relative Abweichung von b gegenüber null nicht definiert ist, wird |b| auf den kleinsten gemessenen Ladungswert bezogen." }, { term: "Vereinbar", text: "Die Daten liefern im Rahmen der schulischen Methode keinen deutlichen Widerspruch zur theoretischen Erwartung." }],
+    workedExample: { title: "Modell und y-Achsenabschnitt prüfen", lines: ["Die größte Modellabweichung 7,41 % liegt unter fmax = 10 %.", "Für den y-Achsenabschnitt gilt |b|/Qmin · 100 = 0,12/2,0 · 100 = 6 %; auch 6 % liegt unter 10 %.", "Beide Abweichungen können nach dieser Methode durch Messfehler erklärt und b näherungsweise vernachlässigt werden: Q(U) ≈ m · U."] },
+    remember: "Weil 7,41 % und 6 % unter 10 % liegen, kann b schulisch näherungsweise vernachlässigt werden; statistisch bestätigt ist b = 0 damit nicht.",
+    actionHeading: "Jetzt urteilen", actions: ["Bearbeite die gemeinsame Seite zur Methode des größten Einzelfehlers.", "Nenne die Steigung als Kapazität von etwa 408 pF.", "Vergleiche 7,41 % und den Anteil |b|/Qmin = 6 % jeweils mit fmax = 10 %.", "Formuliere b ≈ 0 und Q(U) ≈ m · U als Näherung, nicht als Beweis."],
     formula: null, images: [UQ_IMAGES.linearRegression, UQ_IMAGES.linearModelTable],
-    troubleshooting: "Die 10-%-Grenze ist nur eine vereinfachte Vergleichsgröße. Sie liefert keine Unsicherheit des Achsenabschnitts d.",
-    mistake: "Vergleiche d nicht direkt mit ΔQ, um d = 0 zu bestätigen. d ist ein aus allen Punkten bestimmter Regressionsparameter; seine Unsicherheit müsste gesondert berechnet werden.",
+    troubleshooting: "Eine relative Abweichung von b gegenüber dem theoretischen Wert null lässt sich wegen der Division durch null nicht berechnen. Deshalb verwendet die Unterrichtsmethode den Anteil |b|/Qmin = 6 %.",
+    mistake: "Die Rechnung mit 6 % ist eine schulische Fehlerbeurteilung. Sie ersetzt keine statistische Unsicherheit des Regressionsparameters und bestätigt b = 0 nicht exakt.",
+    sharedRequirement: true,
     check: { prompt: "Prüfe Vergleichswerte und Schlussfolgerung.", fields: [
-      { id: "limit", kind: "result", type: "number", label: "Vereinfachte Vergleichsgrenze in %", placeholder: "10", expected: 10, tolerance: 0.05, feedback: { correct: "Die vereinfachte Grenze beträgt 10 %.", incorrect: "Vergleiche 5/50 · 100 mit 0,1/2,0 · 100." } },
-      { id: "intercept", kind: "result", type: "number", label: "Achsenabschnitt d", placeholder: "0,12", expected: 0.12, tolerance: 0.01, feedback: { correct: "d = 0,12 stimmt.", incorrect: "Lies den konstanten Summanden der Geradengleichung ab." } },
-      { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist fachlich angemessen?", expected: "compatible", options: [option("", "Bitte auswählen …"), option("compatible", "Die Daten sind vereinfacht mit Q ∝ U vereinbar; d = 0 ist damit nicht statistisch bestätigt."), option("proven", "Die direkte Proportionalität ist exakt bewiesen."), option("uncertainty", "10 % ist die Unsicherheit von d.")], feedback: { correct: "Genau: vereinbar, aber weder bewiesen noch statistisch für d = 0 abgesichert.", incorrect: "Unterscheide Modellabweichung, Vergleichsgrenze und Parameterunsicherheit." } }
-    ], success: "Du hast die lineare Regression fachlich vorsichtig beurteilt.", retry: "Verbinde 408 pF, d = 0,12, 7,41 % und die Grenze der Aussage." }
+      { id: "limit", kind: "result", type: "number", label: "Größter relativer Einzelfehler in %", placeholder: "10", expected: 10, tolerance: 0.05, feedback: { correct: "fmax beträgt 10 %.", incorrect: "Bearbeite die gemeinsame Fehlerseite." } },
+      { id: "intercept", kind: "result", type: "number", label: "Anteil |b|/Qmin in %", placeholder: "6", expected: 6, tolerance: 0.05, feedback: { correct: "Der Anteil des y-Achsenabschnitts beträgt 6 %.", incorrect: "Berechne 0,12/2,0 · 100." } },
+      { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist fachlich angemessen?", expected: "compatible", options: [option("", "Bitte auswählen …"), option("compatible", "Die Abweichungen sind durch Messfehler erklärbar; b kann näherungsweise vernachlässigt werden."), option("proven", "Die direkte Proportionalität ist exakt bewiesen."), option("uncertainty", "10 % ist die statistische Unsicherheit von b.")], feedback: { correct: "Genau: schulisch erklärbar und näherungsweise vernachlässigbar, aber nicht statistisch bestätigt.", incorrect: "Unterscheide die Unterrichtsmethode von einer statistischen Parameterschätzung." } }
+    ], success: "Du hast die lineare Regression mit der Methode des größten Einzelfehlers beurteilt.", retry: "Verbinde 408 pF, b = 0,12, 7,41 %, 6 % und fmax = 10 %." }
   }
 ]);
 
@@ -808,6 +814,7 @@ export const COURSES = Object.freeze({
     duration: "etwa 20–30 Minuten",
     dataHeaders: ["A: U (V)", "B: Q/(10⁻⁸ C)"],
     dataKeys: ["u", "q"],
+    sharedRequirement: UQ_SHARED_REQUIREMENT_ID,
     stages: ["Messidee", "Tabelle", "Punkte", "Modell", "Auswertung", "Urteil"],
     steps: UQ_POWER_STEPS,
     competencies: [
@@ -820,9 +827,10 @@ export const COURSES = Object.freeze({
     referenceResults: [
       ["Potenzfunktion", "Q(U) ≈ 0,0393011 · U^(1,011566)"],
       ["Größte Modellabweichung", "≈ 3,74 % bei U = 100 V"],
-      ["Grobe Vergleichsgrenze", "10 %; keine Unsicherheit von b"]
+      ["Relative Exponentabweichung", "≈ 1,16 %"],
+      ["Größter relativer Einzelfehler", "fmax = 10 %"]
     ],
-    conclusion: "Der Exponent b ≈ 1,0116 liegt nahe beim theoretisch erwarteten Wert 1; zugleich liegt die größte Modellabweichung von etwa 3,74 % unter der vereinfachten 10-%-Vergleichsgrenze. In dieser vereinfachten Betrachtung ist die Messreihe mit Q ∝ U vereinbar, beweist die Proportionalität aber nicht. Der Faktor a der freien Potenzregression wird nicht ungeprüft als Kapazität interpretiert."
+    conclusion: "Der Potenzexponent n ≈ 1,0116 weicht relativ um etwa 1,16 % vom theoretisch erwarteten Wert 1 ab; die größte Modellabweichung beträgt etwa 3,74 %. Beide Werte liegen unter dem größten relativen Einzelfehler fmax = 10 % und können nach dieser schulischen Methode durch die Messfehler erklärt werden. Die Messreihe ist mit Q ∝ U vereinbar, beweist die Proportionalität aber nicht. Der Faktor a der freien Potenzregression wird nicht ungeprüft als Kapazität interpretiert."
   }),
   "proportional-constants": Object.freeze({
     id: "proportional-constants",
@@ -832,21 +840,22 @@ export const COURSES = Object.freeze({
     duration: "etwa 20–30 Minuten",
     dataHeaders: ["A: U (V)", "B: Q/(10⁻⁸ C)"],
     dataKeys: ["u", "q"],
+    sharedRequirement: UQ_SHARED_REQUIREMENT_ID,
     stages: ["Messidee", "Tabelle", "Kapazitäten", "Mittelwert", "Streuung", "Urteil"],
     steps: UQ_CONSTANT_STEPS,
     competencies: [
       { label: "Ich kann aus Q = C · U die Gleichung C = Q/U herleiten.", steps: ["uq-constant-context"] },
       { label: "Ich kann einzelne Kapazitäten mit GeoGebra berechnen.", steps: ["uq-constant-table", "uq-constant-ratios"] },
       { label: "Ich kann Mittelwert und Kapazität in pF bestimmen.", steps: ["uq-constant-mean", "uq-constant-reference"] },
-      { label: "Ich kann Konstantenabweichungen und die vereinfachte Vergleichsgrenze berechnen.", steps: ["uq-constant-deviation", "uq-constant-uncertainty"] },
+      { label: "Ich kann Konstantenabweichungen mit dem größten relativen Einzelfehler vergleichen.", steps: ["uq-constant-deviation", "uq-constant-uncertainty"] },
       { label: "Ich kann Proportionalität vorsichtig beurteilen.", steps: ["uq-constant-conclusion"] }
     ],
     referenceResults: [
       ["Mittlere Kapazität", "≈ 0,0415933 · 10⁻⁸ F ≈ 416 pF"],
       ["Größte Konstantenabweichung", "≈ 3,83 % bei U = 50 V"],
-      ["Grobe Vergleichsgrenze", "10 %"]
+      ["Größter relativer Einzelfehler", "fmax = 10 %"]
     ],
-    conclusion: "Die mittlere Kapazität beträgt etwa 416 pF. Die größte Konstantenabweichung von etwa 3,83 % liegt unter der bewusst vereinfachten 10-%-Vergleichsgrenze. In dieser Betrachtung ist die Messreihe mit Q = C · U vereinbar und stützt die Annahme direkter Proportionalität; sie beweist sie jedoch nicht."
+    conclusion: "Die mittlere Kapazität beträgt etwa 416 pF. Die größte Konstantenabweichung von etwa 3,83 % liegt unter dem größten relativen Einzelfehler fmax = 10 % und kann nach der schulischen Methode durch die Messfehler erklärt werden. Die Messreihe ist mit Q = C · U vereinbar und stützt die Annahme direkter Proportionalität; sie beweist sie jedoch nicht."
   }),
   "proportional-linear": Object.freeze({
     id: "proportional-linear",
@@ -856,6 +865,7 @@ export const COURSES = Object.freeze({
     duration: "etwa 20–30 Minuten",
     dataHeaders: ["A: U (V)", "B: Q/(10⁻⁸ C)"],
     dataKeys: ["u", "q"],
+    sharedRequirement: UQ_SHARED_REQUIREMENT_ID,
     stages: ["Messidee", "Tabelle", "Punkte", "Geradenmodell", "Modellwerte", "Abweichungen", "Urteil"],
     steps: UQ_LINEAR_STEPS,
     competencies: [
@@ -869,9 +879,10 @@ export const COURSES = Object.freeze({
       ["Regressionsgerade", "Q(U) = 0,0408 · U + 0,12"],
       ["Kapazität aus der Steigung", "≈ 408 pF"],
       ["Größte Modellabweichung", "≈ 7,41 % bei U = 50 V"],
-      ["Vereinfachte Vergleichsgrenze", "10 %"]
+      ["Anteil des y-Achsenabschnitts", "|b|/Qmin · 100 = 6 %"],
+      ["Größter relativer Einzelfehler", "fmax = 10 %"]
     ],
-    conclusion: "Die Messpunkte werden gut durch eine Gerade beschrieben. Die Steigung entspricht einer Kapazität von etwa 408 pF, der Achsenabschnitt liegt nahe bei null und die größte Modellabweichung von etwa 7,41 % bleibt unter der vereinfachten 10-%-Vergleichsgrenze. In dieser vereinfachten Betrachtung sind die Daten mit Q ∝ U vereinbar. Ein Beweis für direkte Proportionalität oder eine statistisch abgesicherte Aussage über d = 0 folgt daraus nicht."
+    conclusion: "Die Messpunkte werden gut durch eine Gerade beschrieben. Die Steigung entspricht einer Kapazität von etwa 408 pF. Die größte Modellabweichung von etwa 7,41 % und der relative Anteil des y-Achsenabschnitts von 6 % liegen unter dem größten relativen Einzelfehler fmax = 10 %. Beide Abweichungen können nach der schulischen Methode durch die Messfehler erklärt werden; b darf näherungsweise vernachlässigt werden, sodass Q(U) ≈ m · U gilt. Ein Beweis für direkte Proportionalität oder eine statistische Bestätigung von b = 0 folgt daraus nicht."
   })
 });
 
