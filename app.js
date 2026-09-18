@@ -144,10 +144,6 @@ function activeTransfer() {
   return state.transfer.methods[state.transfer.activeMethod];
 }
 
-function activeTransferCourse() {
-  return COURSES[state.transfer.activeMethod];
-}
-
 function sharedRequirementState(course = activeCourse()) {
   return course.sharedRequirement ? state.sharedModules?.[course.sharedRequirement] : null;
 }
@@ -1406,4 +1402,3 @@ function initialize() {
 }
 
 initialize();
-  deviationsWithinLimit,

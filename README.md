@@ -23,7 +23,7 @@ Die drei Kondensatorwege verwenden gemeinsam die verpflichtende Unterseite „Me
 - einmalig gespeicherte gemeinsame Pflichtkontrolle zur Methode des größten Einzelfehlers
 - optionaler Transferrechner mit den bisherigen vier Auswertungsverfahren; der Aufladungskurs besitzt bewusst keinen eigenen Transfermodus
 - dynamischer Lernnachweis, der auf dem iPad als PDF gesichert werden kann
-- Übernahme des bisherigen v3-Kursstands in den 1/r²-Lernweg sowie ältere Migrationen
+- aktueller lokaler Lernstand ohne Konto, Backend oder externe Datenübertragung
 
 ## Dateien
 
@@ -33,10 +33,10 @@ Die drei Kondensatorwege verwenden gemeinsam die verpflichtende Unterseite „Me
 - app.js – Lernwege, lokaler Zustand, Bedienung und Ausgaben
 - lesson-data.js – fünf Kursmodelle, Inhalte, Abbildungen und Prüfregeln
 - regression.js – Potenz-, Linear- und Exponentialregression, Kapazitätsauswertung, Abweichungen und Methode des größten Einzelfehlers
-- state.js – getrennte lokale Lernstände und Migration bisheriger Speicherstände
+- state.js – getrennte lokale Lernstände im aktuellen Datenformat
 - assets/steps/ – Abbildungen des Coulomb-Kurses, der drei U-Q-Verfahren und der Kondensator-Aufladung
 - generate-uq-screenshots.ps1 – erzeugt die austauschbaren U-Q-Anleitungsgrafiken erneut
-- tests/ – mathematische, inhaltliche und Migrationstests ohne Zusatzpakete
+- tests/ – mathematische, inhaltliche, Zustands- und Website-Smoke-Tests ohne Zusatzpakete
 
 ## Lokal prüfen
 
@@ -54,4 +54,4 @@ Die Dateien bleiben im Hauptverzeichnis des Pages-Repositories. Unter Settings �
 
 ## Datenschutz
 
-Lernstand, optionale Namensangaben und Transferdaten werden nur unter dem Schlüssel geogebra-begleitkurs-state-v4 im localStorage des jeweiligen Browsers gespeichert. Ein v3-Kursstand wird vollständig in den bisherigen 1/r²-Weg übernommen; v1- und v2-Transferdaten bleiben weiterhin migrierbar. Der Lernnachweis wird über den Druckdialog lokal erzeugt. Es werden keine Schülerdaten an einen Server gesendet.
+Lernstand, optionale Namensangaben und Transferdaten werden nur unter dem Schlüssel geogebra-begleitkurs-state im localStorage des jeweiligen Browsers gespeichert. Die Anwendung liest ausschließlich dieses aktuelle Datenformat. Der Lernnachweis wird über den Druckdialog lokal erzeugt. Es werden keine Schülerdaten an einen Server gesendet.

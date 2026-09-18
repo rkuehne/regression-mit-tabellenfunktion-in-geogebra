@@ -1,0 +1,80 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { COURSES } from "../lesson-data.js";
+
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const BROWSER_MODULES = [
+  "app.js",
+  "lesson-data.js",
+  "state.js",
+  "regression.js",
+  "groesster-einzelfehler.js"
+];
+
+function source(file) {
+  return readFileSync(resolve(ROOT, file), "utf8");
+}
+
+function localReferences(html) {
+  return [...html.matchAll(/\b(?:src|href)=["']([^"']+)["']/g)]
+    .map((match) => match[1])
+    .filter((value) => !/^(?:[a-z]+:|#)/i.test(value))
+    .map((value) => value.split(/[?#]/, 1)[0])
+    .filter(Boolean);
+}
+
+function assertLocalFile(reference, context) {
+  const target = resolve(ROOT, reference);
+  assert.equal(existsSync(target), true, `${context}: ${reference}`);
+}
+
+test("parst alle Browser-Skripte ausdrücklich als ES-Module", () => {
+  for (const file of BROWSER_MODULES) {
+    const result = spawnSync(process.execPath, ["--input-type=module", "--check"], {
+      input: source(file),
+      encoding: "utf8"
+    });
+    assert.equal(result.status, 0, `${file}: ${result.stderr}`);
+  }
+});
+
+test("findet für jeden relativen Modulimport eine lokale Datei", () => {
+  for (const file of BROWSER_MODULES) {
+    const imports = [...source(file).matchAll(/\bfrom\s+["'](\.[^"']+)["']/g)];
+    for (const match of imports) {
+      const target = resolve(ROOT, dirname(file), match[1]);
+      assert.equal(existsSync(target), true, `${file}: ${match[1]}`);
+    }
+  }
+});
+
+test("enthält für alle JavaScript-Zugriffe die zugehörigen HTML-Elemente", () => {
+  for (const [scriptFile, htmlFile] of [["app.js", "index.html"], ["groesster-einzelfehler.js", "groesster-einzelfehler.html"]]) {
+    const script = source(scriptFile);
+    const html = source(htmlFile);
+    const referencedIds = [...script.matchAll(/getElementById\(["']([^"']+)["']\)/g)].map((match) => match[1]);
+    const htmlIds = new Set([...html.matchAll(/\bid=["']([^"']+)["']/g)].map((match) => match[1]));
+    const missing = [...new Set(referencedIds)].filter((id) => !htmlIds.has(id));
+    assert.deepEqual(missing, [], `${scriptFile} verweist auf fehlende IDs`);
+  }
+});
+
+test("verwendet nur vorhandene lokale Seiten-, Stil- und Bildressourcen", () => {
+  for (const htmlFile of ["index.html", "groesster-einzelfehler.html"]) {
+    for (const reference of localReferences(source(htmlFile))) assertLocalFile(reference, htmlFile);
+  }
+
+  for (const course of Object.values(COURSES)) {
+    for (const step of course.steps) {
+      for (const image of step.images) assertLocalFile(image.src, `${course.id}/${step.id}`);
+    }
+  }
+
+  for (const match of source("style.css").matchAll(/url\(["']?([^"')]+)["']?\)/g)) {
+    if (!/^(?:data:|https?:)/i.test(match[1])) assertLocalFile(match[1], "style.css");
+  }
+});

@@ -1,10 +1,7 @@
 import { COURSE_IDS, COURSES, TRANSFER_METHOD_IDS, UQ_SHARED_REQUIREMENT_ID } from "./lesson-data.js";
 import { cloneExampleData, cloneUqExampleData } from "./regression.js";
 
-export const STORAGE_KEY = "geogebra-begleitkurs-state-v4";
-export const V3_STORAGE_KEY = "geogebra-begleitkurs-state-v3";
-export const V2_STORAGE_KEY = "geogebra-begleitkurs-state-v2";
-export const LEGACY_STORAGE_KEY = "regressionstrainer-state-v1";
+export const STORAGE_KEY = "geogebra-begleitkurs-state";
 
 function blankProgress() {
   return { currentStep: 0, completedSteps: [], answers: {} };
@@ -27,7 +24,6 @@ function defaultTransferMethods() {
 
 export function createDefaultState() {
   return {
-    version: 4,
     activeCourseId: "inverse-square",
     lessonMode: "explain",
     courses: Object.fromEntries(COURSE_IDS.map((id) => [id, blankProgress()])),
@@ -50,12 +46,7 @@ function sanitizeRows(data, methodId) {
 
 function sanitizeStoredResult(result) {
   if (!result || typeof result !== "object" || Array.isArray(result)) return null;
-  const { r2: unusedLegacyValue, ...resultWithoutLegacyMetric } = result;
-  return resultWithoutLegacyMetric;
-}
-
-export function sanitizeTransferData(data) {
-  return sanitizeRows(data, "inverse-square");
+  return { ...result };
 }
 
 function sanitizeProgress(candidate, courseId) {
@@ -97,29 +88,9 @@ function sanitizeSharedModule(candidate) {
   return { completed: candidate?.completed === true, answers };
 }
 
-export function migratePreviousState(candidate) {
-  const state = createDefaultState();
-  const oldTransfer = candidate?.transfer ?? candidate ?? {};
-  state.transfer.methods["inverse-square"] = {
-    data: sanitizeRows(oldTransfer.data ?? candidate?.data, "inverse-square"),
-    uncertainty: String(oldTransfer.uncertainty ?? ""),
-    deltaU: "",
-    deltaQ: "",
-    reflection: String(oldTransfer.reflection ?? ""),
-    result: sanitizeStoredResult(oldTransfer.result)
-  };
-  state.student = preservedStudent(candidate);
-
-  if (candidate?.version === 3) {
-    state.lessonMode = candidate.lessonMode === "compact" ? "compact" : "explain";
-    state.courses["inverse-square"] = sanitizeProgress(candidate, "inverse-square");
-  }
-  return state;
-}
-
 export function sanitizeState(candidate) {
   const base = createDefaultState();
-  if (!candidate || candidate.version !== 4) return base;
+  if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) return base;
   const activeCourseId = COURSE_IDS.includes(candidate.activeCourseId) ? candidate.activeCourseId : "inverse-square";
   const preferredMethod = COURSES[activeCourseId].transferMethod;
   const activeMethod = TRANSFER_METHOD_IDS.includes(candidate?.transfer?.activeMethod)
@@ -127,7 +98,6 @@ export function sanitizeState(candidate) {
     : preferredMethod || "inverse-square";
 
   return {
-    version: 4,
     activeCourseId,
     lessonMode: candidate.lessonMode === "compact" ? "compact" : "explain",
     courses: Object.fromEntries(COURSE_IDS.map((id) => [id, sanitizeProgress(candidate?.courses?.[id], id)])),
@@ -150,29 +120,13 @@ export function loadState(storage) {
   } catch {
     // Storage may be unavailable or damaged.
   }
-
-  for (const [key, version] of [[V3_STORAGE_KEY, 3], [V2_STORAGE_KEY, 2]]) {
-    try {
-      const previous = JSON.parse(storage.getItem(key) || "null");
-      if (previous?.version === version) return migratePreviousState(previous);
-    } catch {
-      // Ignore unreadable previous data.
-    }
-  }
-
-  try {
-    const legacy = JSON.parse(storage.getItem(LEGACY_STORAGE_KEY) || "null");
-    if (Array.isArray(legacy?.data)) return migratePreviousState(legacy);
-  } catch {
-    // Ignore unreadable legacy data.
-  }
   return createDefaultState();
 }
 
 export function persistState(storage, state) {
   state.updatedAt = new Date().toISOString();
   try {
-    storage.setItem(STORAGE_KEY, JSON.stringify(state));
+    storage.setItem(STORAGE_KEY, JSON.stringify(sanitizeState(state)));
     return true;
   } catch {
     return false;

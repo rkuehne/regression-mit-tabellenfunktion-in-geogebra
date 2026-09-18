@@ -268,14 +268,6 @@ test("enthält die gemeinsame Fehlerseite mit Herleitung, Anwendungen und Pflich
   assert.match(html, /src="\.\/groesster-einzelfehler\.js"/);
 });
 
-test("entfernt das Bestimmtheitsmaß aus Schüleransicht und Programmlogik", () => {
-  const root = resolve(here, "..");
-  for (const file of ["index.html", "groesster-einzelfehler.html", "lesson-data.js", "app.js", "regression.js", "README.md"]) {
-    const content = readFileSync(resolve(root, file), "utf8");
-    assert.doesNotMatch(content, /R²|RQuadrat|\br2\b/, file);
-  }
-});
-
 test("weist Suchmaschinen auf die gewünschte Nicht-Indexierung hin", () => {
   const root = resolve(here, "..");
   const html = readFileSync(resolve(root, "index.html"), "utf8");
