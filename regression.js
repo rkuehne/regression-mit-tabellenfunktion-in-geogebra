@@ -15,6 +15,23 @@ export const UQ_EXAMPLE_DATA = Object.freeze([
   Object.freeze({ u: 250, q: 10.2 })
 ]);
 
+export const CHARGING_RAW_DATA = Object.freeze([
+  Object.freeze({ t: 0, uc: 0, deltaU: 3.78 }),
+  Object.freeze({ t: 10, uc: 1.061, deltaU: 2.719 }),
+  Object.freeze({ t: 20, uc: 1.796, deltaU: 1.984 }),
+  Object.freeze({ t: 30, uc: 2.301, deltaU: 1.479 }),
+  Object.freeze({ t: 40, uc: 2.698, deltaU: 1.082 }),
+  Object.freeze({ t: 50, uc: 2.98, deltaU: 0.8 }),
+  Object.freeze({ t: 60, uc: 3.192, deltaU: 0.588 }),
+  Object.freeze({ t: 70, uc: 3.343, deltaU: 0.437 }),
+  Object.freeze({ t: 80, uc: 3.448, deltaU: 0.332 }),
+  Object.freeze({ t: 100, uc: 3.529, deltaU: 0.251, excluded: true })
+]);
+
+export const CHARGING_FIT_DATA = Object.freeze(
+  CHARGING_RAW_DATA.slice(0, 9).map(({ t, deltaU }) => Object.freeze({ t, deltaU }))
+);
+
 export function cloneExampleData() {
   return EXAMPLE_DATA.map(({ r, f }) => ({ r, f }));
 }
@@ -107,6 +124,34 @@ export function validateUqPoints(data, { minRows = 3, maxRows = 30 } = {}) {
   return { valid: errors.length === 0, points: usablePoints, errors };
 }
 
+export function validateExponentialPoints(data, { minRows = 3, maxRows = 30 } = {}) {
+  const errors = [];
+  if (!Array.isArray(data)) {
+    return { valid: false, points: [], errors: ["Die Messwerttabelle ist nicht lesbar."] };
+  }
+  if (data.length < minRows) errors.push(`Mindestens ${minRows} vollständige Messwertpaare sind nötig.`);
+  if (data.length > maxRows) errors.push(`Höchstens ${maxRows} Messwertpaare sind möglich.`);
+
+  const points = data.map((row, index) => {
+    const t = parseLocaleNumber(row?.t);
+    const deltaU = parseLocaleNumber(row?.deltaU);
+    if (!Number.isFinite(t) || !Number.isFinite(deltaU)) {
+      errors.push(`Zeile ${index + 1}: Zeit und Spannungsdifferenz müssen Zahlen enthalten.`);
+    } else if (t < 0) {
+      errors.push(`Zeile ${index + 1}: Die Zeit darf nicht negativ sein.`);
+    } else if (deltaU <= 0) {
+      errors.push(`Zeile ${index + 1}: ΔU muss für TrendExp größer als 0 sein.`);
+    }
+    return { t, deltaU };
+  });
+
+  const usablePoints = points.filter(({ t, deltaU }) => Number.isFinite(t) && Number.isFinite(deltaU) && t >= 0 && deltaU > 0);
+  if (usablePoints.length >= minRows && new Set(usablePoints.map(({ t }) => t)).size < 2) {
+    errors.push("Die Zeitwerte dürfen nicht alle gleich sein.");
+  }
+  return { valid: errors.length === 0, points: usablePoints, errors };
+}
+
 export function powerRegression(points) {
   if (!Array.isArray(points) || points.length < 2) return null;
   if (points.some(({ r, f }) => !Number.isFinite(r) || !Number.isFinite(f) || r <= 0 || f <= 0)) return null;
@@ -153,6 +198,27 @@ export function linearRegression(points) {
   const slope = numerator / denominator;
   const intercept = meanQ - slope * meanU;
   return { slope, intercept };
+}
+
+export function exponentialRegression(points) {
+  if (!Array.isArray(points) || points.length < 2) return null;
+  if (points.some(({ t, deltaU }) => !Number.isFinite(t) || !Number.isFinite(deltaU) || t < 0 || deltaU <= 0)) return null;
+
+  const n = points.length;
+  const meanT = points.reduce((sum, { t }) => sum + t, 0) / n;
+  const meanLogU = points.reduce((sum, { deltaU }) => sum + Math.log(deltaU), 0) / n;
+  let numerator = 0;
+  let denominator = 0;
+
+  points.forEach(({ t, deltaU }) => {
+    numerator += (t - meanT) * (Math.log(deltaU) - meanLogU);
+    denominator += (t - meanT) ** 2;
+  });
+  if (denominator === 0) return null;
+
+  const b = numerator / denominator;
+  const a = Math.exp(meanLogU - b * meanT);
+  return { a, b };
 }
 
 export function analyzePoints(points, regression) {
@@ -208,6 +274,38 @@ export function analyzeUqLinear(points, regression) {
   const interceptShare = relativeInterceptShare(points, regression.intercept);
   return { rows, maxDeviation, interceptShare, invalidPrediction: false };
 }
+
+export function analyzeExponential(points, regression) {
+  if (!regression || !Array.isArray(points) || points.length === 0) return { rows: [], maxDeviation: null };
+  const rows = points.map(({ t, deltaU }) => {
+    const predicted = regression.a * Math.exp(regression.b * t);
+    const deviation = ((deltaU - predicted) / predicted) * 100;
+    return { t, deltaU, predicted, deviation };
+  });
+  const maxDeviation = rows.reduce((largest, row) => (
+    !largest || Math.abs(row.deviation) > Math.abs(largest.deviation) ? row : largest
+  ), null);
+  return { rows, maxDeviation };
+}
+
+export function exponentialTimeMeasures(exponent) {
+  if (!Number.isFinite(exponent) || exponent >= 0) return null;
+  const tau = -1 / exponent;
+  return { tau, halfLife: tau * Math.log(2) };
+}
+
+export function greatestSingleChargingError({ deltaTime, minPositiveTime, deltaVoltage, minVoltage }) {
+  if (![deltaTime, minPositiveTime, deltaVoltage, minVoltage].every(Number.isFinite)) return null;
+  if (deltaTime <= 0 || minPositiveTime <= 0 || deltaVoltage <= 0 || minVoltage <= 0) return null;
+  const timePercent = (deltaTime / minPositiveTime) * 100;
+  const voltagePercent = (deltaVoltage / minVoltage) * 100;
+  return { timePercent, voltagePercent, limit: Math.max(timePercent, voltagePercent) };
+}
+
+const chargingReferenceRegression = exponentialRegression(CHARGING_FIT_DATA);
+export const CHARGING_ANALYSIS_DATA = Object.freeze(
+  analyzeExponential(CHARGING_FIT_DATA, chargingReferenceRegression).rows.map((row) => Object.freeze(row))
+);
 
 export function relativeExponentDeviation(exponent, expected = 1) {
   if (!Number.isFinite(exponent) || !Number.isFinite(expected) || expected === 0) return null;

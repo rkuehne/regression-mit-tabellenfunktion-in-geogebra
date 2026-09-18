@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#6552c8">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
-  <meta name="description" content="Vier geführte GeoGebra-Lernwege: Potenzregression, lineare Regression, Proportionalität und Messunsicherheit auf dem iPad.">
+  <meta name="description" content="Fünf geführte GeoGebra-Lernwege zu Potenz-, Linear- und Exponentialregression, Proportionalität und Messunsicherheit auf dem iPad.">
   <meta property="og:title" content="GeoGebra-Begleitkurs · Messdaten auswerten">
-  <meta property="og:description" content="Geführte iPad-Lernwege zu Potenzregression und direkter Proportionalität.">
+  <meta property="og:description" content="Geführte iPad-Lernwege zu Regression, direkter Proportionalität und exponentiellen Aufladevorgängen.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="./assets/og.png">
   <meta property="og:image:width" content="1733">
@@ -15,7 +15,7 @@
   <meta property="og:image:alt" content="GeoGebra-Begleitkurs – Messdaten Schritt für Schritt auswerten">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="GeoGebra-Begleitkurs · Messdaten auswerten">
-  <meta name="twitter:description" content="Geführte iPad-Lernwege zu Potenzregression und direkter Proportionalität.">
+  <meta name="twitter:description" content="Geführte iPad-Lernwege zu Regression, direkter Proportionalität und exponentiellen Aufladevorgängen.">
   <meta name="twitter:image" content="./assets/og.png">
   <title>GeoGebra-Begleitkurs · Messdaten auswerten</title>
   <link rel="stylesheet" href="./style.css">
@@ -39,8 +39,8 @@
           <a class="button secondary" href="https://www.geogebra.org/calculator" target="_blank" rel="noopener">GeoGebra-Webversion öffnen <span aria-hidden="true">↗</span></a>
         </div>
         <ul class="hero-facts" aria-label="Kursinformationen">
-          <li>4 wählbare Lernwege</li>
-          <li>je 8–10 Kapitel</li>
+          <li>5 wählbare Lernwege</li>
+          <li>je 8–11 Kapitel</li>
           <li>Fortschritt nur auf diesem Gerät</li>
         </ul>
       </div>
@@ -93,6 +93,17 @@
               <span>Lineare Regression wählen</span><small>8 Kapitel · m und b untersuchen</small>
             </button>
           </div>
+        </article>
+        <article class="course-choice-group charging">
+          <div>
+            <p class="mini-label">Kondensator-Aufladung · t und U<sub>C</sub></p>
+            <h3>Exponentieller Aufladevorgang</h3>
+            <p class="choice-equation">ΔU(t) = U₀ · e<sup>−t/τ</sup></p>
+            <p>Berechne ΔU = U₀ − U<sub>C</sub>, prüfe die Messdaten und bestimme mit einer Exponentialregression Zeitkonstante und Halbwertszeit.</p>
+          </div>
+          <button class="course-choice-button" type="button" data-course-id="capacitor-exponential">
+            <span>Exponentialregression wählen</span><small>11 Kapitel · t–ΔU</small>
+          </button>
         </article>
       </div>
       <p id="courseChoiceStatus" class="choice-status" role="status" aria-live="polite"></p>
@@ -440,6 +451,14 @@
       <div><dt>y-Achsenabschnitt b</dt><dd>Der Modellwert bei x = 0. Für eine direkte Proportionalität wird b = 0 erwartet.</dd></div>
       <div><dt>Ursprungsgerade</dt><dd>Eine Gerade durch den Koordinatenursprung (0, 0); sie beschreibt einen direkt proportionalen Zusammenhang.</dd></div>
       <div><dt>Extrapolation</dt><dd>Die Verwendung eines Modells außerhalb des gemessenen Bereichs. Der Achsenabschnitt wird hier aus Messungen zwischen 50 V und 250 V bis U = 0 fortgesetzt.</dd></div>
+      <div><dt>Aufladevorgang</dt><dd>Beim Laden eines Kondensators steigt U_C und nähert sich der angelegten Spannung U₀ an; gleichzeitig fällt ΔU = U₀ − U_C gegen null.</dd></div>
+      <div><dt>Spannungsdifferenz ΔU</dt><dd>Der beim Aufladen noch fehlende Spannungsanteil U₀ − U_C. Das Δ bezeichnet hier eine Differenz und keine Messunsicherheit.</dd></div>
+      <div><dt>Exponentialfunktion</dt><dd>Eine Funktion, bei der sich eine Größe in gleichen Zeitabschnitten jeweils um denselben Faktor verändert, hier ΔÛ(t) = A · e^(k·t).</dd></div>
+      <div><dt>Regressionsanfangswert A</dt><dd>Der vom Exponentialmodell für t = 0 vorhergesagte Wert; er muss nicht exakt dem ersten Messwert entsprechen.</dd></div>
+      <div><dt>Zeitkonstante τ</dt><dd>Charakteristische Zeit eines exponentiellen Vorgangs. Beim idealen RC-Kreis gilt τ = R · C und k = −1/τ.</dd></div>
+      <div><dt>Halbwertszeit t₁/₂</dt><dd>Die Zeitspanne, in der sich der Modellwert halbiert; bei exponentieller Abnahme gilt t₁/₂ = τ · ln(2).</dd></div>
+      <div><dt>Auffälliger Messwert</dt><dd>Ein Wert, der wegen Messablauf, Protokoll oder Verlauf geprüft werden muss. Er darf nicht allein wegen einer schlechten Modellpassung entfernt werden.</dd></div>
+      <div><dt>Dokumentierter Ausschluss</dt><dd>Ein begründeter und offengelegter Verzicht auf einen Messwert in der Auswertung; das ursprüngliche Protokoll wird dabei nicht stillschweigend verändert.</dd></div>
       <div><dt>Methode des größten Einzelfehlers</dt><dd>Der größte relative Einzelfehler wird als Fehlergrenze auf alle untersuchten Abweichungen übertragen. Darunterliegende Abweichungen können in dieser schulischen Methode durch Messfehler erklärt werden.</dd></div>
     </dl>
   </dialog>

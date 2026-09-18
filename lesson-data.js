@@ -1,4 +1,10 @@
-import { EXAMPLE_DATA, UQ_EXAMPLE_DATA } from "./regression.js";
+import {
+  CHARGING_ANALYSIS_DATA,
+  CHARGING_FIT_DATA,
+  CHARGING_RAW_DATA,
+  EXAMPLE_DATA,
+  UQ_EXAMPLE_DATA
+} from "./regression.js";
 
 export const UQ_SHARED_REQUIREMENT_ID = "uq-largest-single-error";
 
@@ -64,6 +70,75 @@ const IMAGES = Object.freeze({
     alt: "GeoGebra-Grafik mit sechs Messpunkten und einer fallenden roten Potenz-Regressionskurve.",
     caption: "Die Messpunkte liegen nicht exakt auf der Kurve, folgen aber demselben fallenden Verlauf.",
     highlights: [{ x: 32, y: 3, width: 55, height: 79, label: "Punkte und Kurve" }]
+  })
+});
+
+const CHARGING_IMAGES = Object.freeze({
+  deltaFormula: Object.freeze({
+    src: "./assets/steps/charging/01-spannungsdifferenz-formel-bis-80s.png", width: 640, height: 579,
+    alt: "GeoGebra-Tabellenkalkulation mit Zeitwerten, Kondensatorspannungen und der Eingabe gleich 3.78 minus B1 in Zelle C1.",
+    caption: "In C1 wird aus der Gesamtspannung 3,780 V und der gemessenen Kondensatorspannung die Spannungsdifferenz berechnet.",
+    highlights: [{ x: 69, y: 29, width: 24, height: 10, label: "C1: 3.780 − B1" }]
+  }),
+  deltaValues: Object.freeze({
+    src: "./assets/steps/charging/02-spannungsdifferenzen-bis-80s.png", width: 631, height: 584,
+    alt: "GeoGebra-Tabelle mit neun berechneten Spannungsdifferenzen von 3,780 Volt bis 0,332 Volt in Spalte C.",
+    caption: "Nach dem Ausfüllen enthält Spalte C die abnehmenden Werte von ΔU = U₀ − U_C für 0 bis 80 s.",
+    highlights: [{ x: 72, y: 29, width: 24, height: 70, label: "ΔU in C1:C9" }]
+  }),
+  firstPoint: Object.freeze({
+    src: "./assets/steps/charging/03-erster-zeit-punkt.png", width: 819, height: 537,
+    alt: "GeoGebra-Tabelle mit der Eingabe gleich Klammer auf A1 Komma C1 Klammer zu in Zelle D1.",
+    caption: "D1 verbindet den Zeitpunkt aus A1 mit der Spannungsdifferenz aus C1 zum Punkt (0, 3.78).",
+    highlights: [{ x: 69, y: 30, width: 23, height: 12, label: "Punkt in D1" }]
+  }),
+  points: Object.freeze({
+    src: "./assets/steps/charging/04-zeit-punkte-bis-80s.png", width: 808, height: 572,
+    alt: "GeoGebra-Tabelle mit den neun verwendeten Zeit-Spannungs-Punkten von D1 bis D9.",
+    caption: "Nach der Datenprüfung enthält der Arbeitsbereich nur die Regressionspunkte D1:D9.",
+    highlights: [{ x: 75, y: 29, width: 18, height: 71, label: "Punkte D1:D9" }]
+  }),
+  regression: Object.freeze({
+    src: "./assets/steps/charging/05-exponentialregression.png", width: 756, height: 264,
+    alt: "GeoGebra-Algebraansicht mit U von x gleich TrendExp von D1 bis D9 und der berechneten Exponentialfunktion.",
+    caption: "TrendExp wertet bewusst D1:D9 aus; das ungeklärte zehnte Wertepaar gehört nicht zur Regression.",
+    highlights: [{ x: 21, y: 29, width: 76, height: 35, label: "U(x) = TrendExp(D1:D9)" }]
+  }),
+  curveWithCheckValue: Object.freeze({
+    src: "./assets/steps/charging/06-regressionskurve-mit-pruefwert.png", width: 1876, height: 754,
+    alt: "GeoGebra mit Tabelle und exponentieller Regressionskurve; ein zusätzlicher Punkt bei 100 Sekunden liegt sichtbar abseits der Kurve.",
+    caption: "Der zusätzliche Punkt bei 100 s liegt deutlich oberhalb des aus D1:D9 berechneten Verlaufs und löst die Datenprüfung aus.",
+    highlights: [{ x: 49, y: 8, width: 50, height: 90, label: "Kurve und auffälliger Prüfpunkt" }]
+  }),
+  modelFormula: Object.freeze({
+    src: "./assets/steps/charging/07-modellwert-formel-bis-80s.png", width: 920, height: 591,
+    alt: "GeoGebra-Tabelle mit der Eingabe gleich U von A1 in Zelle E1.",
+    caption: "U(A1) setzt den Zeitpunkt aus Spalte A in die Regressionsfunktion ein.",
+    highlights: [{ x: 78, y: 30, width: 17, height: 10, label: "E1: U(A1)" }]
+  }),
+  modelValues: Object.freeze({
+    src: "./assets/steps/charging/08-modellwerte-bis-80s.png", width: 984, height: 588,
+    alt: "GeoGebra-Tabelle mit den neun berechneten Werten der Exponentialfunktion in Spalte E.",
+    caption: "Die Modellwerte für die akzeptierten Messpunkte stehen in E1:E9.",
+    highlights: [{ x: 77, y: 23, width: 18, height: 76, label: "Modellwerte E1:E9" }]
+  }),
+  historicalDeviationFormula: Object.freeze({
+    src: "./assets/steps/charging/09-historische-abweichungsformel.png", width: 1302, height: 647,
+    alt: "Historische GeoGebra-Aufnahme mit einer prozentualen Abweichungsformel in Spalte F, deren Vorzeichen gegenüber dem Kurs vertauscht ist.",
+    caption: "Achtung: Diese historische Aufnahme verwendet Modellwert minus Messwert. Im Kurs gilt einheitlich Messwert minus Modellwert; kopiere deshalb die Kursformel.",
+    highlights: [{ x: 72, y: 27, width: 16, height: 10, label: "Historische Vorzeichenfolge" }]
+  }),
+  anomaly: Object.freeze({
+    src: "./assets/steps/charging/10-auffaellige-modellabweichung.png", width: 1221, height: 696,
+    alt: "GeoGebra-Tabelle mit einer sehr großen Abweichung von rund minus 42,6 Prozent für den protokollierten Wert bei 100 Sekunden.",
+    caption: "Die Abweichung von etwa 42,6 % macht den letzten Zeitwert prüfbedürftig; sie ist kein automatischer Löschgrund.",
+    highlights: [{ x: 76, y: 81, width: 18, height: 9, label: "auffällige Zeile" }]
+  }),
+  plausibleNinety: Object.freeze({
+    src: "./assets/steps/charging/11-plausibilitaetsvergleich-90s.png", width: 1238, height: 640,
+    alt: "GeoGebra-Tabelle, in der der letzte Zeitpunkt versuchsweise mit 90 statt 100 Sekunden bezeichnet ist.",
+    caption: "90 s wäre rechnerisch plausibler, darf ohne Originalprotokoll aber nicht als nachträgliche Korrektur übernommen werden.",
+    highlights: [{ x: 12, y: 91, width: 13, height: 8, label: "nur Plausibilitätsvergleich" }]
   })
 });
 
@@ -781,6 +856,254 @@ export const UQ_LINEAR_STEPS = Object.freeze([
   }
 ]);
 
+export const CHARGING_EXPONENTIAL_STEPS = Object.freeze([
+  {
+    id: "charging-context", shortTitle: "Aufladung", title: "Den Aufladevorgang und die untersuchte Spannung verstehen",
+    goal: "Du erklärst den Aufladevorgang eines Kondensators und begründest, warum die abnehmende Spannungsdifferenz ΔU untersucht wird.",
+    why: "Beim Aufladen nähert sich die Kondensatorspannung U_C der angelegten Spannung U₀ immer weiter an. Der noch fehlende Anteil ΔU = U₀ − U_C wird deshalb kleiner. Gerade diese Spannungsdifferenz folgt im idealen RC-Modell unmittelbar einer fallenden Exponentialfunktion und lässt sich mit TrendExp untersuchen.",
+    concepts: [
+      { term: "Gesamtspannung U₀", text: "Die angelegte Spannung; in diesem Versuch beträgt sie 3,780 V." },
+      { term: "Kondensatorspannung U_C", text: "Die während des Aufladens gemessene Spannung am Kondensator." },
+      { term: "Spannungsdifferenz ΔU", text: "Der noch fehlende Spannungsanteil U₀ − U_C." },
+      { term: "Zeitkonstante τ", text: "Die charakteristische Zeit des Aufladevorgangs. Für einen idealen RC-Kreis gilt τ = R · C." }
+    ],
+    workedExample: { title: "Zwei Beschreibungen desselben Vorgangs", lines: ["Für den idealen Aufladevorgang gilt U_C(t) = U₀ · (1 − e^(−t/τ)).", "Bildet man U₀ − U_C(t), bleibt ΔU(t) = U₀ · e^(−t/τ).", "U_C steigt daher gegen U₀, während ΔU gleichzeitig gegen null fällt."] },
+    remember: "U_C steigt, ΔU fällt – beide Größen beschreiben denselben Aufladevorgang.",
+    actionHeading: "Bevor du GeoGebra öffnest",
+    actions: ["Notiere U₀ = 3,780 V.", "Ordne t der unabhängigen und ΔU der abhängigen Größe zu.", "Sage den Verlauf voraus: U_C steigt, ΔU nimmt ab."],
+    formula: null, images: [],
+    troubleshooting: "Verwechsle ΔU nicht mit einer Messunsicherheit. Das Δ bezeichnet hier die Differenz U₀ − U_C.",
+    mistake: "Für die Regression wird nicht die steigende Größe U_C verwendet, sondern die fallende Spannungsdifferenz ΔU.",
+    check: { prompt: "Prüfe Modell und Spannungsgrößen.", fields: [
+      { id: "trend", kind: "result", type: "choice", label: "Wie verändert sich ΔU beim Aufladen?", expected: "decreases", options: [option("", "Bitte auswählen …"), option("decreases", "ΔU nimmt ab und nähert sich null."), option("increases", "ΔU steigt bis U₀."), option("constant", "ΔU bleibt konstant.")], feedback: { correct: "Richtig: Der noch fehlende Spannungsanteil wird kleiner.", incorrect: "Setze ΔU = U₀ − U_C und beachte, dass U_C zunimmt." } },
+      { id: "relation", kind: "understanding", type: "choice", label: "Warum untersuchen wir ΔU?", expected: "exponential", options: [option("", "Bitte auswählen …"), option("exponential", "ΔU folgt im idealen RC-Modell direkt einer fallenden Exponentialfunktion."), option("uncertainty", "ΔU ist die Messunsicherheit des Voltmeters."), option("constant", "ΔU muss bei jeder Zeit gleich sein.")], feedback: { correct: "Genau: ΔU besitzt die für TrendExp geeignete Modellform.", incorrect: "Leite ΔU aus der Aufladegleichung her." } }
+    ], success: "Du kannst den Aufladevorgang mit U_C und ΔU beschreiben.", retry: "Vergleiche die beiden Formeln und die jeweiligen Verläufe." }
+  },
+  {
+    id: "charging-table", shortTitle: "Messwerte", title: "Zeit und Kondensatorspannung eingeben",
+    goal: "Du überträgst die protokollierten Zeiten und Kondensatorspannungen in die richtigen Spalten.",
+    why: "Jede Tabellenzeile muss einen Zeitpunkt mit der zu diesem Zeitpunkt gemessenen Kondensatorspannung verbinden. Nur korrekt zugeordnete Messpaare können anschließend ausgewertet werden.",
+    concepts: [
+      { term: "Spalte A", text: "Zeit t in Sekunden." },
+      { term: "Spalte B", text: "Gemessene Kondensatorspannung U_C in Volt." },
+      { term: "Messpaar", text: "Zeit und Spannung aus derselben Tabellenzeile." }
+    ],
+    workedExample: { title: "Eine Tabellenzeile lesen", lines: ["In A3 steht t = 20 s.", "In B3 steht U_C = 1,796 V.", "Damit gehört zum Zeitpunkt 20 s die gemessene Spannung 1,796 V."] },
+    remember: "A enthält t in s; B enthält U_C in V.",
+    actionHeading: "Jetzt in GeoGebra",
+    actions: ["Öffne Grafikrechner und Tabellenkalkulation.", "Trage die Zeitwerte in A1:A10 ein.", "Trage die zugehörigen Spannungen in B1:B10 ein.", "Kontrolliere besonders die Zeilen bei 0 s und 80 s."],
+    dataTable: CHARGING_RAW_DATA, dataHeaders: ["A: t (s)", "B: U_C (V)"], dataKeys: ["t", "uc"], formula: null, images: [CHARGING_IMAGES.deltaFormula],
+    troubleshooting: "Siehst du die Tabellenkalkulation nicht, arbeitet GeoGebra möglicherweise noch im CAS-Modus. Öffne das Menü ☰, wähle Grafikrechner und anschließend links das Tabellenkalkulations-Symbol. Dezimalpunkt und Dezimalkomma bezeichnen denselben Zahlenwert.",
+    mistake: "Ein Zeitwert darf nicht versehentlich zur Spannung der nächsten Zeile gehören.",
+    check: { prompt: "Kontrolliere die verwendete Messreihe.", fields: [
+      { id: "t80", kind: "result", type: "number", label: "Zeitwert der neunten Messung in s", placeholder: "80", expected: 80, tolerance: 0.01, feedback: { correct: "Die neunte Messung liegt bei 80 s.", incorrect: "Sieh in A9 nach." } },
+      { id: "uc80", kind: "result", type: "number", label: "U_C der neunten Messung in V", placeholder: "3,448", expected: 3.448, tolerance: 0.001, feedback: { correct: "B9 stimmt.", incorrect: "B9 enthält 3,448 V." } },
+      { id: "row", kind: "understanding", type: "choice", label: "Was bedeutet eine Tabellenzeile?", expected: "pair", options: [option("", "Bitte auswählen …"), option("pair", "Zeit und Spannung derselben Einzelmessung."), option("independent", "Zwei voneinander unabhängige Werte."), option("model", "Einen bereits berechneten Modellwert.")], feedback: { correct: "Richtig: Eine Zeile bildet ein Messpaar.", incorrect: "A und B derselben Zeile gehören zusammen." } }
+    ], success: "Die t-U_C-Messwerte sind richtig zugeordnet.", retry: "Prüfe Spalten, Einheiten und Zeilenzuordnung." }
+  },
+  {
+    id: "charging-delta", shortTitle: "Differenz", title: "Die Spannungsdifferenz ΔU berechnen",
+    goal: "Du berechnest aus U₀ und U_C die für die Regression benötigte Spannungsdifferenz.",
+    why: "TrendExp soll den exponentiell abnehmenden Anteil beschreiben. Deshalb wird für jede Zeile ΔU = U₀ − U_C berechnet und in einer eigenen Spalte gespeichert.",
+    concepts: [
+      { term: "Differenz", text: "Der Abstand zwischen der angelegten Spannung U₀ und der bereits erreichten Kondensatorspannung U_C." },
+      { term: "Relativer Zellbezug", text: "Beim Ausfüllen wird aus B1 automatisch B2, B3 und so weiter." },
+      { term: "Positive Modellwerte", text: "TrendExp benötigt hier positive Werte von ΔU." }
+    ],
+    workedExample: { title: "Zeile 2 berechnen", lines: ["Bei t = 10 s wurde U_C = 1,061 V gemessen.", "ΔU = 3,780 V − 1,061 V = 2,719 V.", "Beim Ausfüllen berechnet GeoGebra diesen Unterschied für jede Zeile."] },
+    remember: "Spalte C enthält ΔU = 3,780 V − U_C.",
+    actionHeading: "Jetzt in GeoGebra",
+    actions: ["Tippe C1 an und gib die Formel ein.", "Bestätige: C1 muss 3,780 anzeigen.", "Fülle C1 bis C10 aus.", "Kontrolliere C9 = 0,332."],
+    dataTable: CHARGING_RAW_DATA, dataHeaders: ["A: t (s)", "B: U_C (V)", "C: ΔU (V)"], dataKeys: ["t", "uc", "deltaU"], formula: "=3.780-B1", images: [CHARGING_IMAGES.deltaFormula, CHARGING_IMAGES.deltaValues],
+    troubleshooting: "Beginne mit dem Gleichheitszeichen. Verwende 3.780 ohne Einheit; GeoGebra rechnet dann mit dem Zahlenwert in Volt.",
+    mistake: "Bei B1 − 3.780 würden negative Werte entstehen. Benötigt wird U₀ − U_C.",
+    check: { prompt: "Prüfe Rechnung und Verlauf.", fields: [
+      { id: "c1", kind: "result", type: "number", label: "C1: ΔU in V", placeholder: "3,780", expected: 3.78, tolerance: 0.001, feedback: { correct: "C1 stimmt.", incorrect: "Bei t = 0 gilt 3,780 − 0 = 3,780 V." } },
+      { id: "c9", kind: "result", type: "number", label: "C9: ΔU in V", placeholder: "0,332", expected: 0.332, tolerance: 0.001, feedback: { correct: "C9 stimmt.", incorrect: "Berechne 3,780 − 3,448." } },
+      { id: "meaning", kind: "understanding", type: "choice", label: "Warum nimmt ΔU ab?", expected: "charging", options: [option("", "Bitte auswählen …"), option("charging", "U_C nähert sich beim Aufladen U₀."), option("error", "Das Voltmeter wird mit der Zeit ungenauer."), option("time", "Die Zeitwerte werden kleiner.")], feedback: { correct: "Genau: Der Kondensator erreicht immer mehr von U₀.", incorrect: "Betrachte ΔU = U₀ − U_C." } }
+    ], success: "Die Spannungsdifferenzen sind korrekt berechnet und gedeutet.", retry: "Prüfe Formelrichtung, C1 und C9." }
+  },
+  {
+    id: "charging-data-check", shortTitle: "Datenprüfung", title: "Das letzte Wertepaar kritisch prüfen",
+    goal: "Du erkennst einen auffälligen Protokolleintrag und begründest fachlich sauber, warum er nicht ungeprüft in die Regression eingeht.",
+    why: "Vor jeder Regression müssen Messdaten auf Übertragungs- und Protokollfehler geprüft werden. Der letzte Eintrag folgt nach 80 s erst bei 100 s, obwohl zuvor in 10-s-Schritten gemessen wurde. Außerdem weicht er vom aus den ersten neun Punkten bestimmten Modell um etwa 42,6 % ab. Beides ist ein Prüfhinweis, aber noch kein Beweis für einen Fehler.",
+    concepts: [
+      { term: "Plausibilitätsprüfung", text: "Kontrolle, ob ein Wert zum Messablauf, zum Protokoll und zu anderen Beobachtungen passt." },
+      { term: "Auffälliger Messwert", text: "Ein Wert, der deutlich vom übrigen Verlauf abweicht und deshalb untersucht werden muss." },
+      { term: "Dokumentierter Ausschluss", text: "Ein Wert wird nur mit sachlicher Begründung aus der Auswertung genommen; er wird nicht heimlich gelöscht oder passend gemacht." }
+    ],
+    workedExample: { title: "Warum nicht einfach 90 s eintragen?", lines: ["Der Wert ΔU = 0,251 V läge bei 90 s wesentlich näher an der Kurve als bei 100 s.", "Das macht einen Schreibfehler plausibel, beweist aber nicht, dass tatsächlich bei 90 s gemessen wurde.", "Ohne Originalnachweis wird das Wertepaar daher dokumentiert ausgeschlossen; es wird weder auf 90 s umbeschriftet noch nur wegen einer schlechten Modellpassung entfernt."] },
+    remember: "Erst prüfen und dokumentieren, dann ausschließen – niemals Messdaten stillschweigend an ein Modell anpassen.",
+    actionHeading: "Jetzt die Arbeitsdaten bereinigen",
+    actions: ["Vergleiche die Zeitfolge 0, 10, …, 80, 100 s.", "Notiere den ungeklärten Eintrag t = 100 s und U_C = 3,529 V.", "Prüfe wenn möglich das Originalprotokoll.", "Bleibt der Zeitpunkt ungeklärt, lösche A10:C10 aus der Arbeitsauswertung und dokumentiere den Grund."],
+    dataTable: CHARGING_RAW_DATA, dataHeaders: ["t (s)", "U_C (V)", "ΔU (V)"], dataKeys: ["t", "uc", "deltaU"], dataCaption: "Protokollierte Messwerte; die mit einem Stern markierte letzte Zeile wird nach der Datenprüfung nicht regressiert.", markExcludedRows: true, formula: null,
+    images: [CHARGING_IMAGES.curveWithCheckValue, CHARGING_IMAGES.historicalDeviationFormula, CHARGING_IMAGES.anomaly, CHARGING_IMAGES.plausibleNinety],
+    troubleshooting: "Falls das Originalprotokoll den Zeitpunkt eindeutig klärt, muss diese Information statt einer Vermutung verwendet werden. Der Kurs arbeitet mangels Nachweis nur mit den ersten neun Paaren weiter.",
+    mistake: "Eine große Abweichung allein berechtigt nicht dazu, einen Messwert zu löschen. Zusätzlich muss ein sachlicher Grund aus Messablauf oder Protokoll vorliegen.",
+    check: { prompt: "Prüfe die Entscheidung zur Datenqualität.", fields: [
+      { id: "deviation", kind: "result", type: "number", label: "Betrag der auffälligen Modellabweichung in %", placeholder: "42,6", expected: 42.5864056, tolerance: 0.15, feedback: { correct: "Die Größenordnung stimmt.", incorrect: "Der Prüfwert bei 100 s weicht um etwa 42,6 % ab." } },
+      { id: "decision", kind: "result", type: "choice", label: "Wie wird ohne geklärtes Originalprotokoll verfahren?", expected: "exclude", options: [option("", "Bitte auswählen …"), option("exclude", "Wertepaar begründet dokumentieren und aus der Regression ausschließen."), option("rename", "100 s ohne Hinweis in 90 s ändern."), option("keep", "Den Wert ungeprüft verwenden.")], feedback: { correct: "Richtig: Ausschluss mit transparenter Begründung.", incorrect: "Der Zeitpunkt darf weder erfunden noch ungeprüft verwendet werden." } },
+      { id: "principle", kind: "understanding", type: "choice", label: "Wann darf ein Messwert ausgeschlossen werden?", expected: "evidence", options: [option("", "Bitte auswählen …"), option("evidence", "Wenn ein sachlicher Prüfgrund vorliegt und der Ausschluss dokumentiert wird."), option("fit", "Sobald er schlecht zum gewünschten Modell passt."), option("always", "Immer dann, wenn die Abweichung am größten ist.")], feedback: { correct: "Genau: Datenqualität und Dokumentation sind entscheidend.", incorrect: "Ein Modell darf die Messdaten nicht nachträglich passend auswählen." } }
+    ], success: "Du kannst den Ausschluss transparent und fachlich begründen.", retry: "Trenne Plausibilitätsprüfung, Vermutung und gesicherte Korrektur." }
+  },
+  {
+    id: "charging-points", shortTitle: "Punkte", title: "Zeit und Spannungsdifferenz als Punkte darstellen",
+    goal: "Du erzeugst aus den neun akzeptierten Wertepaaren die Punkte (t, ΔU).",
+    why: "TrendExp erwartet eine Liste von Punkten. Die Zeit wird zur x-Koordinate und die Spannungsdifferenz zur y-Koordinate.",
+    concepts: [
+      { term: "x-Koordinate", text: "Der Zeitpunkt t aus Spalte A." },
+      { term: "y-Koordinate", text: "Die Spannungsdifferenz ΔU aus Spalte C." },
+      { term: "Punktbereich D1:D9", text: "Nur die neun fachlich akzeptierten Messpaare für 0 bis 80 s." }
+    ],
+    workedExample: { title: "Erster und letzter verwendeter Punkt", lines: ["A1 = 0 und C1 = 3,780 ergeben D1 = (0, 3.78).", "A9 = 80 und C9 = 0,332 ergeben D9 = (80, 0.332).", "Das ungeklärte zehnte Wertepaar wird nicht als Regressionspunkt verwendet."] },
+    remember: "Die Reihenfolge lautet (t, ΔU) = (x, y), und die Regressionsliste endet bei D9.",
+    actionHeading: "Jetzt in GeoGebra",
+    actions: ["Tippe D1 an und gib die Punktformel ein.", "Bestätige den Punkt (0, 3.78).", "Fülle D1 bis D9 aus.", "Sichere den Zwischenstand als bearbeitbare GeoGebra-Datei."],
+    dataTable: CHARGING_FIT_DATA, dataHeaders: ["t (s)", "ΔU (V)"], dataKeys: ["t", "deltaU"], formula: "=(A1,C1)", images: [CHARGING_IMAGES.firstPoint, CHARGING_IMAGES.points],
+    troubleshooting: "Beginne mit dem Gleichheitszeichen und verwende A1 sowie C1 in runden Klammern. Ziehe den Ausfüllgriff nur bis D9.",
+    mistake: "Bei =(C1,A1) würden Zeit und Spannung auf den falschen Achsen liegen.",
+    check: { prompt: "Prüfe Punktbereich und Koordinaten.", fields: [
+      { id: "d1", kind: "result", type: "choice", label: "Was steht in D1?", expected: "first", options: [option("", "Bitte auswählen …"), option("first", "(0, 3.78)"), option("reversed", "(3.78, 0)"), option("cells", "(A1, C1)")], feedback: { correct: "D1 stimmt.", incorrect: "GeoGebra setzt die Zellwerte in der Reihenfolge A1, C1 ein." } },
+      { id: "d9", kind: "result", type: "choice", label: "Was steht in D9?", expected: "last", options: [option("", "Bitte auswählen …"), option("last", "(80, 0.332)"), option("excluded", "(100, 0.251)"), option("copy", "(0, 3.78)")], feedback: { correct: "D9 ist der letzte verwendete Punkt.", incorrect: "Die Regression endet beim Messwert für 80 s." } },
+      { id: "order", kind: "understanding", type: "choice", label: "Warum steht t an erster Stelle?", expected: "independent", options: [option("", "Bitte auswählen …"), option("independent", "ΔU wird in Abhängigkeit von der Zeit untersucht."), option("unit", "Sekunden stehen grundsätzlich zuerst."), option("largest", "t besitzt die größeren Zahlenwerte.")], feedback: { correct: "Richtig: t ist die unabhängige x-Größe.", incorrect: "Untersucht wird ΔU als Funktion der Zeit." } }
+    ], success: "Die neun Regressionspunkte sind richtig erzeugt.", retry: "Prüfe D1, D9 und die Reihenfolge (t, ΔU)." }
+  },
+  {
+    id: "charging-model", shortTitle: "Modell", title: "Das exponentielle Modell verstehen",
+    goal: "Du deutest die Parameter A und k in ΔÛ(t) = A · e^(k·t).",
+    why: "Eine Exponentialregression bestimmt diejenige Funktion der gewählten Form, die den Messpunkten insgesamt möglichst nahe kommt. Sie muss deshalb nicht durch jeden Punkt verlaufen.",
+    concepts: [
+      { term: "Regressionsanfangswert A", text: "Der vom Modell für t = 0 vorhergesagte Wert; er liegt nahe bei U₀, muss aber nicht exakt dem ersten Messwert entsprechen." },
+      { term: "Exponent k", text: "Er beschreibt, wie schnell ΔU abnimmt. Bei einem Aufladevorgang ist k negativ." },
+      { term: "Eulerzahl e", text: "Die Basis der natürlichen Exponentialfunktion; e ist ungefähr 2,718." }
+    ],
+    workedExample: { title: "Die Vorzeichenwirkung", lines: ["Bei k < 0 wird k · t mit wachsender Zeit immer negativer.", "Dadurch wird e^(k·t) kleiner.", "Das Modell beschreibt so die beobachtete Abnahme von ΔU."] },
+    remember: "A beschreibt den Modellstart; ein negatives k erzeugt den fallenden Verlauf.",
+    actionHeading: "Vor der Regression",
+    actions: ["Schreibe die Modellform ΔÛ(t) = A · e^(k·t) auf.", "Ordne A dem modellierten Anfangswert zu.", "Begründe aus dem Verlauf, warum k negativ sein muss."],
+    formula: null, images: [],
+    troubleshooting: "A ist kein frei gewählter Messwert. GeoGebra bestimmt A und k gemeinsam aus allen neun Punkten.",
+    mistake: "Eine Exponentialfunktion ist nicht automatisch wachsend. Das Vorzeichen des Exponenten entscheidet über Wachstum oder Abnahme.",
+    check: { prompt: "Prüfe Parameter und Regressionsidee.", fields: [
+      { id: "sign", kind: "result", type: "choice", label: "Welches Vorzeichen muss k besitzen?", expected: "negative", options: [option("", "Bitte auswählen …"), option("negative", "k < 0"), option("positive", "k > 0"), option("zero", "k = 0")], feedback: { correct: "Richtig: Ein negatives k beschreibt die Abnahme.", incorrect: "ΔU wird mit der Zeit kleiner." } },
+      { id: "meaning", kind: "understanding", type: "choice", label: "Was leistet die Regression?", expected: "best-fit", options: [option("", "Bitte auswählen …"), option("best-fit", "Sie passt A und k so an, dass die Kurve insgesamt möglichst nah an den Punkten verläuft."), option("all", "Sie zwingt die Kurve exakt durch jeden Punkt."), option("delete", "Sie löscht automatisch unpassende Messwerte.")], feedback: { correct: "Genau: Die Regression ist eine gemeinsame Modellannäherung.", incorrect: "Messwerte streuen; die Kurve muss nicht durch jeden Punkt gehen." } }
+    ], success: "Du kannst Modellform, Parameter und Kurvenverlauf erklären.", retry: "Betrachte besonders das Vorzeichen von k und die Aufgabe einer Regression." }
+  },
+  {
+    id: "charging-regression", shortTitle: "TrendExp", title: "Die Exponentialregression berechnen",
+    goal: "Du wendest TrendExp auf D1:D9 an und liest A sowie k aus der Ausgabe ab.",
+    why: "TrendExp bestimmt die Parameter der exponentiellen Modellfunktion aus allen neun akzeptierten Punkten. Durch den Funktionsnamen U kann das Modell anschließend direkt in der Tabelle ausgewertet werden.",
+    concepts: [
+      { term: "TrendExp", text: "GeoGebras Befehl für eine Exponentialregression der Form A · e^(k·x)." },
+      { term: "Funktionsname U", text: "Ein frei gewählter Name für die Regressionsfunktion; er erinnert hier an die untersuchte Spannung." },
+      { term: "Variable x", text: "GeoGebra schreibt innerhalb der Funktion x; physikalisch steht x hier für die Zeit t." }
+    ],
+    workedExample: { title: "Die GeoGebra-Ausgabe lesen", lines: ["GeoGebra liefert U(x) ≈ 3,6925788 · e^(−0,0304341x).", "Damit ist A ≈ 3,6925788 V und k ≈ −0,0304341 s⁻¹.", "Der Bereich D1:D9 zeigt, dass nur die akzeptierten Punkte ausgewertet wurden."] },
+    remember: "A ≈ 3,69258 V und k ≈ −0,0304341 s⁻¹; verwendet wird D1:D9.",
+    actionHeading: "Jetzt in GeoGebra",
+    actions: ["Wechsle zur Algebraansicht.", "Gib die Formel vollständig ein und bestätige.", "Kontrolliere den Punktbereich D1:D9.", "Lies A und k aus der Funktion ab."],
+    formula: "U(x)=TrendExp(D1:D9)", images: [CHARGING_IMAGES.regression],
+    troubleshooting: "Wenn TrendExp eine Fehlermeldung zeigt, prüfe, ob D1:D9 tatsächlich Punkte enthalten und alle ΔU-Werte positiv sind.",
+    mistake: "U ist nur der Funktionsname. Das x in U(x) steht in diesem Versuch für die Zeit t, nicht für eine zusätzliche Messgröße.",
+    check: { prompt: "Übertrage Regressionsparameter und Punktbereich.", fields: [
+      { id: "a", kind: "result", type: "number", label: "Regressionsanfangswert A in V", placeholder: "3,69258", expected: 3.6925788228, tolerance: 0.0001, feedback: { correct: "A stimmt.", incorrect: "Lies den Faktor vor e ab." } },
+      { id: "k", kind: "result", type: "number", label: "Exponent k in s⁻¹", placeholder: "−0,0304341", expected: -0.0304340541, tolerance: 0.00001, feedback: { correct: "k stimmt.", incorrect: "Achte auf das Minuszeichen im Exponenten." } },
+      { id: "range", kind: "understanding", type: "choice", label: "Warum endet der Bereich bei D9?", expected: "audited", options: [option("", "Bitte auswählen …"), option("audited", "Nur die neun geprüften Messpaare werden regressiert."), option("limit", "TrendExp erlaubt höchstens neun Punkte."), option("zero", "Der zehnte ΔU-Wert ist null.")], feedback: { correct: "Richtig: D10 wurde wegen des ungeklärten Zeitpunkts ausgeschlossen.", incorrect: "Der Bereich folgt der dokumentierten Datenprüfung." } }
+    ], success: "Die Exponentialregression ist korrekt bestimmt und gelesen.", retry: "Prüfe Eingabe, Punktbereich, Faktor und Exponent." }
+  },
+  {
+    id: "charging-time", shortTitle: "Zeitmaße", title: "Zeitkonstante und Halbwertszeit bestimmen",
+    goal: "Du berechnest τ und t₁/₂ aus dem Exponenten und kannst die Halbwertszeit am Graphen bestimmen.",
+    why: "Der Exponent k ist mathematisch praktisch, aber die Zeitkonstante τ und die Halbwertszeit sind anschaulicher: Sie geben charakteristische Zeitspannen des Aufladevorgangs an.",
+    concepts: [
+      { term: "Zeitkonstante τ", text: "Für k = −1/τ gilt τ = −1/k. Nach einer Zeitkonstante ist ΔU auf den Anteil 1/e abgesunken." },
+      { term: "Halbwertszeit t₁/₂", text: "Die Zeitspanne, in der sich ein Modellwert von ΔU halbiert." },
+      { term: "RC-Zeit", text: "Im idealen Stromkreis gilt τ = R · C." }
+    ],
+    workedExample: { title: "Aus k werden Zeitangaben", lines: ["τ = −1/(−0,0304341 s⁻¹) ≈ 32,86 s.", "t₁/₂ = τ · ln(2) ≈ 22,78 s.", "Grafisch halbiert man A ≈ 3,6926 V zu A/2 ≈ 1,8463 V und liest den zugehörigen Zeitpunkt an der Kurve ab."] },
+    remember: "τ ≈ 32,86 s und t₁/₂ ≈ 22,78 s; ohne bekannten Widerstand wird daraus keine Kapazität berechnet.",
+    actionHeading: "Jetzt rechnen und am Graphen prüfen",
+    actions: ["Berechne τ = −1/k.", "Berechne t₁/₂ = τ · ln(2).", "Halbiere den Modellanfangswert A.", "Gehe im Graphen von A/2 waagerecht zur Kurve und anschließend senkrecht zur Zeitachse."],
+    formula: null, images: [],
+    troubleshooting: "Verwende für die Modellhalbwertszeit A/2 ≈ 1,8463 V. U₀/2 = 1,890 V liefert einen leicht anderen grafischen Wert, weil die Regression nicht exakt durch den Anfangsmesspunkt verläuft.",
+    mistake: "τ und t₁/₂ sind nicht identisch. Es gilt t₁/₂ = τ · ln(2), also t₁/₂ ≈ 0,693 · τ.",
+    check: { prompt: "Bestimme beide Zeitmaße und die grafische Vorgehensweise.", fields: [
+      { id: "tau", kind: "result", type: "number", label: "Zeitkonstante τ in s", placeholder: "32,86", expected: 32.8579294, tolerance: 0.08, feedback: { correct: "τ stimmt.", incorrect: "Berechne −1/k mit k = −0,0304341 s⁻¹." } },
+      { id: "half", kind: "result", type: "number", label: "Halbwertszeit t₁/₂ in s", placeholder: "22,78", expected: 22.7753811, tolerance: 0.08, feedback: { correct: "Die Halbwertszeit stimmt.", incorrect: "Multipliziere τ mit ln(2)." } },
+      { id: "graphic", kind: "understanding", type: "choice", label: "Wie wird t₁/₂ am Modellgraphen bestimmt?", expected: "half-a", options: [option("", "Bitte auswählen …"), option("half-a", "A halbieren, waagerecht zur Kurve und senkrecht zur Zeitachse gehen."), option("half-time", "Die größte gemessene Zeit halbieren."), option("intercept", "Den Schnittpunkt mit der t-Achse verwenden.")], feedback: { correct: "Genau: Gesucht ist die Zeit bis zur Halbierung des Modellwerts.", incorrect: "Beginne beim halben Modellanfangswert A/2." } }
+    ], success: "Du kannst τ und Halbwertszeit rechnerisch sowie grafisch bestimmen.", retry: "Unterscheide Zeitkonstante, Halbwertszeit und Modellanfangswert." }
+  },
+  {
+    id: "charging-predictions", shortTitle: "Modellwerte", title: "Werte der Exponentialfunktion berechnen",
+    goal: "Du berechnest für jeden verwendeten Zeitpunkt den zugehörigen Modellwert.",
+    why: "Eine Modellabweichung ist nur sinnvoll, wenn Messwert und Modellwert zum selben Zeitpunkt gehören. U(A1) setzt deshalb genau den Zeitwert der jeweiligen Zeile ein.",
+    concepts: [
+      { term: "Messwert", text: "Der aus U₀ − U_C bestimmte Wert in Spalte C." },
+      { term: "Modellwert", text: "Der von der Regressionsfunktion berechnete Wert in Spalte E." },
+      { term: "U(A1)", text: "Der Funktionswert der Regression beim Zeitpunkt aus A1." }
+    ],
+    workedExample: { title: "Erster Modellwert", lines: ["Für t = 0 gilt U(0) = 3,6925788 · e⁰.", "Daher ist E1 ≈ 3,69258 V.", "Der Messwert C1 = 3,780 V und der Modellwert E1 sind ähnlich, aber nicht identisch."] },
+    remember: "C enthält Messwerte von ΔU; E enthält berechnete Werte des Regressionsmodells.",
+    actionHeading: "Jetzt in GeoGebra",
+    actions: ["Wechsle zur Tabellenkalkulation.", "Gib in E1 die Modellwertformel ein.", "Fülle E1 bis E9 aus.", "Kontrolliere den ersten und letzten Modellwert."],
+    formula: "=U(A1)", images: [CHARGING_IMAGES.modelFormula, CHARGING_IMAGES.modelValues],
+    troubleshooting: "Wenn U nicht erkannt wird, kontrolliere in der Algebraansicht den Funktionsnamen U(x). Fülle nur bis E9 aus.",
+    mistake: "Die Werte in E sind keine neuen Messungen, sondern Vorhersagen der Regressionsfunktion.",
+    check: { prompt: "Prüfe Modellwerte und ihre Bedeutung.", fields: [
+      { id: "e1", kind: "result", type: "number", label: "E1: Modellwert in V", placeholder: "3,69258", expected: 3.6925788228, tolerance: 0.0001, feedback: { correct: "E1 stimmt.", incorrect: "Setze t = 0 in die Regressionsfunktion ein." } },
+      { id: "e9", kind: "result", type: "number", label: "E9: Modellwert in V", placeholder: "0,32355", expected: 0.323550768, tolerance: 0.0001, feedback: { correct: "E9 stimmt.", incorrect: "E9 sollte etwa 0,32355 V enthalten." } },
+      { id: "kind", kind: "understanding", type: "choice", label: "Was ist E1?", expected: "model", options: [option("", "Bitte auswählen …"), option("model", "Ein aus U(x) berechneter Modellwert."), option("measurement", "Eine zweite Spannungsmessung."), option("uncertainty", "Die Unsicherheit des Voltmeters.")], feedback: { correct: "Richtig: E1 stammt aus der Regressionsfunktion.", incorrect: "Vergleiche die Aufgaben der Spalten C und E." } }
+    ], success: "Du kannst Messwerte und Modellwerte unterscheiden.", retry: "Prüfe E1, E9 und die Herkunft der Werte." }
+  },
+  {
+    id: "charging-deviations", shortTitle: "Abweichungen", title: "Relative Modellabweichungen bestimmen",
+    goal: "Du berechnest die relativen Abweichungen mit derselben Vorzeichenkonvention wie in den anderen Kursen.",
+    why: "Die relative Modellabweichung zeigt, wie groß der Unterschied zwischen Messwert und Modellwert im Verhältnis zum Modellwert ist. Durch den Betrag lassen sich unterschiedlich große Modellwerte vergleichen.",
+    concepts: [
+      { term: "Relative Modellabweichung", text: "(Messwert − Modellwert) geteilt durch den Modellwert, anschließend mit 100 multipliziert." },
+      { term: "Vorzeichen", text: "Positiv bedeutet: Messwert über dem Modellwert; negativ bedeutet: Messwert darunter." },
+      { term: "Betrag", text: "Die Größe der Abweichung ohne ihre Richtung." }
+    ],
+    workedExample: { title: "Abweichung bei 80 s", lines: ["Messwert C9 = 0,332 V; Modellwert E9 ≈ 0,32355 V.", "(0,332 − 0,32355)/0,32355 · 100 ≈ +2,61 %.", "Das Plus zeigt, dass der Messwert oberhalb der Modellkurve liegt."] },
+    remember: "Der größte Betrag der neun verwendeten Modellabweichungen beträgt etwa 2,61 % bei 80 s.",
+    actionHeading: "Jetzt in GeoGebra",
+    actions: ["Gib die Kursformel in F1 ein.", "Fülle F1 bis F9 aus.", "Vergleiche die Beträge der neun Werte.", "Notiere Betrag, Zeitpunkt und Vorzeichen des größten Werts."],
+    dataTable: CHARGING_ANALYSIS_DATA, dataHeaders: ["t (s)", "Messwert ΔU (V)", "Modellwert (V)", "Abweichung (%)"], dataKeys: ["t", "deltaU", "predicted", "deviation"], dataFormatDigits: 5,
+    formula: "=(C1-E1)/E1*100", images: [],
+    troubleshooting: "Die historische Aufnahme zeigt die umgekehrte Subtraktionsreihenfolge. Verwende für diesen Kurs ausschließlich (C1−E1)/E1·100, damit das Vorzeichen zu allen anderen Lernwegen passt.",
+    mistake: "Eine Modellabweichung ist keine Messunsicherheit. Sie beschreibt den Abstand eines Messwerts vom gewählten Modell.",
+    check: { prompt: "Bestimme und deute die größte verwendete Abweichung.", fields: [
+      { id: "max", kind: "result", type: "number", label: "Größter Betrag in %", placeholder: "2,61", expected: 2.61140841, tolerance: 0.05, feedback: { correct: "Der Betrag stimmt.", incorrect: "Vergleiche |F1| bis |F9|." } },
+      { id: "time", kind: "result", type: "number", label: "Zugehöriger Zeitpunkt in s", placeholder: "80", expected: 80, tolerance: 0.01, feedback: { correct: "Der größte Betrag liegt bei 80 s.", incorrect: "Suche die Zeile mit dem größten Betrag." } },
+      { id: "sign", kind: "understanding", type: "choice", label: "Was bedeutet das positive Vorzeichen bei 80 s?", expected: "above", options: [option("", "Bitte auswählen …"), option("above", "Der Messwert liegt über dem Modellwert."), option("below", "Der Messwert liegt unter dem Modellwert."), option("invalid", "Der Messwert ist automatisch ungültig.")], feedback: { correct: "Richtig: C9 ist größer als E9.", incorrect: "Bei Messwert minus Modellwert bedeutet positiv: Messwert größer." } }
+    ], success: "Du kannst Modellabweichungen berechnen und ihr Vorzeichen deuten.", retry: "Nutze Kursformel, Betrag und Vorzeichen getrennt." }
+  },
+  {
+    id: "charging-conclusion", shortTitle: "Urteil", title: "Messfehler abschätzen und das Modell beurteilen",
+    goal: "Du wendest die Methode des größten Einzelfehlers an und formulierst ein vorsichtiges Urteil zum exponentiellen Modell.",
+    why: "Messpunkte liegen wegen begrenzter Zeit- und Spannungsauflösung nicht exakt auf einer Modellkurve. In der hier verwendeten schulischen Methode wird der größte relative Einzelfehler als Grenze auf die untersuchten Abweichungen übertragen.",
+    concepts: [
+      { term: "Spannungsfehler", text: "Aus ΔU_Gerät = 0,001 V und dem kleinsten protokollierten Spannungswert 0,251 V ergeben sich rund 0,40 %." },
+      { term: "Zeitfehler", text: "Aus Δt = 1 s und dem kleinsten von null verschiedenen Zeitpunkt 10 s ergeben sich 10 %. Bei t = 0 wäre ein relativer Fehler nicht definiert." },
+      { term: "Größter relativer Einzelfehler", text: "Das Maximum aus 0,40 % und 10 %, hier also fmax = 10 %." },
+      { term: "Vereinbarkeit", text: "Die betrachteten Abweichungen liefern innerhalb dieser vereinfachten Methode keinen deutlichen Widerspruch zum Modell." }
+    ],
+    workedExample: { title: "Alle Vergleichswerte zusammenführen", lines: ["Spannung: 0,001/0,251 · 100 ≈ 0,40 %; Zeit: 1/10 · 100 = 10 %; damit fmax = 10 %.", "Der Regressionsanfangswert A weicht relativ um etwa 2,31 % von U₀ ab; die größte Modellabweichung beträgt etwa 2,61 %.", "Beide Abweichungen liegen unter 10 % und können nach der schulischen Methode durch die Messfehler erklärt werden."] },
+    remember: "Die Daten sind mit einem exponentiellen Aufladevorgang vereinbar; sie beweisen das Modell nicht.",
+    actionHeading: "Jetzt ein fachliches Urteil formulieren",
+    actions: ["Berechne die relativen Einzelfehler von Spannung und Zeit.", "Bestimme fmax = 10 %.", "Vergleiche 2,31 % und 2,61 % jeweils mit fmax.", "Nenne τ ≈ 32,86 s und dokumentiere den Ausschluss des ungeklärten letzten Zeitwerts."],
+    formula: null, images: [],
+    troubleshooting: "Der Wert 0,251 V bleibt als kleinster protokollierter Spannungswert für die konservative Gerätefehlerabschätzung nutzbar, obwohl seine ungeklärte Zeitzuordnung nicht regressiert wird. Mit 0,332 V ergäben sich rund 0,30 %; fmax bliebe 10 %.",
+    mistake: "Die 10-%-Grenze ist eine vereinfachte schulische Beurteilung, keine vollständige Fehlerfortpflanzung und kein mathematischer Beweis des Modells.",
+    check: { prompt: "Prüfe Fehlerwerte und Schlussfolgerung.", fields: [
+      { id: "voltage-error", kind: "result", type: "number", label: "Relativer Spannungsfehler in %", placeholder: "0,40", expected: 0.398406375, tolerance: 0.03, feedback: { correct: "Der Spannungsfehler beträgt rund 0,40 %.", incorrect: "Berechne 0,001/0,251 · 100." } },
+      { id: "time-error", kind: "result", type: "number", label: "Relativer Zeitfehler in %", placeholder: "10", expected: 10, tolerance: 0.05, feedback: { correct: "Der Zeitfehler beträgt 10 %.", incorrect: "Verwende 1 s und den kleinsten positiven Zeitpunkt 10 s." } },
+      { id: "start-error", kind: "result", type: "number", label: "Abweichung von A gegenüber U₀ in %", placeholder: "2,31", expected: 2.312729555, tolerance: 0.05, feedback: { correct: "Die Anfangswertabweichung stimmt.", incorrect: "Berechne |3,69258−3,780|/3,780 · 100." } },
+      { id: "judgement", kind: "understanding", type: "choice", label: "Welche Schlussfolgerung ist fachlich angemessen?", expected: "compatible", options: [option("", "Bitte auswählen …"), option("compatible", "Die geprüften Daten sind mit einem exponentiellen Aufladevorgang vereinbar, beweisen ihn aber nicht."), option("proven", "Die Exponentialfunktion ist mathematisch bewiesen."), option("tau-proven", "Ohne weitere Angaben ist eine theoretisch erwartete Zeitkonstante exakt bestätigt.")], feedback: { correct: "Genau: Vereinbarkeit statt Beweis.", incorrect: "Messunsicherheiten und der dokumentierte Datenausschluss begrenzen die Aussage." } }
+    ], success: "Du hast Regression, Zeitmaße, Datenprüfung und Messfehler zu einem vorsichtigen Urteil verbunden.", retry: "Vergleiche 2,31 % und 2,61 % mit fmax = 10 % und formuliere nur eine Vereinbarkeitsaussage." }
+  }
+]);
+
 export const COURSES = Object.freeze({
   "inverse-square": Object.freeze({
     id: "inverse-square",
@@ -788,6 +1111,7 @@ export const COURSES = Object.freeze({
     title: "Coulombkraft: F ∝ 1/r²",
     subtitle: "Potenzregression der r-F-Messreihe",
     duration: "etwa 20–35 Minuten",
+    transferMethod: "inverse-square",
     dataHeaders: ["A: r (cm)", "B: F (mN)"],
     dataKeys: ["r", "f"],
     stages: ["Messwerte", "Punkte", "Modell", "Modellwerte", "Abweichungen", "Urteil"],
@@ -812,6 +1136,7 @@ export const COURSES = Object.freeze({
     title: "Kondensator: Potenzregression",
     subtitle: "Q ∝ U anhand des Exponenten b prüfen",
     duration: "etwa 20–30 Minuten",
+    transferMethod: "proportional-power",
     dataHeaders: ["A: U (V)", "B: Q/(10⁻⁸ C)"],
     dataKeys: ["u", "q"],
     sharedRequirement: UQ_SHARED_REQUIREMENT_ID,
@@ -838,6 +1163,7 @@ export const COURSES = Object.freeze({
     title: "Kondensator: Konstantenverfahren",
     subtitle: "Q ∝ U anhand der Quotienten Q/U prüfen",
     duration: "etwa 20–30 Minuten",
+    transferMethod: "proportional-constants",
     dataHeaders: ["A: U (V)", "B: Q/(10⁻⁸ C)"],
     dataKeys: ["u", "q"],
     sharedRequirement: UQ_SHARED_REQUIREMENT_ID,
@@ -863,6 +1189,7 @@ export const COURSES = Object.freeze({
     title: "Kondensator: Lineare Regression",
     subtitle: "Q ∝ U anhand von Steigung und Achsenabschnitt prüfen",
     duration: "etwa 20–30 Minuten",
+    transferMethod: "proportional-linear",
     dataHeaders: ["A: U (V)", "B: Q/(10⁻⁸ C)"],
     dataKeys: ["u", "q"],
     sharedRequirement: UQ_SHARED_REQUIREMENT_ID,
@@ -883,7 +1210,36 @@ export const COURSES = Object.freeze({
       ["Größter relativer Einzelfehler", "fmax = 10 %"]
     ],
     conclusion: "Die Messpunkte werden gut durch eine Gerade beschrieben. Die Steigung entspricht einer Kapazität von etwa 408 pF. Die größte Modellabweichung von etwa 7,41 % und der relative Anteil des y-Achsenabschnitts von 6 % liegen unter dem größten relativen Einzelfehler fmax = 10 %. Beide Abweichungen können nach der schulischen Methode durch die Messfehler erklärt werden; b darf näherungsweise vernachlässigt werden, sodass Q(U) ≈ m · U gilt. Ein Beweis für direkte Proportionalität oder eine statistische Bestätigung von b = 0 folgt daraus nicht."
+  }),
+  "capacitor-exponential": Object.freeze({
+    id: "capacitor-exponential",
+    eyebrow: "Kondensator-Aufladung",
+    title: "Kondensator: Exponentialregression",
+    subtitle: "ΔU = U₀ − U_C als exponentiell abnehmende Größe untersuchen",
+    duration: "etwa 25–40 Minuten",
+    transferMethod: null,
+    dataHeaders: ["A: t (s)", "B: U_C (V)"],
+    dataKeys: ["t", "uc"],
+    stages: ["Aufladevorgang", "Messwerte", "Datenprüfung", "Punkte", "Exponentialmodell", "Zeitmaße", "Abweichungen", "Urteil"],
+    steps: CHARGING_EXPONENTIAL_STEPS,
+    competencies: [
+      { label: "Ich kann den Aufladevorgang mit U_C und ΔU beschreiben.", steps: ["charging-context", "charging-delta"] },
+      { label: "Ich kann Messdaten eingeben, prüfen und einen Ausschluss transparent begründen.", steps: ["charging-table", "charging-data-check"] },
+      { label: "Ich kann Zeit-Spannungs-Punkte erstellen und eine Exponentialregression durchführen.", steps: ["charging-points", "charging-model", "charging-regression"] },
+      { label: "Ich kann Zeitkonstante, Halbwertszeit und Modellwerte bestimmen.", steps: ["charging-time", "charging-predictions"] },
+      { label: "Ich kann Modellabweichungen mit dem größten relativen Einzelfehler vergleichen und vorsichtig urteilen.", steps: ["charging-deviations", "charging-conclusion"] }
+    ],
+    referenceResults: [
+      ["Exponentialfunktion", "ΔÛ(t) ≈ 3,6925788 · e^(−0,0304341 · t)"],
+      ["Zeitkonstante", "τ ≈ 32,86 s"],
+      ["Halbwertszeit", "t₁/₂ ≈ 22,78 s"],
+      ["Größte Modellabweichung", "≈ 2,61 % bei t = 80 s"],
+      ["Größter relativer Einzelfehler", "fmax = 10 %"],
+      ["Datenprüfung", "Ungeklärtes Wertepaar bei 100 s dokumentiert ausgeschlossen"]
+    ],
+    conclusion: "Die Regression der neun geprüften Messpunkte ergibt ΔÛ(t) ≈ 3,6925788 · e^(−0,0304341 · t), eine Zeitkonstante von etwa 32,86 s und eine Halbwertszeit von etwa 22,78 s. Die Abweichung des Regressionsanfangswerts von U₀ beträgt etwa 2,31 %, die größte Modellabweichung etwa 2,61 %. Beide liegen unter dem größten relativen Einzelfehler fmax = 10 % und können nach der schulischen Methode durch Messfehler erklärt werden. Die Daten sind mit einem exponentiellen Aufladevorgang vereinbar, beweisen ihn aber nicht; der Ausschluss des ungeklärten letzten Zeitwerts bleibt ausdrücklich dokumentiert."
   })
 });
 
 export const COURSE_IDS = Object.freeze(Object.keys(COURSES));
+export const TRANSFER_METHOD_IDS = Object.freeze(COURSE_IDS.filter((id) => COURSES[id].transferMethod === id));

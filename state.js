@@ -1,4 +1,4 @@
-import { COURSE_IDS, COURSES, UQ_SHARED_REQUIREMENT_ID } from "./lesson-data.js";
+import { COURSE_IDS, COURSES, TRANSFER_METHOD_IDS, UQ_SHARED_REQUIREMENT_ID } from "./lesson-data.js";
 import { cloneExampleData, cloneUqExampleData } from "./regression.js";
 
 export const STORAGE_KEY = "geogebra-begleitkurs-state-v4";
@@ -121,7 +121,10 @@ export function sanitizeState(candidate) {
   const base = createDefaultState();
   if (!candidate || candidate.version !== 4) return base;
   const activeCourseId = COURSE_IDS.includes(candidate.activeCourseId) ? candidate.activeCourseId : "inverse-square";
-  const activeMethod = COURSE_IDS.includes(candidate?.transfer?.activeMethod) ? candidate.transfer.activeMethod : activeCourseId;
+  const preferredMethod = COURSES[activeCourseId].transferMethod;
+  const activeMethod = TRANSFER_METHOD_IDS.includes(candidate?.transfer?.activeMethod)
+    ? candidate.transfer.activeMethod
+    : preferredMethod || "inverse-square";
 
   return {
     version: 4,
@@ -133,7 +136,7 @@ export function sanitizeState(candidate) {
     },
     transfer: {
       activeMethod,
-      methods: Object.fromEntries(COURSE_IDS.map((id) => [id, sanitizeTransferMethod(candidate?.transfer?.methods?.[id], id)]))
+      methods: Object.fromEntries(TRANSFER_METHOD_IDS.map((id) => [id, sanitizeTransferMethod(candidate?.transfer?.methods?.[id], id)]))
     },
     student: preservedStudent(candidate),
     updatedAt: String(candidate.updatedAt ?? base.updatedAt)

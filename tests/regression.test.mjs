@@ -1,13 +1,19 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  CHARGING_FIT_DATA,
+  CHARGING_RAW_DATA,
   EXAMPLE_DATA,
   UQ_EXAMPLE_DATA,
+  analyzeExponential,
   analyzePoints,
   analyzeProportionality,
   analyzeUqLinear,
   analyzeUqPower,
   deviationsWithinLimit,
+  exponentialRegression,
+  exponentialTimeMeasures,
+  greatestSingleChargingError,
   greatestSingleRelativeError,
   isWithin,
   linearRegression,
@@ -16,6 +22,7 @@ import {
   relativeExponentDeviation,
   relativeInterceptShare,
   uqPowerRegression,
+  validateExponentialPoints,
   validateUqPoints,
   validatePowerPoints
 } from "../regression.js";
@@ -94,6 +101,46 @@ test("berechnet die lineare U-Q-Regression und ihre Modellabweichungen", () => {
   assert.ok(Math.abs(analysis.maxDeviation.deviation - (-7.407407407407414)) < 1e-12);
   assert.equal(analysis.interceptShare.minQ, 2);
   assert.ok(Math.abs(analysis.interceptShare.percent - 6) < 1e-12);
+});
+
+test("berechnet die Exponentialregression der neun geprüften Aufladewerte", () => {
+  const regression = exponentialRegression(CHARGING_FIT_DATA);
+  assert.ok(regression);
+  assert.ok(Math.abs(regression.a - 3.6925788228079903) < 1e-12);
+  assert.ok(Math.abs(regression.b - (-0.030434054070557454)) < 1e-14);
+
+  const analysis = analyzeExponential(CHARGING_FIT_DATA, regression);
+  assert.equal(analysis.rows.length, 9);
+  assert.ok(Math.abs(analysis.rows[0].predicted - 3.6925788228079903) < 1e-12);
+  assert.ok(Math.abs(analysis.rows[8].predicted - 0.32355076803155713) < 1e-12);
+  assert.equal(analysis.maxDeviation.t, 80);
+  assert.ok(Math.abs(analysis.maxDeviation.deviation - 2.6114084104472894) < 1e-12);
+  assert.ok(analysis.maxDeviation.deviation > 0);
+  const excluded = analyzeExponential([{ t: 100, deltaU: 0.251 }], regression).rows[0];
+  assert.ok(Math.abs(excluded.deviation - 42.5864056325733) < 1e-10);
+  assert.ok(Math.abs((Math.abs(regression.a - 3.78) / 3.78) * 100 - 2.3127295553441662) < 1e-12);
+});
+
+test("bestimmt Zeitkonstante, Halbwertszeit und größten Einzelfehler", () => {
+  const regression = exponentialRegression(CHARGING_FIT_DATA);
+  const measures = exponentialTimeMeasures(regression.b);
+  assert.ok(Math.abs(measures.tau - 32.85792939979761) < 1e-10);
+  assert.ok(Math.abs(measures.halfLife - 22.77538112250745) < 1e-10);
+  assert.equal(exponentialTimeMeasures(0), null);
+
+  const errors = greatestSingleChargingError({ deltaTime: 1, minPositiveTime: 10, deltaVoltage: 0.001, minVoltage: 0.251 });
+  assert.ok(Math.abs(errors.voltagePercent - 0.39840637450199207) < 1e-12);
+  assert.equal(errors.timePercent, 10);
+  assert.equal(errors.limit, 10);
+});
+
+test("validiert Exponentialdaten mit t = 0, aber nur positiven Spannungsdifferenzen", () => {
+  assert.equal(validateExponentialPoints(CHARGING_FIT_DATA).valid, true);
+  assert.equal(validateExponentialPoints(CHARGING_RAW_DATA).valid, true);
+  assert.equal(validateExponentialPoints([{ t: 0, deltaU: 3 }, { t: 10, deltaU: 2 }]).valid, false);
+  assert.equal(validateExponentialPoints([{ t: 0, deltaU: 3 }, { t: 10, deltaU: 0 }, { t: 20, deltaU: 1 }]).valid, false);
+  assert.equal(validateExponentialPoints([{ t: 0, deltaU: 3 }, { t: 0, deltaU: 2 }, { t: 0, deltaU: 1 }]).valid, false);
+  assert.equal(exponentialRegression([{ t: 0, deltaU: 3 }, { t: 10, deltaU: -1 }]), null);
 });
 
 test("verwirft lineare Modellabweichungen mit nicht positivem Modellwert", () => {

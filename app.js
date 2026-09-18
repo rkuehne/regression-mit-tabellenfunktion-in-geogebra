@@ -73,6 +73,7 @@ const els = {
   sharedRequirementText: document.getElementById("sharedRequirementText"),
   sharedRequirementLink: document.getElementById("sharedRequirementLink"),
   transferMethodSelect: document.getElementById("transferMethodSelect"),
+  transferSection: document.getElementById("transfer"),
   transferIntro: document.getElementById("transferIntro"),
   transferInputTitle: document.getElementById("transferInputTitle"),
   transferXHeader: document.getElementById("transferXHeader"),
@@ -220,9 +221,11 @@ function renderProgress() {
     els.completionActionLink.textContent = "Fehlerseite abschließen";
   } else if (chaptersComplete) {
     els.completionTitle.textContent = `${course.title} abgeschlossen`;
-    els.completionText.textContent = "Du kannst den Auswertungsweg fachlich begründen, auf eigene Messdaten übertragen und im Lernnachweis dokumentieren.";
-    els.completionActionLink.href = "#transfer";
-    els.completionActionLink.textContent = "Zum Transfer";
+    els.completionText.textContent = course.transferMethod
+      ? "Du kannst den Auswertungsweg fachlich begründen, auf eigene Messdaten übertragen und im Lernnachweis dokumentieren."
+      : "Du kannst den Auswertungsweg fachlich begründen und im Lernnachweis dokumentieren.";
+    els.completionActionLink.href = course.transferMethod ? "#transfer" : "#summary";
+    els.completionActionLink.textContent = course.transferMethod ? "Zum Transfer" : "Zum Lernnachweis";
   }
 }
 
@@ -262,7 +265,8 @@ function renderStepNav() {
   });
 }
 
-function renderSourceData(data) {
+function renderSourceData(step) {
+  const data = step.dataTable;
   els.stepDataTable.replaceChildren();
   if (!data) {
     els.stepDataTable.hidden = true;
@@ -271,10 +275,10 @@ function renderSourceData(data) {
 
   const table = document.createElement("table");
   const caption = document.createElement("caption");
-  caption.textContent = "Messwerte für den Lernweg";
+  caption.textContent = step.dataCaption || "Messwerte für den Lernweg";
   const head = document.createElement("thead");
   const headerRow = document.createElement("tr");
-  ["Nr.", ...activeCourse().dataHeaders].forEach((text) => {
+  ["Nr.", ...(step.dataHeaders || activeCourse().dataHeaders)].forEach((text) => {
     const th = document.createElement("th");
     th.scope = "col";
     th.textContent = text;
@@ -283,12 +287,20 @@ function renderSourceData(data) {
   head.append(headerRow);
 
   const body = document.createElement("tbody");
-  const keys = activeCourse().dataKeys;
+  const keys = step.dataKeys || activeCourse().dataKeys;
+  const digits = step.dataFormatDigits ?? 3;
   data.forEach((dataRow, index) => {
     const row = document.createElement("tr");
+    const markExcluded = Boolean(step.markExcludedRows && dataRow.excluded);
+    if (markExcluded) {
+      row.className = "excluded-data-row";
+      row.title = "Ungeklärtes Wertepaar – nicht für die Regression verwendet";
+    }
     [index + 1, ...keys.map((key) => dataRow[key])].forEach((value, columnIndex) => {
       const cell = document.createElement("td");
-      cell.textContent = columnIndex === 0 ? String(value) : formatNumber(value, 3);
+      cell.textContent = columnIndex === 0
+        ? `${value}${markExcluded ? "*" : ""}`
+        : formatNumber(value, digits);
       row.append(cell);
     });
     body.append(row);
@@ -569,7 +581,7 @@ function renderLesson() {
     els.stepActions.append(item);
   });
 
-  renderSourceData(step.dataTable);
+  renderSourceData(step);
   els.formulaBlock.hidden = !step.formula;
   els.formulaText.textContent = step.formula || "";
   els.stepTroubleshooting.textContent = step.troubleshooting;
@@ -581,7 +593,9 @@ function renderLesson() {
   renderCheckpoint(step);
 
   els.previousStepBtn.disabled = progress.currentStep === 0;
-  els.nextStepBtn.textContent = progress.currentStep === course.steps.length - 1 ? "Zum Transfer ↓" : "Weiter →";
+  els.nextStepBtn.textContent = progress.currentStep === course.steps.length - 1
+    ? course.transferMethod ? "Zum Transfer ↓" : "Zum Lernnachweis ↓"
+    : "Weiter →";
 }
 
 function renderCourseIdentity() {
@@ -598,7 +612,9 @@ function renderCourseIdentity() {
     els.learningMap.append(item);
   });
   els.completionTitle.textContent = `${course.title} abgeschlossen`;
-  els.completionText.textContent = "Du kannst den Auswertungsweg fachlich begründen, auf eigene Messdaten übertragen und im Lernnachweis dokumentieren.";
+  els.completionText.textContent = course.transferMethod
+    ? "Du kannst den Auswertungsweg fachlich begründen, auf eigene Messdaten übertragen und im Lernnachweis dokumentieren."
+    : "Du kannst den Auswertungsweg fachlich begründen und im Lernnachweis dokumentieren.";
   els.courseChoiceButtons.forEach((button) => {
     const selected = button.dataset.courseId === state.activeCourseId;
     button.setAttribute("aria-pressed", String(selected));
@@ -1086,6 +1102,9 @@ function syncTransferInputs() {
 }
 
 function renderTransfer() {
+  const enabled = Boolean(activeCourse().transferMethod);
+  els.transferSection.hidden = !enabled;
+  if (!enabled) return;
   renderTransferIdentity();
   syncTransferInputs();
   renderTransferRows();
@@ -1173,7 +1192,14 @@ function renderSummary() {
       ? "Die acht Kapitel sind abgeschlossen. Die abschließende Beurteilung wird eingetragen, sobald auch die gemeinsame Kontrolle zur Methode des größten Einzelfehlers abgeschlossen ist."
       : "Die abschließende Beurteilung wird eingetragen, sobald alle Ergebnis- und Verständnisprüfungen dieses Lernwegs abgeschlossen sind.";
 
-  const transfer = state.transfer.methods[state.activeCourseId];
+  const transferMethod = course.transferMethod;
+  if (!transferMethod) {
+    els.summaryTransfer.hidden = true;
+    els.summaryTransferResult.textContent = "";
+    els.summaryReflection.textContent = "";
+    return;
+  }
+  const transfer = state.transfer.methods[transferMethod];
   const hasTransfer = Boolean(transfer.result) || Boolean(transfer.reflection.trim());
   els.summaryTransfer.hidden = !hasTransfer;
   if (transfer.result) {
@@ -1217,7 +1243,7 @@ function renderSummary() {
 function selectCourse(courseId, { scroll = true } = {}) {
   if (!COURSE_IDS.includes(courseId)) return;
   state.activeCourseId = courseId;
-  state.transfer.activeMethod = courseId;
+  if (COURSES[courseId].transferMethod) state.transfer.activeMethod = COURSES[courseId].transferMethod;
   saveState();
   renderCourse();
   renderTransfer();
@@ -1243,7 +1269,7 @@ els.resetCourseBtn.addEventListener("click", () => {
 els.previousStepBtn.addEventListener("click", () => setCurrentStep(activeProgress().currentStep - 1));
 els.nextStepBtn.addEventListener("click", () => {
   if (activeProgress().currentStep === activeCourse().steps.length - 1) {
-    scrollToElement(document.getElementById("transfer"));
+    scrollToElement(document.getElementById(activeCourse().transferMethod ? "transfer" : "summary"));
   } else {
     setCurrentStep(activeProgress().currentStep + 1);
   }

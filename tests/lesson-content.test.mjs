@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
-import { COURSE_IDS, COURSES, LESSON_STEPS, UQ_CONSTANT_STEPS, UQ_LINEAR_STEPS, UQ_POWER_STEPS, UQ_SHARED_REQUIREMENT_ID } from "../lesson-data.js";
+import { CHARGING_EXPONENTIAL_STEPS, COURSE_IDS, COURSES, LESSON_STEPS, TRANSFER_METHOD_IDS, UQ_CONSTANT_STEPS, UQ_LINEAR_STEPS, UQ_POWER_STEPS, UQ_SHARED_REQUIREMENT_ID } from "../lesson-data.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const expectedIds = [
@@ -123,21 +123,25 @@ test("die Startseite enthält Kurswahl, Moduswahl, Begriffshilfe und lokale Soci
   assert.match(html, /data-course-id="proportional-power"/);
   assert.match(html, /data-course-id="proportional-constants"/);
   assert.match(html, /data-course-id="proportional-linear"/);
+  assert.match(html, /data-course-id="capacitor-exponential"/);
   assert.match(html, /property="og:image" content="\.\/assets\/og\.png"/);
   assert.match(html, /name="twitter:card" content="summary_large_image"/);
   assert.equal(existsSync(resolve(root, "assets", "og.png")), true);
 });
 
-test("enthält vier eigenständige Lernwege mit 10, 8, 8 und 8 Kapiteln", () => {
-  assert.deepEqual(COURSE_IDS, ["inverse-square", "proportional-power", "proportional-constants", "proportional-linear"]);
+test("enthält fünf Lernwege, aber weiterhin nur vier Transferverfahren", () => {
+  assert.deepEqual(COURSE_IDS, ["inverse-square", "proportional-power", "proportional-constants", "proportional-linear", "capacitor-exponential"]);
+  assert.deepEqual(TRANSFER_METHOD_IDS, ["inverse-square", "proportional-power", "proportional-constants", "proportional-linear"]);
   assert.equal(COURSES["inverse-square"].steps.length, 10);
   assert.equal(UQ_POWER_STEPS.length, 8);
   assert.equal(UQ_CONSTANT_STEPS.length, 8);
   assert.equal(UQ_LINEAR_STEPS.length, 8);
+  assert.equal(CHARGING_EXPONENTIAL_STEPS.length, 11);
+  assert.equal(COURSES["capacitor-exponential"].transferMethod, null);
 });
 
 test("alle neuen Kapitel besitzen Erklärfelder sowie Ergebnis- und Verständnisprüfung", () => {
-  [...UQ_POWER_STEPS, ...UQ_CONSTANT_STEPS, ...UQ_LINEAR_STEPS].forEach((step) => {
+  [...UQ_POWER_STEPS, ...UQ_CONSTANT_STEPS, ...UQ_LINEAR_STEPS, ...CHARGING_EXPONENTIAL_STEPS].forEach((step) => {
     assert.ok(step.goal && step.why && step.remember && step.troubleshooting && step.mistake);
     assert.ok(step.concepts.length >= 2);
     assert.ok(step.workedExample.lines.length >= 2);
@@ -146,6 +150,51 @@ test("alle neuen Kapitel besitzen Erklärfelder sowie Ergebnis- und Verständnis
     assert.equal(kinds.has("result"), true, `${step.id}: Ergebnisprüfung fehlt`);
     assert.equal(kinds.has("understanding"), true, `${step.id}: Verständnisprüfung fehlt`);
   });
+});
+
+test("bindet elf Auflade-Abbildungen mit zugänglichen Beschreibungen und Markierungen ein", () => {
+  const images = CHARGING_EXPONENTIAL_STEPS.flatMap((step) => step.images);
+  const uniqueImages = [...new Map(images.map((image) => [image.src, image])).values()];
+  assert.equal(uniqueImages.length, 11);
+  uniqueImages.forEach((image) => {
+    assert.ok(image.alt.length > 30);
+    assert.ok(image.caption.length > 20);
+    assert.ok(Number.isInteger(image.width) && image.width > 0);
+    assert.ok(Number.isInteger(image.height) && image.height > 0);
+    assert.ok(image.highlights.length >= 1);
+    const imagePath = resolve(here, "..", image.src.replace(/^\.\//, ""));
+    assert.equal(existsSync(imagePath), true, image.src);
+    const png = readFileSync(imagePath);
+    assert.equal(png.readUInt32BE(16), image.width, `${image.src}: Breite`);
+    assert.equal(png.readUInt32BE(20), image.height, `${image.src}: Höhe`);
+  });
+});
+
+test("führt den Aufladungskurs fachlich konsistent von ΔU bis zur Fehlerbeurteilung", () => {
+  const content = JSON.stringify(CHARGING_EXPONENTIAL_STEPS);
+  const formulas = CHARGING_EXPONENTIAL_STEPS.map((step) => step.formula).filter(Boolean);
+  assert.deepEqual(formulas, ["=3.780-B1", "=(A1,C1)", "U(x)=TrendExp(D1:D9)", "=U(A1)", "=(C1-E1)/E1*100"]);
+  assert.match(content, /U_C\(t\).*1 − e\^\(−t\/τ\)/);
+  assert.match(content, /τ = R · C/);
+  assert.match(content, /t₁\/₂ = τ · ln\(2\)/);
+  assert.match(content, /42,6 %/);
+  assert.match(content, /nicht.*allein.*Modell|nicht.*nur.*Modell/i);
+  assert.match(content, /nicht.*90 s|90 s.*nicht/i);
+  assert.match(content, /fmax = 10 %/);
+  assert.match(content, /vereinbar/i);
+  assert.match(content, /beweis/i);
+  assert.doesNotMatch(content, /TrendExp\(D1:D10\)/);
+});
+
+test("führt den Aufladungskurs ohne fünften Transfermodus zum Lernnachweis", () => {
+  const root = resolve(here, "..");
+  const app = readFileSync(resolve(root, "app.js"), "utf8");
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  assert.match(app, /els\.transferSection\.hidden = !enabled/);
+  assert.match(app, /activeCourse\(\)\.transferMethod \? "transfer" : "summary"/);
+  assert.match(app, /course\.transferMethod \? "Zum Transfer" : "Zum Lernnachweis"/);
+  assert.equal((html.match(/<option value="(?:inverse-square|proportional-[^"]+)">/g) || []).length, 4);
+  assert.doesNotMatch(html, /<option value="capacitor-exponential">/);
 });
 
 test("bindet dreizehn lokale U-Q-Abbildungen zugänglich ein", () => {

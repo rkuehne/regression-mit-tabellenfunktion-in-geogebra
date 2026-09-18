@@ -19,11 +19,14 @@ function memoryStorage(initial = {}) {
   };
 }
 
-test("erzeugt vier getrennte Lern- und Transferstände", () => {
+test("erzeugt fünf Lernstände und vier getrennte Transferstände", () => {
   const state = loadState(memoryStorage());
   assert.equal(state.version, 4);
   assert.equal(state.activeCourseId, "inverse-square");
-  assert.deepEqual(Object.keys(state.courses), ["inverse-square", "proportional-power", "proportional-constants", "proportional-linear"]);
+  assert.deepEqual(Object.keys(state.courses), ["inverse-square", "proportional-power", "proportional-constants", "proportional-linear", "capacitor-exponential"]);
+  assert.deepEqual(Object.keys(state.transfer.methods), ["inverse-square", "proportional-power", "proportional-constants", "proportional-linear"]);
+  assert.deepEqual(state.courses["capacitor-exponential"].completedSteps, []);
+  assert.equal(state.transfer.methods["capacitor-exponential"], undefined);
   assert.equal(state.transfer.methods["proportional-power"].deltaU, "5");
   assert.equal(state.transfer.methods["proportional-power"].deltaQ, "0,1");
   assert.equal(state.transfer.methods["proportional-constants"].data.length, 5);
@@ -128,7 +131,7 @@ test("speichert den gemeinsamen Fehlerabschluss einmal für alle Q-U-Wege", () =
   assert.equal(Object.keys(state.sharedModules).length, 1);
 });
 
-test("ergänzt einen bestehenden v4-Stand um den linearen Lernweg und entfernt alte r2-Werte", () => {
+test("ergänzt einen bestehenden v4-Stand um neue Lernwege und entfernt alte r2-Werte", () => {
   const state = sanitizeState({
     version: 4,
     activeCourseId: "proportional-power",
@@ -152,8 +155,27 @@ test("ergänzt einen bestehenden v4-Stand um den linearen Lernweg und entfernt a
 
   assert.deepEqual(state.courses["proportional-power"].completedSteps, ["uq-power-context"]);
   assert.deepEqual(state.courses["proportional-linear"].completedSteps, []);
+  assert.deepEqual(state.courses["capacitor-exponential"].completedSteps, []);
   assert.equal(state.transfer.methods["proportional-linear"].data.length, 5);
+  assert.equal(state.transfer.methods["capacitor-exponential"], undefined);
   assert.deepEqual(state.sharedModules["uq-largest-single-error"], { completed: false, answers: {} });
   assert.equal("r2" in state.transfer.methods["proportional-power"].result, false);
   assert.equal(state.student.name, "Ada");
+});
+
+test("hält beim Aufladungskurs ein gültiges bestehendes Transferverfahren getrennt", () => {
+  const state = sanitizeState({
+    version: 4,
+    activeCourseId: "capacitor-exponential",
+    courses: {
+      "capacitor-exponential": { currentStep: 4, completedSteps: ["charging-context"], answers: {} }
+    },
+    transfer: { activeMethod: "proportional-linear", methods: {} },
+    student: {}
+  });
+  assert.equal(state.activeCourseId, "capacitor-exponential");
+  assert.equal(state.courses["capacitor-exponential"].currentStep, 4);
+  assert.deepEqual(state.courses["capacitor-exponential"].completedSteps, ["charging-context"]);
+  assert.equal(state.transfer.activeMethod, "proportional-linear");
+  assert.equal(Object.hasOwn(state.transfer.methods, "capacitor-exponential"), false);
 });
