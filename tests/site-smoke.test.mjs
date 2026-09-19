@@ -95,6 +95,12 @@ test("liefert MathJax 4.1.3 und die Schrift vollständig lokal aus", () => {
   assert.match(loader, /%%FONT%%-font/);
   assert.match(loader, /inlineMath:\s*\[\["\\\\\(", "\\\\\)"\]\]/);
   assert.match(loader, /displayMath:\s*\[\["\\\\\[", "\\\\\]"\]\]/);
+  assert.match(source("index.html"), /rel="preload" href="\.\/assets\/vendor\/mathjax\/tex-chtml\.js" as="script"/);
+  assert.match(source("groesster-einzelfehler.html"), /rel="preload" href="\.\/assets\/vendor\/mathjax\/tex-chtml\.js" as="script"/);
+  assert.match(loader, /compactTargets/);
+  assert.match(loader, /pendingTargets/);
+  assert.doesNotMatch(source("app.js"), /typesetMath\(els\.lessonCard\)/);
+  assert.match(source("app.js"), /lessonCard\.classList\.add\("math-pending"\)/);
   assert.match(notices, /MathJax 4\.1\.3/);
   assert.match(notices, /Apache License 2\.0/);
   assert.doesNotMatch(source("index.html") + source("groesster-einzelfehler.html") + loader, /cdn\.jsdelivr|unpkg\.com|cdnjs\.cloudflare/);

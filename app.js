@@ -78,6 +78,7 @@ const els = {
 };
 
 let state = loadState(localStorage);
+let courseMathRenderToken = 0;
 
 function activeCourse() {
   return COURSES[state.activeCourseId];
@@ -118,7 +119,6 @@ function setMathText(element, text = "") {
 function setFeedback(element, text = "", type = "") {
   setMathText(element, text);
   element.className = `feedback${type ? ` ${type}` : ""}`;
-  if (text) typesetMath(element);
 }
 
 function isComplete(stepId) {
@@ -504,7 +504,6 @@ function setFieldFeedback(step, field, valid) {
   if (!feedback) return;
   setMathText(feedback, valid ? field.feedback.correct : field.feedback.incorrect);
   feedback.className = `field-feedback ${valid ? "good" : "bad"}`;
-  typesetMath(feedback);
 }
 
 function renderCheckpoint(step) {
@@ -578,7 +577,6 @@ function renderLesson() {
   els.nextStepBtn.textContent = progress.currentStep === course.steps.length - 1
     ? "Zum Lernnachweis ↓"
     : "Weiter →";
-  typesetMath(els.lessonCard);
 }
 
 function renderCourseIdentity() {
@@ -605,12 +603,19 @@ function renderCourseIdentity() {
 }
 
 function renderCourse() {
+  const renderToken = ++courseMathRenderToken;
   clearMath(els.course);
+  els.lessonCard.classList.add("math-pending");
+  els.lessonCard.setAttribute("aria-busy", "true");
   renderCourseIdentity();
   renderProgress();
   renderStepNav();
   renderLesson();
-  typesetMath(els.course);
+  typesetMath(els.course).then(() => {
+    if (renderToken !== courseMathRenderToken) return;
+    els.lessonCard.classList.remove("math-pending");
+    els.lessonCard.removeAttribute("aria-busy");
+  });
 }
 
 function setCurrentStep(index, shouldScroll = true) {
@@ -799,6 +804,7 @@ els.checkpointForm.addEventListener("submit", (event) => {
     setFeedback(els.checkpointFeedback, step.check.retry, "bad");
     validation.firstInvalid?.focus();
   }
+  typesetMath([els.checkpointFields, els.checkpointFeedback]);
 });
 
 els.explainModeBtn.addEventListener("click", () => setLessonMode("explain"));
@@ -818,13 +824,13 @@ els.imageDialog.addEventListener("click", (event) => {
 els.studentNameInput.addEventListener("input", () => {
   state.student.name = els.studentNameInput.value;
   saveState();
-  renderSummary();
+  els.printStudentName.textContent = state.student.name.trim() || "–";
 });
 
 els.courseNameInput.addEventListener("input", () => {
   state.student.course = els.courseNameInput.value;
   saveState();
-  renderSummary();
+  els.printCourseName.textContent = state.student.course.trim() || "–";
 });
 
 els.printSummaryBtn.addEventListener("click", async () => {

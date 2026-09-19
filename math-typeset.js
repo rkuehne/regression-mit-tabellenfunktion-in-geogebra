@@ -57,7 +57,47 @@ function loadMathJax() {
 
 export const mathReady = loadMathJax();
 
-let typesetQueue = Promise.resolve();
+const pendingTargets = new Set();
+let pendingRequests = [];
+let drainPromise = null;
+
+function compactTargets(targets) {
+  return targets.filter((target) => !targets.some((candidate) => candidate !== target && candidate.contains(target)));
+}
+
+async function drainTypesetRequests() {
+  const available = await mathReady;
+
+  while (pendingTargets.size) {
+    // Collect every request from the current browser task before MathJax starts.
+    await Promise.resolve();
+    const targets = compactTargets([...pendingTargets].filter((target) => target.isConnected));
+    const requests = pendingRequests;
+    pendingTargets.clear();
+    pendingRequests = [];
+
+    let rendered = false;
+    try {
+      if (available && targets.length) {
+        await window.MathJax.typesetPromise(targets);
+        rendered = true;
+      }
+    } catch (error) {
+      console.warn("Eine Formel konnte nicht gesetzt werden.", error);
+    }
+    requests.forEach((resolve) => resolve(rendered));
+  }
+}
+
+function ensureDrain() {
+  if (drainPromise) return;
+  drainPromise = Promise.resolve()
+    .then(drainTypesetRequests)
+    .finally(() => {
+      drainPromise = null;
+      if (pendingTargets.size) ensureDrain();
+    });
+}
 
 export function clearMath(elements) {
   const targets = normaliseElements(elements);
@@ -68,15 +108,12 @@ export function clearMath(elements) {
 
 export function typesetMath(elements) {
   const targets = normaliseElements(elements);
-  if (!targets.length) return typesetQueue;
+  if (!targets.length) return Promise.resolve(false);
 
-  typesetQueue = typesetQueue
-    .then(() => mathReady)
-    .then((available) => available && window.MathJax.typesetPromise(targets))
-    .catch((error) => {
-      console.warn("Eine Formel konnte nicht gesetzt werden.", error);
-    });
-  return typesetQueue;
+  targets.forEach((target) => pendingTargets.add(target));
+  const request = new Promise((resolve) => pendingRequests.push(resolve));
+  ensureDrain();
+  return request;
 }
 
 export function typesetDocument() {
