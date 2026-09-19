@@ -12,6 +12,7 @@ const BROWSER_MODULES = [
   "lesson-data.js",
   "state.js",
   "regression.js",
+  "math-typeset.js",
   "groesster-einzelfehler.js"
 ];
 
@@ -77,4 +78,24 @@ test("verwendet nur vorhandene lokale Seiten-, Stil- und Bildressourcen", () => 
   for (const match of source("style.css").matchAll(/url\(["']?([^"')]+)["']?\)/g)) {
     if (!/^(?:data:|https?:)/i.test(match[1])) assertLocalFile(match[1], "style.css");
   }
+});
+
+test("liefert MathJax 4.1.3 und die Schrift vollständig lokal aus", () => {
+  const loader = source("math-typeset.js");
+  const notices = source("THIRD_PARTY_NOTICES.md");
+  const bundle = resolve(ROOT, "assets", "vendor", "mathjax", "tex-chtml.js");
+  const license = resolve(ROOT, "assets", "vendor", "mathjax", "LICENSE.txt");
+  const fontRoot = resolve(ROOT, "assets", "vendor", "mathjax-newcm-font", "chtml");
+
+  assert.equal(existsSync(bundle), true);
+  assert.equal(existsSync(license), true);
+  assert.equal(existsSync(resolve(fontRoot, "dynamic", "latin.js")), true);
+  assert.equal(existsSync(resolve(fontRoot, "woff2", "mjx-ncm-rb.woff2")), true);
+  assert.match(loader, /\.\/assets\/vendor\/mathjax\/tex-chtml\.js/);
+  assert.match(loader, /%%FONT%%-font/);
+  assert.match(loader, /inlineMath:\s*\[\["\\\\\(", "\\\\\)"\]\]/);
+  assert.match(loader, /displayMath:\s*\[\["\\\\\[", "\\\\\]"\]\]/);
+  assert.match(notices, /MathJax 4\.1\.3/);
+  assert.match(notices, /Apache License 2\.0/);
+  assert.doesNotMatch(source("index.html") + source("groesster-einzelfehler.html") + loader, /cdn\.jsdelivr|unpkg\.com|cdnjs\.cloudflare/);
 });

@@ -32,14 +32,6 @@ export const CHARGING_FIT_DATA = Object.freeze(
   CHARGING_RAW_DATA.slice(0, 9).map(({ t, deltaU }) => Object.freeze({ t, deltaU }))
 );
 
-export function cloneExampleData() {
-  return EXAMPLE_DATA.map(({ r, f }) => ({ r, f }));
-}
-
-export function cloneUqExampleData() {
-  return UQ_EXAMPLE_DATA.map(({ u, q }) => ({ u, q }));
-}
-
 export function parseLocaleNumber(value) {
   if (typeof value === "number") return Number.isFinite(value) ? value : NaN;
   if (typeof value !== "string") return NaN;

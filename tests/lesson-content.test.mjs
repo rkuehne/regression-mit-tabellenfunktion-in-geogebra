@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
-import { CHARGING_EXPONENTIAL_STEPS, COURSE_IDS, COURSES, LESSON_STEPS, TRANSFER_METHOD_IDS, UQ_CONSTANT_STEPS, UQ_LINEAR_STEPS, UQ_POWER_STEPS, UQ_SHARED_REQUIREMENT_ID } from "../lesson-data.js";
+import { CHARGING_EXPONENTIAL_STEPS, COURSE_IDS, COURSES, LESSON_STEPS, UQ_CONSTANT_STEPS, UQ_LINEAR_STEPS, UQ_POWER_STEPS, UQ_SHARED_REQUIREMENT_ID, displayMath, inlineMath, typesetCourseText } from "../lesson-data.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const expectedIds = [
@@ -129,15 +129,14 @@ test("die Startseite enthält Kurswahl, Moduswahl, Begriffshilfe und lokale Soci
   assert.equal(existsSync(resolve(root, "assets", "og.png")), true);
 });
 
-test("enthält fünf Lernwege, aber weiterhin nur vier Transferverfahren", () => {
+test("enthält fünf eigenständige Lernwege", () => {
   assert.deepEqual(COURSE_IDS, ["inverse-square", "proportional-power", "proportional-constants", "proportional-linear", "capacitor-exponential"]);
-  assert.deepEqual(TRANSFER_METHOD_IDS, ["inverse-square", "proportional-power", "proportional-constants", "proportional-linear"]);
   assert.equal(COURSES["inverse-square"].steps.length, 10);
   assert.equal(UQ_POWER_STEPS.length, 8);
   assert.equal(UQ_CONSTANT_STEPS.length, 8);
   assert.equal(UQ_LINEAR_STEPS.length, 8);
   assert.equal(CHARGING_EXPONENTIAL_STEPS.length, 11);
-  assert.equal(COURSES["capacitor-exponential"].transferMethod, null);
+  Object.values(COURSES).forEach((course) => assert.equal(Object.hasOwn(course, "transferMethod"), false));
 });
 
 test("alle neuen Kapitel besitzen Erklärfelder sowie Ergebnis- und Verständnisprüfung", () => {
@@ -186,15 +185,15 @@ test("führt den Aufladungskurs fachlich konsistent von ΔU bis zur Fehlerbeurte
   assert.doesNotMatch(content, /TrendExp\(D1:D10\)/);
 });
 
-test("führt den Aufladungskurs ohne fünften Transfermodus zum Lernnachweis", () => {
+test("führt jeden Lernweg unmittelbar zum Lernnachweis", () => {
   const root = resolve(here, "..");
   const app = readFileSync(resolve(root, "app.js"), "utf8");
   const html = readFileSync(resolve(root, "index.html"), "utf8");
-  assert.match(app, /els\.transferSection\.hidden = !enabled/);
-  assert.match(app, /activeCourse\(\)\.transferMethod \? "transfer" : "summary"/);
-  assert.match(app, /course\.transferMethod \? "Zum Transfer" : "Zum Lernnachweis"/);
-  assert.equal((html.match(/<option value="(?:inverse-square|proportional-[^"]+)">/g) || []).length, 4);
-  assert.doesNotMatch(html, /<option value="capacitor-exponential">/);
+  assert.doesNotMatch(app, /transferMethod|TRANSFER_METHOD_IDS|activeTransfer|renderTransfer/);
+  assert.doesNotMatch(html, /id="transfer"|Transferrechner|Reflexion/);
+  assert.match(app, /Zum Lernnachweis/);
+  assert.match(app, /await mathReady;[\s\S]*await typesetMath\(document\.getElementById\("printSummary"\)\);[\s\S]*window\.print\(\)/);
+  assert.doesNotMatch(app, /beforeprint/);
 });
 
 test("bindet dreizehn lokale U-Q-Abbildungen zugänglich ein", () => {
@@ -254,18 +253,53 @@ test("verknüpft alle drei Q-U-Wege mit derselben Pflichtseite", () => {
 test("enthält die gemeinsame Fehlerseite mit Herleitung, Anwendungen und Pflichtkontrolle", () => {
   const root = resolve(here, "..");
   const html = readFileSync(resolve(root, "groesster-einzelfehler.html"), "utf8");
-  assert.match(html, /5\/50 · 100 = 10 %/);
-  assert.match(html, /0,1\/2,0 · 100 = 5 %/);
-  assert.match(html, /f<sub>max<\/sub> = max\(10 %, 5 %\) = 10 %/);
-  assert.match(html, /1,16 %/);
-  assert.match(html, /3,74 %/);
-  assert.match(html, /3,83 %/);
-  assert.match(html, /7,41 %/);
-  assert.match(html, /0,12\/2,0 · 100 = 6 %/);
+  assert.match(html, /\\frac\{5\}\{50\}\\cdot100=10\\,\\%/);
+  assert.match(html, /\\frac\{0\{,\}1\}\{2\{,\}0\}\\cdot100=5\\,\\%/);
+  assert.match(html, /f_\{\\max\}=\\max\(10\\,\\%,5\\,\\%\)=10\\,\\%/);
+  assert.match(html, /1\{,\}16\\,\\%/);
+  assert.match(html, /3\{,\}74\\,\\%/);
+  assert.match(html, /3\{,\}83\\,\\%/);
+  assert.match(html, /7\{,\}41\\,\\%/);
+  assert.match(html, /\\frac\{0\{,\}12\}\{2\{,\}0\}\\cdot100=6\\,\\%/);
   assert.match(html, /Q=Trendlinie\(C1:C5\)/);
   assert.match(html, /durch die Messfehler erklärt werden/);
   assert.match(html, /name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"/);
   assert.match(html, /src="\.\/groesster-einzelfehler\.js"/);
+});
+
+test("kennzeichnet mathematische Auswahlantworten und erzeugt konsistente TeX-Begrenzer", () => {
+  assert.equal(inlineMath("Q=CU"), "\\(Q=CU\\)");
+  assert.equal(displayMath("Q=CU"), "\\[Q=CU\\]");
+  assert.equal(typesetCourseText("Es gilt Q = C · U."), "Es gilt \\(Q=CU\\).");
+
+  const mathFields = Object.values(COURSES)
+    .flatMap((course) => course.steps)
+    .flatMap((step) => step.check.fields)
+    .filter((field) => field.type === "choice" && field.mathOptions);
+  assert.ok(mathFields.length > 10);
+  assert.ok(mathFields.every((field) => {
+    const answerLabels = field.options.filter(({ value }) => value !== "").map(({ label }) => label);
+    if (field.codeOptions) return answerLabels.every((label) => label.startsWith("="));
+    return [field.label, ...answerLabels].map(typesetCourseText).join(" ").includes("\\(");
+  }));
+});
+
+test("erzeugt in allen dynamischen Kurstexten ausgewogene MathJax-Begrenzer", () => {
+  const strings = [];
+  const collect = (value) => {
+    if (typeof value === "string") strings.push(value);
+    else if (Array.isArray(value)) value.forEach(collect);
+    else if (value && typeof value === "object") Object.values(value).forEach(collect);
+  };
+  collect(COURSES);
+
+  strings.forEach((value) => {
+    const rendered = typesetCourseText(value);
+    assert.equal((rendered.match(/\\\(/g) || []).length, (rendered.match(/\\\)/g) || []).length, rendered);
+    assert.equal((rendered.match(/\\\[/g) || []).length, (rendered.match(/\\\]/g) || []).length, rendered);
+    assert.doesNotMatch(rendered, /\\\)\s*[,;]\d/, rendered);
+    assert.doesNotMatch(rendered, /\\\)\p{L}/u, rendered);
+  });
 });
 
 test("weist Suchmaschinen auf die gewünschte Nicht-Indexierung hin", () => {

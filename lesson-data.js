@@ -8,6 +8,173 @@ import {
 
 export const UQ_SHARED_REQUIREMENT_ID = "uq-largest-single-error";
 
+export const inlineMath = (tex) => `\\(${tex}\\)`;
+export const displayMath = (tex) => `\\[${tex}\\]`;
+
+const m = inlineMath;
+
+const COURSE_MATH_REPLACEMENTS = [
+  ["Messwert ΔU (V)", "\\text{Messwert }\\Delta U\\;(\\mathrm V)"],
+  ["Modellwert (V)", "\\text{Modellwert }(\\mathrm V)"],
+  ["Abweichung (%)", "\\text{Abweichung }(\\%)"],
+  ["B: Q/(10⁻⁸ C)", "B:\\;\\frac{Q}{10^{-8}\\,\\mathrm C}"],
+  ["C: ΔU (V)", "C:\\;\\Delta U\\;(\\mathrm V)"],
+  ["B: U_C (V)", "B:\\;U_C\\;(\\mathrm V)"],
+  ["A: t (s)", "A:\\;t\\;(\\mathrm s)"],
+  ["A: U (V)", "A:\\;U\\;(\\mathrm V)"],
+  ["A: r (cm)", "A:\\;r\\;(\\mathrm{cm})"],
+  ["B: F (mN)", "B:\\;F\\;(\\mathrm{mN})"],
+  ["ΔU (V)", "\\Delta U\\;(\\mathrm V)"],
+  ["U_C (V)", "U_C\\;(\\mathrm V)"],
+  ["t (s)", "t\\;(\\mathrm s)"],
+  ["U_C(t) = U₀ · (1 − e^(−t/τ))", "U_C(t)=U_0\\left(1-e^{-t/\\tau}\\right)"],
+  ["ΔU(t) = U₀ · e^(−t/τ)", "\\Delta U(t)=U_0e^{-t/\\tau}"],
+  ["ΔÛ(t) = A · e^(k·t)", "\\widehat{\\Delta U}(t)=Ae^{kt}"],
+  ["U(x) ≈ 3,6925788 · e^(−0,0304341x)", "U(x)\\approx3{,}6925788e^{-0{,}0304341x}"],
+  ["ΔÛ(t) ≈ 3,6925788 · e^(−0,0304341 · t)", "\\widehat{\\Delta U}(t)\\approx3{,}6925788e^{-0{,}0304341t}"],
+  ["Q(x) ≈ 0,0393011 · x^(1,011566)", "Q(x)\\approx0{,}0393011x^{1{,}011566}"],
+  ["Q(U) ≈ 0,0393011 · U^(1,011566)", "Q(U)\\approx0{,}0393011U^{1{,}011566}"],
+  ["F(x) = 28,9022 · x^(−2,075)", "F(x)=28{,}9022x^{-2{,}075}"],
+  ["F(r) = 28,9022 · r^(−2,075)", "F(r)=28{,}9022r^{-2{,}075}"],
+  ["Q(U) = 0,0408 · U + 0,12", "Q(U)=0{,}0408U+0{,}12"],
+  ["Q: y = 0,0408 · x + 0,12", "Q:\\ y=0{,}0408x+0{,}12"],
+  ["Q(U) = 0,04 · U + 1", "Q(U)=0{,}04U+1"],
+  ["Q(U) = 0,04 · U", "Q(U)=0{,}04U"],
+  ["Q(U) = m · U + b", "Q(U)=mU+b"],
+  ["y = m · x + b", "y=mx+b"],
+  ["Q(U) = a · Uᵇ", "Q(U)=aU^b"],
+  ["F(r) = a · r⁻² = a/r²", "F(r)=ar^{-2}=\\frac{a}{r^2}"],
+  ["F(r) = a · rᵇ", "F(r)=ar^b"],
+  ["Q(50) = 0,0408 · 50 + 0,12", "Q(50)=0{,}0408\\cdot50+0{,}12"],
+  ["Q(50) = 2,16 · 10⁻⁸ C", "Q(50)=2{,}16\\cdot10^{-8}\\,\\mathrm C"],
+  ["Q(50) ≈ 2,05601 · 10⁻⁸ C", "Q(50)\\approx2{,}05601\\cdot10^{-8}\\,\\mathrm C"],
+  ["0,0408 · 10⁻⁸ F = 408 pF", "0{,}0408\\cdot10^{-8}\\,\\mathrm F=408\\,\\mathrm{pF}"],
+  ["|b|/Qmin · 100 = 0,12/2,0 · 100 = 6 %", "\\frac{|b|}{Q_{\\min}}\\cdot100=\\frac{0{,}12}{2{,}0}\\cdot100=6\\,\\%"],
+  ["|3,69258−3,780|/3,780 · 100", "\\frac{|3{,}69258-3{,}780|}{3{,}780}\\cdot100"],
+  ["(0,332 − 0,32355)/0,32355 · 100 ≈ +2,61 %", "\\frac{0{,}332-0{,}32355}{0{,}32355}\\cdot100\\approx+2{,}61\\,\\%"],
+  ["(2,0 − 2,16) / 2,16 · 100 ≈ −7,41 %", "\\frac{2{,}0-2{,}16}{2{,}16}\\cdot100\\approx-7{,}41\\,\\%"],
+  ["(2,0 − 2,05601) / 2,05601 · 100 ≈ −2,72 %", "\\frac{2{,}0-2{,}05601}{2{,}05601}\\cdot100\\approx-2{,}72\\,\\%"],
+  ["(0,37 − 0,38638) / 0,38638 · 100 ≈ −4,24 %", "\\frac{0{,}37-0{,}38638}{0{,}38638}\\cdot100\\approx-4{,}24\\,\\%"],
+  ["0,001/0,251 · 100 ≈ 0,40 %", "\\frac{0{,}001}{0{,}251}\\cdot100\\approx0{,}40\\,\\%"],
+  ["0,01/0,06 · 100", "\\frac{0{,}01}{0{,}06}\\cdot100"],
+  ["1/10 · 100 = 10 %", "\\frac{1}{10}\\cdot100=10\\,\\%"],
+  ["0,1/2,0 · 100 = 5 %", "\\frac{0{,}1}{2{,}0}\\cdot100=5\\,\\%"],
+  ["5/50 · 100 = 10 %", "\\frac{5}{50}\\cdot100=10\\,\\%"],
+  ["τ = −1/(−0,0304341 s⁻¹) ≈ 32,86 s", "\\tau=\\frac{-1}{-0{,}0304341\\,\\mathrm{s}^{-1}}\\approx32{,}86\\,\\mathrm s"],
+  ["t₁/₂ = τ · ln(2) ≈ 22,78 s", "t_{1/2}=\\tau\\ln(2)\\approx22{,}78\\,\\mathrm s"],
+  ["t₁/₂ = τ · ln(2)", "t_{1/2}=\\tau\\ln(2)"],
+  ["τ = −1/k", "\\tau=-\\frac{1}{k}"],
+  ["k = −1/τ", "k=-\\frac{1}{\\tau}"],
+  ["τ = R · C", "\\tau=RC"],
+  ["ΔU = 3,780 V − 1,061 V = 2,719 V", "\\Delta U=3{,}780\\,\\mathrm V-1{,}061\\,\\mathrm V=2{,}719\\,\\mathrm V"],
+  ["ΔU = U₀ − U_C", "\\Delta U=U_0-U_C"],
+  ["U₀ − U_C", "U_0-U_C"],
+  ["Q = C · U", "Q=CU"],
+  ["Q ∝ U", "Q\\propto U"],
+  ["F ∝ 1/r²", "F\\propto\\frac{1}{r^2}"],
+  ["1/r²", "\\frac{1}{r^2}"],
+  ["r⁻²", "r^{-2}"],
+  ["C = Q/U", "C=\\frac{Q}{U}"],
+  ["Q/U", "\\frac{Q}{U}"],
+  ["(r, F) = (x, y)", "(r,F)=(x,y)"],
+  ["(U, Q) = (x, y)", "(U,Q)=(x,y)"],
+  ["(t, ΔU) = (x, y)", "(t,\\Delta U)=(x,y)"],
+  ["|1,011566 − 1|/1 · 100 ≈ 1,16 %", "\\frac{|1{,}011566-1|}{1}\\cdot100\\approx1{,}16\\,\\%"],
+  ["(0,0400 − 0,0415933) / 0,0415933 · 100 ≈ −3,83 %", "\\frac{0{,}0400-0{,}0415933}{0{,}0415933}\\cdot100\\approx-3{,}83\\,\\%"],
+  ["a · xᵇ", "ax^b"],
+  ["a · Uᵇ", "aU^b"],
+  ["a · U", "aU"],
+  ["A · e^(k·x)", "Ae^{kx}"],
+  ["e^(k·t)", "e^{kt}"],
+  ["k · t", "kt"],
+  ["C1 = 0,04", "C1=0{,}04"],
+  ["0,04 · 10⁻⁸ F = 400 pF", "0{,}04\\cdot10^{-8}\\,\\mathrm F=400\\,\\mathrm{pF}"],
+  ["3,83 % < 10 %", "3{,}83\\,\\%<10\\,\\%"],
+  ["Q−U", "Q-U"],
+  ["Q·U", "Q\\cdot U"],
+  ["Qmin", "Q_{\\min}"],
+  ["t₁/₂", "t_{1/2}"],
+  ["ΔU", "\\Delta U"],
+  ["U₀", "U_0"],
+  ["U_C", "U_C"],
+  ["b ≈ −2,075", "b\\approx-2{,}075"],
+  ["b = −2,075", "b=-2{,}075"],
+  ["b = −2", "b=-2"],
+  ["b ≈ 1,0116", "b\\approx1{,}0116"],
+  ["n ≈ 1,0116", "n\\approx1{,}0116"],
+  ["n ≈ 1", "n\\approx1"],
+  ["b = 1", "b=1"],
+  ["b = 2", "b=2"],
+  ["b ≠ 1", "b\\ne1"],
+  ["b = 0,12", "b=0{,}12"],
+  ["b = 0", "b=0"],
+  ["b ≈ 0", "b\\approx0"],
+  ["k < 0", "k<0"],
+  ["k > 0", "k>0"],
+  ["k = 0", "k=0"],
+  ["fmax = 10 %", "f_{\\max}=10\\,\\%"],
+  ["|b|/Qmin = 6 %", "\\frac{|b|}{Q_{\\min}}=6\\,\\%"],
+  ["Q(U) ≈ m · U", "Q(U)\\approx mU"],
+  ["t₁/₂ ≈ 22,78 s", "t_{1/2}\\approx22{,}78\\,\\mathrm s"],
+  ["τ ≈ 32,86 s", "\\tau\\approx32{,}86\\,\\mathrm s"],
+  ["A/2 ≈ 1,8463 V", "A/2\\approx1{,}8463\\,\\mathrm V"],
+  ["U₀/2 = 1,890 V", "U_0/2=1{,}890\\,\\mathrm V"],
+  ["A ≈ 3,6926 V", "A\\approx3{,}6926\\,\\mathrm V"],
+  ["A ≈ 3,69258 V", "A\\approx3{,}69258\\,\\mathrm V"],
+  ["k ≈ −0,0304341 s⁻¹", "k\\approx-0{,}0304341\\,\\mathrm{s}^{-1}"],
+  ["ΔU_Gerät = 0,001 V", "\\Delta U_{\\mathrm{Gerät}}=0{,}001\\,\\mathrm V"],
+  ["Δt = 1 s", "\\Delta t=1\\,\\mathrm s"],
+  ["10⁻⁸ C", "10^{-8}\\,\\mathrm C"],
+  ["10⁻⁸ F", "10^{-8}\\,\\mathrm F"],
+  ["s⁻¹", "\\mathrm{s}^{-1}"]
+].sort(([left], [right]) => right.length - left.length);
+
+export function typesetCourseText(value) {
+  if (typeof value !== "string" || value === "") return value;
+  const symbolTex = (symbol) => ({ "ΔQ": "\\Delta Q", "ΔU": "\\Delta U", "U₀": "U_0", "C̄": "\\overline C" })[symbol] || symbol;
+  const numberTex = (number) => number.replace(",", "{,}").replace("−", "-");
+  let prepared = value
+    .replace(
+      /(ΔQ|Q|C̄)\s*(=|≈)\s*([−-]?\d+(?:[.,]\d+)?)\s*·\s*10⁻⁸\s*([CF])/g,
+      (_, symbol, relation, number, unit) => inlineMath(`${symbolTex(symbol)}${relation}${numberTex(number)}\\cdot10^{-8}\\,\\mathrm{${unit}}`)
+    )
+    .replace(
+      /([−-]?\d+(?:[.,]\d+)?)\s*·\s*10⁻⁸\s*([CF])/g,
+      (_, number, unit) => inlineMath(`${numberTex(number)}\\cdot10^{-8}\\,\\mathrm{${unit}}`)
+    )
+    .replace(
+      /(ΔU|U₀|U_C)\s*(=|≈)\s*([−-]?\d+(?:[.,]\d+)?)(?:\s*(V))?\b/g,
+      (_, symbol, relation, number, unit = "") => inlineMath(`${symbolTex(symbol)}${relation}${numberTex(number)}${unit ? "\\,\\mathrm V" : ""}`)
+    );
+  const protectedMath = [];
+  const holdFormula = (formula) => {
+    const placeholder = "\uE000" + protectedMath.length + "\uE001";
+    protectedMath.push(formula);
+    return placeholder;
+  };
+  let result = prepared.replace(/\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]/g, holdFormula);
+  COURSE_MATH_REPLACEMENTS.forEach(([plain, tex]) => {
+    if (result.includes(plain)) result = result.split(plain).join(holdFormula(inlineMath(tex)));
+  });
+  result = result.replace(
+    /\(([A-Z]\d+|[-+]?\d+(?:[.,]\d+)?),\s*([A-Z]\d+|[-+]?\d+(?:[.,]\d+)?)\)/g,
+    (_, x, y) => holdFormula(inlineMath(`(${x.replace(",", "{,}")};${y.replace(",", "{,}")})`))
+  );
+  result = result.replace(
+    /\b([rF])\s*=\s*([-+]?\d+(?:[.,]\d+)?)\s*(cm|mN)\b/g,
+    (_, symbol, number, unit) => holdFormula(inlineMath(`${symbol}=${number.replace(",", "{,}")}\\,\\mathrm{${unit}}`))
+  );
+  result = result.replace(
+    /\b(U|Q|F|r|t|[A-F]\d+|[abmnk])\s*(=|≈)\s*([−-]?\d+(?:[.,]\d+)?)(?:\s*(V|mN|cm|pF|s|F|C))?\b/g,
+    (_, symbol, relation, number, unit = "") => holdFormula(inlineMath(`${symbol}${relation}${numberTex(number)}${unit ? `\\,\\mathrm{${unit}}` : ""}`))
+  );
+  result = result.replace(
+    /(?<![\p{L}\d])([−-]?\d+(?:[.,]\d+)?)\s*(V|mN|cm|pF|s|F|C|%)(?![\p{L}])/gu,
+    (_, number, unit) => holdFormula(inlineMath(`${numberTex(number)}\\,${unit === "%" ? "\\%" : `\\mathrm{${unit}}`}`))
+  );
+  return result.replace(/\uE000(\d+)\uE001/g, (_, index) => protectedMath[Number(index)]);
+}
+
 const IMAGES = Object.freeze({
   table: Object.freeze({
     src: "./assets/steps/01-messwerte.png",
@@ -1104,14 +1271,26 @@ export const CHARGING_EXPONENTIAL_STEPS = Object.freeze([
   }
 ]);
 
+const mathChoicePattern = /\\\(|[=≈∝Δτ²³⁻⁸·±<>|]|\b(?:fmax|Qmin|ln|TrendPot|TrendExp)\b|\([−+]?\d+(?:[.,]\d+)?[,;]\s*[−+]?\d/;
+
+[LESSON_STEPS, UQ_POWER_STEPS, UQ_CONSTANT_STEPS, UQ_LINEAR_STEPS, CHARGING_EXPONENTIAL_STEPS]
+  .flat()
+  .forEach((step) => step.check.fields.forEach((field) => {
+    if (field.type !== "choice") return;
+    const searchableText = [field.label, ...field.options.map(({ label }) => label)].join(" ");
+    if (mathChoicePattern.test(searchableText)) {
+      field.mathOptions = true;
+      field.codeOptions = field.options.some(({ label }) => label.trim().startsWith("="));
+    }
+  }));
+
 export const COURSES = Object.freeze({
   "inverse-square": Object.freeze({
     id: "inverse-square",
     eyebrow: "Umgekehrtes Quadratgesetz",
-    title: "Coulombkraft: F ∝ 1/r²",
+    title: `Coulombkraft: ${m(String.raw`F \propto \frac{1}{r^2}`)}`,
     subtitle: "Potenzregression der r-F-Messreihe",
     duration: "etwa 20–35 Minuten",
-    transferMethod: "inverse-square",
     dataHeaders: ["A: r (cm)", "B: F (mN)"],
     dataKeys: ["r", "f"],
     stages: ["Messwerte", "Punkte", "Modell", "Modellwerte", "Abweichungen", "Urteil"],
@@ -1124,9 +1303,9 @@ export const COURSES = Object.freeze({
       { label: "Ich kann ein Modell unter Berücksichtigung der Messunsicherheit vorsichtig beurteilen.", steps: ["conclusion"] }
     ],
     referenceResults: [
-      ["Potenzfunktion", "F(r) ≈ 28,9022 · r^(−2,075)"],
-      ["Größte Modellabweichung", "≈ 15,7 % bei r = 12,4 cm"],
-      ["Grobe relative Unsicherheit", "≈ 16,7 % beim kleinsten F-Wert"]
+      ["Potenzfunktion", m(String.raw`F(r) \approx 28{,}9022\,r^{-2{,}075}`)],
+      ["Größte Modellabweichung", m(String.raw`\approx 15{,}7\,\%\ \text{bei}\ r=12{,}4\,\mathrm{cm}`)],
+      ["Grobe relative Unsicherheit", m(String.raw`\approx 16{,}7\,\%\ \text{beim kleinsten}\ F\text{-Wert}`)]
     ],
     conclusion: "Der Regressions-Exponent −2,075 liegt nahe beim theoretisch erwarteten Wert −2. Die größte Modellabweichung beträgt etwa 15,7 %; für den kleinsten Kraftwert ergibt sich eine grob abgeschätzte relative Unsicherheit von rund 16,7 %. In dieser vereinfachten Betrachtung sind die Messwerte mit einem 1/r²-Modell vereinbar. Sie beweisen das Modell jedoch nicht."
   }),
@@ -1134,9 +1313,8 @@ export const COURSES = Object.freeze({
     id: "proportional-power",
     eyebrow: "Direkte Proportionalität · Methode 1",
     title: "Kondensator: Potenzregression",
-    subtitle: "Q ∝ U anhand des Exponenten b prüfen",
+    subtitle: `${m(String.raw`Q \propto U`)} anhand des Exponenten ${m("b")} prüfen`,
     duration: "etwa 20–30 Minuten",
-    transferMethod: "proportional-power",
     dataHeaders: ["A: U (V)", "B: Q/(10⁻⁸ C)"],
     dataKeys: ["u", "q"],
     sharedRequirement: UQ_SHARED_REQUIREMENT_ID,
@@ -1150,10 +1328,10 @@ export const COURSES = Object.freeze({
       { label: "Ich kann die Proportionalitätsvermutung vorsichtig beurteilen.", steps: ["uq-power-conclusion"] }
     ],
     referenceResults: [
-      ["Potenzfunktion", "Q(U) ≈ 0,0393011 · U^(1,011566)"],
-      ["Größte Modellabweichung", "≈ 3,74 % bei U = 100 V"],
-      ["Relative Exponentabweichung", "≈ 1,16 %"],
-      ["Größter relativer Einzelfehler", "fmax = 10 %"]
+      ["Potenzfunktion", m(String.raw`Q(U) \approx 0{,}0393011\,U^{1{,}011566}`)],
+      ["Größte Modellabweichung", m(String.raw`\approx 3{,}74\,\%\ \text{bei}\ U=100\,\mathrm{V}`)],
+      ["Relative Exponentabweichung", m(String.raw`\approx 1{,}16\,\%`)],
+      ["Größter relativer Einzelfehler", m(String.raw`f_{\max}=10\,\%`)]
     ],
     conclusion: "Der Potenzexponent n ≈ 1,0116 weicht relativ um etwa 1,16 % vom theoretisch erwarteten Wert 1 ab; die größte Modellabweichung beträgt etwa 3,74 %. Beide Werte liegen unter dem größten relativen Einzelfehler fmax = 10 % und können nach dieser schulischen Methode durch die Messfehler erklärt werden. Die Messreihe ist mit Q ∝ U vereinbar, beweist die Proportionalität aber nicht. Der Faktor a der freien Potenzregression wird nicht ungeprüft als Kapazität interpretiert."
   }),
@@ -1161,9 +1339,8 @@ export const COURSES = Object.freeze({
     id: "proportional-constants",
     eyebrow: "Direkte Proportionalität · Methode 2",
     title: "Kondensator: Konstantenverfahren",
-    subtitle: "Q ∝ U anhand der Quotienten Q/U prüfen",
+    subtitle: `${m(String.raw`Q \propto U`)} anhand der Quotienten ${m(String.raw`Q/U`)} prüfen`,
     duration: "etwa 20–30 Minuten",
-    transferMethod: "proportional-constants",
     dataHeaders: ["A: U (V)", "B: Q/(10⁻⁸ C)"],
     dataKeys: ["u", "q"],
     sharedRequirement: UQ_SHARED_REQUIREMENT_ID,
@@ -1177,9 +1354,9 @@ export const COURSES = Object.freeze({
       { label: "Ich kann Proportionalität vorsichtig beurteilen.", steps: ["uq-constant-conclusion"] }
     ],
     referenceResults: [
-      ["Mittlere Kapazität", "≈ 0,0415933 · 10⁻⁸ F ≈ 416 pF"],
-      ["Größte Konstantenabweichung", "≈ 3,83 % bei U = 50 V"],
-      ["Größter relativer Einzelfehler", "fmax = 10 %"]
+      ["Mittlere Kapazität", m(String.raw`\approx 0{,}0415933\cdot10^{-8}\,\mathrm{F}\approx416\,\mathrm{pF}`)],
+      ["Größte Konstantenabweichung", m(String.raw`\approx3{,}83\,\%\ \text{bei}\ U=50\,\mathrm{V}`)],
+      ["Größter relativer Einzelfehler", m(String.raw`f_{\max}=10\,\%`)]
     ],
     conclusion: "Die mittlere Kapazität beträgt etwa 416 pF. Die größte Konstantenabweichung von etwa 3,83 % liegt unter dem größten relativen Einzelfehler fmax = 10 % und kann nach der schulischen Methode durch die Messfehler erklärt werden. Die Messreihe ist mit Q = C · U vereinbar und stützt die Annahme direkter Proportionalität; sie beweist sie jedoch nicht."
   }),
@@ -1187,9 +1364,8 @@ export const COURSES = Object.freeze({
     id: "proportional-linear",
     eyebrow: "Direkte Proportionalität · Methode 3",
     title: "Kondensator: Lineare Regression",
-    subtitle: "Q ∝ U anhand von Steigung und Achsenabschnitt prüfen",
+    subtitle: `${m(String.raw`Q \propto U`)} anhand von Steigung und Achsenabschnitt prüfen`,
     duration: "etwa 20–30 Minuten",
-    transferMethod: "proportional-linear",
     dataHeaders: ["A: U (V)", "B: Q/(10⁻⁸ C)"],
     dataKeys: ["u", "q"],
     sharedRequirement: UQ_SHARED_REQUIREMENT_ID,
@@ -1203,11 +1379,11 @@ export const COURSES = Object.freeze({
       { label: "Ich kann die Proportionalitätsvermutung fachlich vorsichtig beurteilen.", steps: ["uq-linear-conclusion"] }
     ],
     referenceResults: [
-      ["Regressionsgerade", "Q(U) = 0,0408 · U + 0,12"],
-      ["Kapazität aus der Steigung", "≈ 408 pF"],
-      ["Größte Modellabweichung", "≈ 7,41 % bei U = 50 V"],
-      ["Anteil des y-Achsenabschnitts", "|b|/Qmin · 100 = 6 %"],
-      ["Größter relativer Einzelfehler", "fmax = 10 %"]
+      ["Regressionsgerade", m(String.raw`Q(U)=0{,}0408\,U+0{,}12`)],
+      ["Kapazität aus der Steigung", m(String.raw`\approx408\,\mathrm{pF}`)],
+      ["Größte Modellabweichung", m(String.raw`\approx7{,}41\,\%\ \text{bei}\ U=50\,\mathrm{V}`)],
+      ["Anteil des y-Achsenabschnitts", m(String.raw`\frac{|b|}{Q_{\min}}\cdot100=6\,\%`)],
+      ["Größter relativer Einzelfehler", m(String.raw`f_{\max}=10\,\%`)]
     ],
     conclusion: "Die Messpunkte werden gut durch eine Gerade beschrieben. Die Steigung entspricht einer Kapazität von etwa 408 pF. Die größte Modellabweichung von etwa 7,41 % und der relative Anteil des y-Achsenabschnitts von 6 % liegen unter dem größten relativen Einzelfehler fmax = 10 %. Beide Abweichungen können nach der schulischen Methode durch die Messfehler erklärt werden; b darf näherungsweise vernachlässigt werden, sodass Q(U) ≈ m · U gilt. Ein Beweis für direkte Proportionalität oder eine statistische Bestätigung von b = 0 folgt daraus nicht."
   }),
@@ -1215,9 +1391,8 @@ export const COURSES = Object.freeze({
     id: "capacitor-exponential",
     eyebrow: "Kondensator-Aufladung",
     title: "Kondensator: Exponentialregression",
-    subtitle: "ΔU = U₀ − U_C als exponentiell abnehmende Größe untersuchen",
+    subtitle: `${m(String.raw`\Delta U=U_0-U_C`)} als exponentiell abnehmende Größe untersuchen`,
     duration: "etwa 25–40 Minuten",
-    transferMethod: null,
     dataHeaders: ["A: t (s)", "B: U_C (V)"],
     dataKeys: ["t", "uc"],
     stages: ["Aufladevorgang", "Messwerte", "Datenprüfung", "Punkte", "Exponentialmodell", "Zeitmaße", "Abweichungen", "Urteil"],
@@ -1230,11 +1405,11 @@ export const COURSES = Object.freeze({
       { label: "Ich kann Modellabweichungen mit dem größten relativen Einzelfehler vergleichen und vorsichtig urteilen.", steps: ["charging-deviations", "charging-conclusion"] }
     ],
     referenceResults: [
-      ["Exponentialfunktion", "ΔÛ(t) ≈ 3,6925788 · e^(−0,0304341 · t)"],
-      ["Zeitkonstante", "τ ≈ 32,86 s"],
-      ["Halbwertszeit", "t₁/₂ ≈ 22,78 s"],
-      ["Größte Modellabweichung", "≈ 2,61 % bei t = 80 s"],
-      ["Größter relativer Einzelfehler", "fmax = 10 %"],
+      ["Exponentialfunktion", m(String.raw`\widehat{\Delta U}(t)\approx3{,}6925788\,e^{-0{,}0304341t}`)],
+      ["Zeitkonstante", m(String.raw`\tau\approx32{,}86\,\mathrm{s}`)],
+      ["Halbwertszeit", m(String.raw`t_{1/2}\approx22{,}78\,\mathrm{s}`)],
+      ["Größte Modellabweichung", m(String.raw`\approx2{,}61\,\%\ \text{bei}\ t=80\,\mathrm{s}`)],
+      ["Größter relativer Einzelfehler", m(String.raw`f_{\max}=10\,\%`)],
       ["Datenprüfung", "Ungeklärtes Wertepaar bei 100 s dokumentiert ausgeschlossen"]
     ],
     conclusion: "Die Regression der neun geprüften Messpunkte ergibt ΔÛ(t) ≈ 3,6925788 · e^(−0,0304341 · t), eine Zeitkonstante von etwa 32,86 s und eine Halbwertszeit von etwa 22,78 s. Die Abweichung des Regressionsanfangswerts von U₀ beträgt etwa 2,31 %, die größte Modellabweichung etwa 2,61 %. Beide liegen unter dem größten relativen Einzelfehler fmax = 10 % und können nach der schulischen Methode durch Messfehler erklärt werden. Die Daten sind mit einem exponentiellen Aufladevorgang vereinbar, beweisen ihn aber nicht; der Ausschluss des ungeklärten letzten Zeitwerts bleibt ausdrücklich dokumentiert."
@@ -1242,4 +1417,3 @@ export const COURSES = Object.freeze({
 });
 
 export const COURSE_IDS = Object.freeze(Object.keys(COURSES));
-export const TRANSFER_METHOD_IDS = Object.freeze(COURSE_IDS.filter((id) => COURSES[id].transferMethod === id));

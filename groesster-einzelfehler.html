@@ -13,7 +13,7 @@
   <header class="method-header">
     <div class="wrap method-header-inner">
       <a class="method-back-link" href="./index.html#course">← Zurück zum Lernweg</a>
-      <p class="eyebrow">Gemeinsame Pflichtseite für alle Q–U-Wege</p>
+      <p class="eyebrow">Gemeinsame Pflichtseite für alle \(Q\)–\(U\)-Wege</p>
       <h1>Methode des größten Einzelfehlers</h1>
       <p class="hero-lead">Wir übertragen den größten relativen Einzelfehler als Fehlergrenze auf die untersuchten Abweichungen. So beurteilen wir schulisch, ob Abweichungen durch die Messfehler erklärt werden können.</p>
       <div id="moduleStatus" class="method-status" role="status" aria-live="polite"></div>
@@ -32,10 +32,10 @@
       <p class="mini-label">Schritt für Schritt</p>
       <h2 id="calculation-title">Den größten relativen Einzelfehler bestimmen</h2>
       <div class="calculation-flow">
-        <article><span>1</span><h3>Absolute Einzelfehler</h3><p class="display-equation">ΔU = 5 V<br>ΔQ = 0,1 · 10⁻⁸ C</p><p>Das sind die angenommenen absoluten Messfehler des Kondensatorversuchs.</p></article>
-        <article><span>2</span><h3>Spannung relativ</h3><p class="display-equation">5/50 · 100 = 10 %</p><p>Der kleinste Spannungswert ist 50 V.</p></article>
-        <article><span>3</span><h3>Ladung relativ</h3><p class="display-equation">0,1/2,0 · 100 = 5 %</p><p>Der kleinste Ladungswert ist 2,0 · 10⁻⁸ C.</p></article>
-        <article><span>4</span><h3>Größten Wert wählen</h3><p class="display-equation">f<sub>max</sub> = max(10 %, 5 %) = 10 %</p><p>Es wird bewusst nicht addiert und kein Mittelwert gebildet.</p></article>
+        <article><span>1</span><h3>Absolute Einzelfehler</h3><p class="display-equation">\[\Delta U=5\,\mathrm V,\qquad \Delta Q=0{,}1\cdot10^{-8}\,\mathrm C\]</p><p>Das sind die angenommenen absoluten Messfehler des Kondensatorversuchs.</p></article>
+        <article><span>2</span><h3>Spannung relativ</h3><p class="display-equation">\[\frac{5}{50}\cdot100=10\,\%\]</p><p>Der kleinste Spannungswert ist \(50\,\mathrm V\).</p></article>
+        <article><span>3</span><h3>Ladung relativ</h3><p class="display-equation">\[\frac{0{,}1}{2{,}0}\cdot100=5\,\%\]</p><p>Der kleinste Ladungswert ist \(2{,}0\cdot10^{-8}\,\mathrm C\).</p></article>
+        <article><span>4</span><h3>Größten Wert wählen</h3><p class="display-equation">\[f_{\max}=\max(10\,\%,5\,\%)=10\,\%\]</p><p>Es wird bewusst nicht addiert und kein Mittelwert gebildet.</p></article>
       </div>
       <aside class="method-note"><strong>Warum die kleinsten Messwerte?</strong><p>Bei gleichbleibendem absoluten Fehler ist der relative Fehler dort am größten: Derselbe Fehler wird durch einen kleineren Messwert geteilt.</p></aside>
     </section>
@@ -47,26 +47,26 @@
         <article>
           <p class="method-tag">Potenzregression</p>
           <h3>Exponent und Modellwerte</h3>
-          <p class="display-equation">Q(U) = a · U<sup>n</sup>, n = 1,011566</p>
+          <p class="display-equation">\[Q(U)=aU^n,\qquad n=1{,}011566\]</p>
           <p>Relative Exponentabweichung:</p>
-          <p class="display-equation">|1,011566 − 1|/1 · 100 ≈ 1,16 %</p>
-          <p>Die größte Modellabweichung beträgt 3,74 %. Beide Werte liegen unter 10 % und können nach der Methode durch die Messfehler erklärt werden. Der Exponent darf näherungsweise als n ≈ 1 behandelt werden.</p>
+          <p class="display-equation">\[\frac{|1{,}011566-1|}{1}\cdot100\approx1{,}16\,\%\]</p>
+          <p>Die größte Modellabweichung beträgt \(3{,}74\,\%\). Beide Werte liegen unter \(10\,\%\) und können nach der Methode durch die Messfehler erklärt werden. Der Exponent darf näherungsweise als \(n\approx1\) behandelt werden.</p>
         </article>
         <article>
           <p class="method-tag">Konstantenverfahren</p>
           <h3>Streuung der Kapazitäten</h3>
-          <p>Die größte Abweichung einer Einzelkapazität vom Mittelwert beträgt 3,83 %.</p>
-          <p class="display-equation">3,83 % &lt; 10 %</p>
+          <p>Die größte Abweichung einer Einzelkapazität vom Mittelwert beträgt \(3{,}83\,\%\).</p>
+          <p class="display-equation">\[3{,}83\,\%<10\,\%\]</p>
           <p>Die Streuung kann nach der Methode durch die Messfehler erklärt werden. Die Kapazität darf in diesem Rahmen als konstant angesehen werden.</p>
         </article>
         <article>
           <p class="method-tag">Lineare Regression</p>
           <h3>Modellwerte und y-Achsenabschnitt</h3>
           <p>GeoGebra-Eingabe: <code>Q=Trendlinie(C1:C5)</code></p>
-          <p class="display-equation">Q(U) = 0,0408 · U + 0,12</p>
-          <p>Die größte Modellabweichung beträgt 7,41 %. Eine relative Abweichung von b gegenüber dem theoretischen Wert 0 wäre wegen der Division durch null nicht definiert. Deshalb beziehen wir den Anteil von b auf den kleinsten gemessenen Ladungswert:</p>
-          <p class="display-equation">|b|/Q<sub>min</sub> · 100 = 0,12/2,0 · 100 = 6 %</p>
-          <p>7,41 % und 6 % liegen unter 10 %. Beide Abweichungen können nach der Methode durch die Messfehler erklärt werden; b darf näherungsweise vernachlässigt werden: Q(U) ≈ m · U. Das ist keine statistische Bestätigung von b = 0.</p>
+          <p class="display-equation">\[Q(U)=0{,}0408\,U+0{,}12\]</p>
+          <p>Die größte Modellabweichung beträgt \(7{,}41\,\%\). Eine relative Abweichung von \(b\) gegenüber dem theoretischen Wert \(0\) wäre wegen der Division durch null nicht definiert. Deshalb beziehen wir den Anteil von \(b\) auf den kleinsten gemessenen Ladungswert:</p>
+          <p class="display-equation">\[\frac{|b|}{Q_{\min}}\cdot100=\frac{0{,}12}{2{,}0}\cdot100=6\,\%\]</p>
+          <p>\(7{,}41\,\%\) und \(6\,\%\) liegen unter \(10\,\%\). Beide Abweichungen können nach der Methode durch die Messfehler erklärt werden; \(b\) darf näherungsweise vernachlässigt werden: \(Q(U)\approx mU\). Das ist keine statistische Bestätigung von \(b=0\).</p>
           <p class="source-link"><a href="https://geogebra.github.io/docs/manual/de/commands/Trendlinie/" target="_blank" rel="noopener">GeoGebra-Handbuch: Trendlinie ↗</a></p>
         </article>
       </div>
@@ -78,15 +78,15 @@
       <div class="phrase-list">
         <article>
           <div><h3>Potenzregression</h3><button class="copy-button" type="button" data-copy-target="phrase-power">Kopieren</button></div>
-          <p id="phrase-power">Die Potenzregression ergibt den Exponenten n ≈ 1,0116. Aus ΔU = 5 V und ΔQ = 0,1 · 10⁻⁸ C ergibt sich nach der Methode des größten Einzelfehlers ein größter relativer Einzelfehler von 10 %. Die relative Exponentabweichung beträgt etwa 1,16 %, die größte Modellabweichung etwa 3,74 %. Beide Abweichungen liegen unter 10 % und können daher durch die Messfehler erklärt werden. Der Exponent kann näherungsweise als n ≈ 1 behandelt werden. Die Messwerte sind damit mit Q ∝ U vereinbar, beweisen die Proportionalität aber nicht.</p>
+          <p id="phrase-power">Die Potenzregression ergibt den Exponenten \(n\approx1{,}0116\). Aus \(\Delta U=5\,\mathrm V\) und \(\Delta Q=0{,}1\cdot10^{-8}\,\mathrm C\) ergibt sich nach der Methode des größten Einzelfehlers ein größter relativer Einzelfehler von \(10\,\%\). Die relative Exponentabweichung beträgt etwa \(1{,}16\,\%\), die größte Modellabweichung etwa \(3{,}74\,\%\). Beide Abweichungen liegen unter \(10\,\%\) und können daher durch die Messfehler erklärt werden. Der Exponent kann näherungsweise als \(n\approx1\) behandelt werden. Die Messwerte sind damit mit \(Q\propto U\) vereinbar, beweisen die Proportionalität aber nicht.</p>
         </article>
         <article>
           <div><h3>Konstantenverfahren</h3><button class="copy-button" type="button" data-copy-target="phrase-constants">Kopieren</button></div>
-          <p id="phrase-constants">Die mittlere Kapazität beträgt etwa 416 pF. Nach der Methode des größten Einzelfehlers ergibt sich aus den Messfehlern ein größter relativer Einzelfehler von 10 %. Die größte Abweichung einer Einzelkapazität vom Mittelwert beträgt etwa 3,83 % und liegt damit unter 10 %. Die Streuung kann durch die Messfehler erklärt und die Kapazität im Rahmen dieser Methode als konstant angesehen werden. Die Messwerte sind mit Q ∝ U vereinbar, beweisen die Proportionalität aber nicht.</p>
+          <p id="phrase-constants">Die mittlere Kapazität beträgt etwa \(416\,\mathrm{pF}\). Nach der Methode des größten Einzelfehlers ergibt sich aus den Messfehlern ein größter relativer Einzelfehler von \(10\,\%\). Die größte Abweichung einer Einzelkapazität vom Mittelwert beträgt etwa \(3{,}83\,\%\) und liegt damit unter \(10\,\%\). Die Streuung kann durch die Messfehler erklärt und die Kapazität im Rahmen dieser Methode als konstant angesehen werden. Die Messwerte sind mit \(Q\propto U\) vereinbar, beweisen die Proportionalität aber nicht.</p>
         </article>
         <article>
           <div><h3>Lineare Regression</h3><button class="copy-button" type="button" data-copy-target="phrase-linear">Kopieren</button></div>
-          <p id="phrase-linear">Die lineare Regression ergibt Q(U) = 0,0408U + 0,12. Aus ΔU = 5 V und ΔQ = 0,1 · 10⁻⁸ C ergibt sich nach der Methode des größten Einzelfehlers ein größter relativer Einzelfehler von 10 %. Die größte Modellabweichung beträgt 7,41 %. Der Anteil des y-Achsenabschnitts am kleinsten Ladungswert beträgt 0,12/2,0 · 100 = 6 %. Beide Abweichungen liegen unter 10 % und können daher durch die Messfehler erklärt werden. Der y-Achsenabschnitt kann näherungsweise vernachlässigt werden, sodass Q(U) ≈ mU gilt. Die Messwerte sind damit mit Q ∝ U vereinbar, beweisen die Proportionalität aber nicht.</p>
+          <p id="phrase-linear">Die lineare Regression ergibt \(Q(U)=0{,}0408U+0{,}12\). Aus \(\Delta U=5\,\mathrm V\) und \(\Delta Q=0{,}1\cdot10^{-8}\,\mathrm C\) ergibt sich nach der Methode des größten Einzelfehlers ein größter relativer Einzelfehler von \(10\,\%\). Die größte Modellabweichung beträgt \(7{,}41\,\%\). Der Anteil des y-Achsenabschnitts am kleinsten Ladungswert beträgt \(0{,}12/2{,}0\cdot100=6\,\%\). Beide Abweichungen liegen unter \(10\,\%\) und können daher durch die Messfehler erklärt werden. Der y-Achsenabschnitt kann näherungsweise vernachlässigt werden, sodass \(Q(U)\approx mU\) gilt. Die Messwerte sind damit mit \(Q\propto U\) vereinbar, beweisen die Proportionalität aber nicht.</p>
         </article>
       </div>
       <p id="copyMethodStatus" class="sr-only" role="status" aria-live="polite"></p>
@@ -97,11 +97,11 @@
       <p>Dein Abschluss wird lokal gespeichert und gilt anschließend für Potenzregression, Konstantenverfahren und lineare Regression.</p>
       <form id="methodCheckForm" novalidate>
         <div class="checkpoint-fields">
-          <div class="checkpoint-field result"><span class="check-kind">Ergebnis</span><label class="field" for="uError"><span>Größter relativer U-Einzelfehler in %</span><input id="uError" name="uError" type="text" inputmode="decimal" placeholder="10" aria-describedby="feedback-uError"></label><p id="feedback-uError" class="field-feedback" aria-live="polite"></p></div>
-          <div class="checkpoint-field result"><span class="check-kind">Ergebnis</span><label class="field" for="qError"><span>Größter relativer Q-Einzelfehler in %</span><input id="qError" name="qError" type="text" inputmode="decimal" placeholder="5" aria-describedby="feedback-qError"></label><p id="feedback-qError" class="field-feedback" aria-live="polite"></p></div>
-          <div class="checkpoint-field result"><span class="check-kind">Ergebnis</span><label class="field" for="maxError"><span>fmax in %</span><input id="maxError" name="maxError" type="text" inputmode="decimal" placeholder="10" aria-describedby="feedback-maxError"></label><p id="feedback-maxError" class="field-feedback" aria-live="polite"></p></div>
+          <div class="checkpoint-field result"><span class="check-kind">Ergebnis</span><label class="field" for="uError"><span>Größter relativer \(U\)-Einzelfehler in \(\%\)</span><input id="uError" name="uError" type="text" inputmode="decimal" placeholder="10" aria-describedby="feedback-uError"></label><p id="feedback-uError" class="field-feedback" aria-live="polite"></p></div>
+          <div class="checkpoint-field result"><span class="check-kind">Ergebnis</span><label class="field" for="qError"><span>Größter relativer \(Q\)-Einzelfehler in \(\%\)</span><input id="qError" name="qError" type="text" inputmode="decimal" placeholder="5" aria-describedby="feedback-qError"></label><p id="feedback-qError" class="field-feedback" aria-live="polite"></p></div>
+          <div class="checkpoint-field result"><span class="check-kind">Ergebnis</span><label class="field" for="maxError"><span>\(f_{\max}\) in %</span><input id="maxError" name="maxError" type="text" inputmode="decimal" placeholder="10" aria-describedby="feedback-maxError"></label><p id="feedback-maxError" class="field-feedback" aria-live="polite"></p></div>
           <div class="checkpoint-field understanding"><span class="check-kind">Verständnis</span><label class="field" for="minimumReason"><span>Warum verwenden wir die kleinsten Messwerte?</span><select id="minimumReason" name="minimumReason" aria-describedby="feedback-minimumReason"><option value="">Bitte auswählen …</option><option value="largest-relative">Bei gleichem absoluten Fehler ist dort der relative Fehler am größten.</option><option value="smallest-error">Dort ist auch der absolute Fehler am kleinsten.</option><option value="geogebra">GeoGebra verlangt immer den kleinsten Wert.</option></select></label><p id="feedback-minimumReason" class="field-feedback" aria-live="polite"></p></div>
-          <div class="checkpoint-field understanding"><span class="check-kind">Verständnis</span><label class="field" for="methodMeaning"><span>Was bedeutet eine Abweichung unter fmax?</span><select id="methodMeaning" name="methodMeaning" aria-describedby="feedback-methodMeaning"><option value="">Bitte auswählen …</option><option value="explainable">Sie kann nach dieser Methode durch Messfehler erklärt werden, beweist aber nichts.</option><option value="proven">Die Theorie ist damit mathematisch bewiesen.</option><option value="zero">Die tatsächliche Abweichung ist null.</option></select></label><p id="feedback-methodMeaning" class="field-feedback" aria-live="polite"></p></div>
+          <div class="checkpoint-field understanding"><span class="check-kind">Verständnis</span><label class="field" for="methodMeaning"><span>Was bedeutet eine Abweichung unter \(f_{\max}\)?</span><select id="methodMeaning" name="methodMeaning" aria-describedby="feedback-methodMeaning"><option value="">Bitte auswählen …</option><option value="explainable">Sie kann nach dieser Methode durch Messfehler erklärt werden, beweist aber nichts.</option><option value="proven">Die Theorie ist damit mathematisch bewiesen.</option><option value="zero">Die tatsächliche Abweichung ist null.</option></select></label><p id="feedback-methodMeaning" class="field-feedback" aria-live="polite"></p></div>
         </div>
         <button class="button primary" type="submit">Pflichtkontrolle prüfen</button>
       </form>

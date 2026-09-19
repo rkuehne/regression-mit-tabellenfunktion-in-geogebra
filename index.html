@@ -69,40 +69,40 @@
       </div>
       <div class="course-choice-grid">
         <article class="course-choice-group inverse">
-          <p class="mini-label">Coulomb-Versuch · r und F</p>
+          <p class="mini-label">Coulomb-Versuch · \(r\) und \(F\)</p>
           <h3>Umgekehrtes Quadratgesetz</h3>
-          <p class="choice-equation">F ∝ 1/r²</p>
-          <p>Prüfe mit einer Potenzregression, ob Verlauf, Exponent und Abweichungen mit b = −2 vereinbar sind.</p>
+          <p class="choice-equation">\[F\propto\frac{1}{r^2}\]</p>
+          <p>Prüfe mit einer Potenzregression, ob Verlauf, Exponent und Abweichungen mit \(b=-2\) vereinbar sind.</p>
           <button class="course-choice-button" type="button" data-course-id="inverse-square">
             <span>Potenzregression wählen</span><small>10 Kapitel · r–F</small>
           </button>
         </article>
         <article class="course-choice-group proportional">
-          <p class="mini-label">Kondensator-Versuch · U und Q</p>
+          <p class="mini-label">Kondensator-Versuch · \(U\) und \(Q\)</p>
           <h3>Direkte Proportionalität</h3>
-          <p class="choice-equation">Q = C · U</p>
-          <p>Wähle, ob du den Exponenten eines Potenzmodells, die Quotienten Q/U oder Steigung und Achsenabschnitt einer Regressionsgeraden untersuchen möchtest.</p>
+          <p class="choice-equation">\[Q=C\cdot U\]</p>
+          <p>Wähle, ob du den Exponenten eines Potenzmodells, die Quotienten \(Q/U\) oder Steigung und Achsenabschnitt einer Regressionsgeraden untersuchen möchtest.</p>
           <div class="choice-button-stack">
             <button class="course-choice-button" type="button" data-course-id="proportional-power">
-              <span>Potenzregression wählen</span><small>8 Kapitel · Exponent n mit 1 vergleichen</small>
+              <span>Potenzregression wählen</span><small>8 Kapitel · Exponent \(n\) mit \(1\) vergleichen</small>
             </button>
             <button class="course-choice-button" type="button" data-course-id="proportional-constants">
               <span>Konstantenverfahren wählen</span><small>8 Kapitel · Kapazitäten vergleichen</small>
             </button>
             <button class="course-choice-button" type="button" data-course-id="proportional-linear">
-              <span>Lineare Regression wählen</span><small>8 Kapitel · m und b untersuchen</small>
+              <span>Lineare Regression wählen</span><small>8 Kapitel · \(m\) und \(b\) untersuchen</small>
             </button>
           </div>
         </article>
         <article class="course-choice-group charging">
           <div>
-            <p class="mini-label">Kondensator-Aufladung · t und U<sub>C</sub></p>
+            <p class="mini-label">Kondensator-Aufladung · \(t\) und \(U_C\)</p>
             <h3>Exponentieller Aufladevorgang</h3>
-            <p class="choice-equation">ΔU(t) = U₀ · e<sup>−t/τ</sup></p>
-            <p>Berechne ΔU = U₀ − U<sub>C</sub>, prüfe die Messdaten und bestimme mit einer Exponentialregression Zeitkonstante und Halbwertszeit.</p>
+            <p class="choice-equation">\[\Delta U(t)=U_0e^{-t/\tau}\]</p>
+            <p>Berechne \(\Delta U=U_0-U_C\), prüfe die Messdaten und bestimme mit einer Exponentialregression Zeitkonstante und Halbwertszeit.</p>
           </div>
           <button class="course-choice-button" type="button" data-course-id="capacitor-exponential">
-            <span>Exponentialregression wählen</span><small>11 Kapitel · t–ΔU</small>
+              <span>Exponentialregression wählen</span><small>11 Kapitel · \(t\)–\(\Delta U\)</small>
           </button>
         </article>
       </div>
@@ -250,103 +250,10 @@
         <div aria-hidden="true" class="completion-mark">✓</div>
         <div>
           <p class="eyebrow">Lernweg abgeschlossen</p>
-          <h3 id="completionTitle">Du kannst den gesamten Weg erklären und auf eigene Messdaten übertragen.</h3>
-          <p id="completionText">Öffne den Transferrechner oder erstelle direkt deinen Lernnachweis.</p>
+          <h3 id="completionTitle">Du kannst den gesamten Auswertungsweg fachlich erklären.</h3>
+          <p id="completionText">Erstelle jetzt deinen persönlichen Lernnachweis.</p>
         </div>
-        <a id="completionActionLink" class="button light" href="#transfer">Zum Transfer</a>
-      </div>
-    </section>
-
-    <section id="transfer" class="transfer-section" aria-labelledby="transfer-title">
-      <div class="wrap">
-        <div class="section-heading inverse">
-          <div>
-            <p class="eyebrow">Optionaler Transfer</p>
-            <h2 id="transfer-title">Eigene Messreihe prüfen</h2>
-          </div>
-          <p id="transferIntro" class="section-intro">Gib mindestens drei positive Wertepaare ein und wähle das passende Auswertungsverfahren.</p>
-        </div>
-
-        <div class="transfer-card">
-          <div class="transfer-inputs">
-            <label class="field transfer-method-field" for="transferMethodSelect">
-              <span>Auswertungsverfahren</span>
-              <select id="transferMethodSelect">
-                <option value="inverse-square">F ∝ 1/r² · Potenzregression</option>
-                <option value="proportional-power">Q ∝ U · Potenzregression</option>
-                <option value="proportional-constants">Q ∝ U · Quotienten Q/U</option>
-                <option value="proportional-linear">Q ∝ U · Lineare Regression</option>
-              </select>
-            </label>
-            <div class="panel-heading">
-              <div>
-                <p class="mini-label">Messdaten</p>
-                <h3 id="transferInputTitle">r und F eingeben</h3>
-              </div>
-              <button id="resetTransferBtn" class="text-button" type="button">Beispieldaten einsetzen</button>
-            </div>
-
-            <div class="table-scroll">
-              <table class="data-table input-table">
-                <thead>
-                  <tr><th scope="col">Nr.</th><th id="transferXHeader" scope="col">r (cm)</th><th id="transferYHeader" scope="col">F (mN)</th></tr>
-                </thead>
-                <tbody id="transferInputRows"></tbody>
-              </table>
-            </div>
-            <div class="row-actions">
-              <button id="addTransferRowBtn" class="button secondary compact" type="button">+ Zeile</button>
-              <button id="removeTransferRowBtn" class="button secondary compact" type="button">− Zeile</button>
-            </div>
-
-            <label id="relativeUncertaintyGroup" class="field uncertainty-field" for="uncertaintyInput">
-              <span>Geschätzte relative Messunsicherheit von F in % <small>(optional)</small></span>
-              <input id="uncertaintyInput" type="text" inputmode="decimal" placeholder="z. B. 10">
-            </label>
-            <div id="uqUncertaintyGroup" class="uncertainty-pair" hidden>
-              <label class="field" for="deltaUInput"><span>ΔU in V <small>(optional)</small></span><input id="deltaUInput" type="text" inputmode="decimal" placeholder="5"></label>
-              <label class="field" for="deltaQInput"><span>ΔQ/(10⁻⁸ C) <small>(optional)</small></span><input id="deltaQInput" type="text" inputmode="decimal" placeholder="0,1"></label>
-            </div>
-            <p id="uncertaintyNote" class="field-note">Ohne Unsicherheitsangabe zeigt der Rechner Ergebnisse, fällt aber kein Urteil über die Vereinbarkeit.</p>
-            <p id="transferSharedErrorLinkWrap" class="field-note shared-method-link" hidden><a id="transferSharedErrorLink" href="./groesster-einzelfehler.html">Methode des größten Einzelfehlers nachlesen</a></p>
-
-            <button id="calculateTransferBtn" class="button primary wide" type="button">Potenzregression berechnen</button>
-            <div id="transferFeedback" class="feedback" role="status" aria-live="polite"></div>
-          </div>
-
-          <div id="transferResults" class="transfer-results" hidden>
-            <div class="result-heading">
-              <div>
-                <p class="mini-label">Auswertung</p>
-                <h3 id="transferResultTitle">Deine Potenzregression</h3>
-              </div>
-              <span class="result-dot" aria-hidden="true"></span>
-            </div>
-            <p id="transferEquation" class="result-equation"></p>
-            <p id="transferMeta" class="result-meta"></p>
-            <p id="uncertaintyResult" class="interpretation"></p>
-
-            <div class="chart-card">
-              <div class="chart-legend"><span><i class="legend-point"></i> Messwerte</span><span><i class="legend-line"></i> <span id="chartModelLabel">Potenzregression</span></span></div>
-              <svg id="transferChart" viewBox="0 0 760 420" role="img"></svg>
-            </div>
-
-            <div class="table-scroll result-table-wrap">
-              <table class="data-table">
-                <thead>
-                  <tr><th id="resultXHeader" scope="col">r (cm)</th><th id="resultYHeader" scope="col">Messwert F (mN)</th><th id="resultModelHeader" scope="col">Modellwert F̂ (mN)</th><th id="resultDeviationHeader" scope="col">Modellabweichung</th></tr>
-                </thead>
-                <tbody id="transferAnalysisRows"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <label class="reflection-card" for="reflectionInput">
-          <span class="mini-label">Deine Reflexion</span>
-          <strong>Was sagt deine Messreihe aus?</strong>
-            <textarea id="reflectionInput" rows="4" placeholder="Nenne das Ergebnis, beurteile die Abweichungen und berücksichtige die Messunsicherheit …"></textarea>
-        </label>
+        <a id="completionActionLink" class="button light" href="#summary">Zum Lernnachweis</a>
       </div>
     </section>
 
@@ -400,12 +307,6 @@
           <p id="summaryConclusion"></p>
         </section>
 
-        <section id="summaryTransfer" class="summary-transfer" hidden>
-          <p class="mini-label">Eigene Messreihe</p>
-          <p id="summaryTransferResult"></p>
-          <p id="summaryReflection"></p>
-        </section>
-
         <p class="print-footnote">Dieser Lernnachweis wurde lokal im Browser erstellt. Es wurden keine Daten übertragen.</p>
       </div>
 
@@ -429,34 +330,34 @@
     <h2 id="glossaryTitle">Begriffshilfe</h2>
     <dl class="glossary-list">
       <div><dt>Hypothese</dt><dd>Eine theoretisch begründete Erwartung, die anhand von Messdaten geprüft wird.</dd></div>
-      <div><dt>Physikalisches Modell</dt><dd>Eine vereinfachte mathematische Beschreibung eines realen Vorgangs, zum Beispiel F ∝ 1/r² oder Q = C · U.</dd></div>
-      <div><dt>Messwert</dt><dd>Der Zahlenwert einer Messgröße mit Einheit, zum Beispiel F = 0,37 mN.</dd></div>
+      <div><dt>Physikalisches Modell</dt><dd>Eine vereinfachte mathematische Beschreibung eines realen Vorgangs, zum Beispiel \(F\propto 1/r^2\) oder \(Q=C\cdot U\).</dd></div>
+      <div><dt>Messwert</dt><dd>Der Zahlenwert einer Messgröße mit Einheit, zum Beispiel \(F=0{,}37\,\mathrm{mN}\).</dd></div>
       <div><dt>Messergebnis</dt><dd>Die vollständige Angabe eines Messwertes einschließlich seiner Messunsicherheit.</dd></div>
       <div><dt>Messpaar</dt><dd>Die zusammengehörigen Werte zweier Messgrößen aus derselben Einzelmessung.</dd></div>
-      <div><dt>Punkt</dt><dd>Die Darstellung eines Messpaares im Koordinatensystem, zum Beispiel (x, y) = (r, F) oder (U, Q).</dd></div>
-      <div><dt>Potenzfunktion</dt><dd>Eine Funktion der Form y = a · xᵇ. Der Exponent b bestimmt die Art des Zusammenhangs.</dd></div>
+      <div><dt>Punkt</dt><dd>Die Darstellung eines Messpaares im Koordinatensystem, zum Beispiel \((x,y)=(r,F)\) oder \((U,Q)\).</dd></div>
+      <div><dt>Potenzfunktion</dt><dd>Eine Funktion der Form \(y=a\cdot x^b\). Der Exponent \(b\) bestimmt die Art des Zusammenhangs.</dd></div>
       <div><dt>Regression</dt><dd>Ein mathematisches Verfahren, das die Parameter einer gewählten Modellfunktion an mehrere Messpunkte anpasst.</dd></div>
       <div><dt>Modellwert</dt><dd>Ein von der Regressionsfunktion berechneter Wert, nicht ein neuer Messwert.</dd></div>
       <div><dt>Modellabweichung</dt><dd>Die prozentuale Differenz zwischen Messwert und Modellwert, bezogen auf den Modellwert.</dd></div>
       <div><dt>Betrag</dt><dd>Die Größe einer Zahl ohne ihr Vorzeichen.</dd></div>
       <div><dt>Messunsicherheit</dt><dd>Eine Angabe dazu, wie genau ein Messergebnis aufgrund von Messverfahren und Geräten sinnvoll angegeben werden kann.</dd></div>
       <div><dt>Vereinbarkeit</dt><dd>Die Messdaten liefern im Rahmen der betrachteten Unsicherheiten keinen erkennbaren Widerspruch zum Modell.</dd></div>
-      <div><dt>Spannung U</dt><dd>Die elektrische Spannung in Volt; beim Kondensator ist sie die unabhängige Größe.</dd></div>
-      <div><dt>Elektrische Ladung Q</dt><dd>Die auf dem Kondensator gespeicherte Ladung in Coulomb.</dd></div>
-      <div><dt>Kapazität C</dt><dd>Der Quotient Q/U. Seine Einheit ist Farad; hier ergeben sich Werte um 416 pF.</dd></div>
-      <div><dt>Direkte Proportionalität</dt><dd>Ein Zusammenhang der Form y = k · x; bei realen Messdaten bleibt der Quotient y/x innerhalb der Messunsicherheit annähernd konstant.</dd></div>
-      <div><dt>Proportionalitätskonstante</dt><dd>Der feste Faktor k; bei Q = C · U ist dies die Kapazität C.</dd></div>
-      <div><dt>Lineare Funktion</dt><dd>Eine Funktion der Form y = m · x + b. Ihr Graph ist eine Gerade.</dd></div>
-      <div><dt>Steigung m</dt><dd>Sie gibt an, um wie viel sich der Modellwert y ändert, wenn x um eine Einheit zunimmt. Bei Q = C · U entspricht sie der Kapazität.</dd></div>
-      <div><dt>y-Achsenabschnitt b</dt><dd>Der Modellwert bei x = 0. Für eine direkte Proportionalität wird b = 0 erwartet.</dd></div>
-      <div><dt>Ursprungsgerade</dt><dd>Eine Gerade durch den Koordinatenursprung (0, 0); sie beschreibt einen direkt proportionalen Zusammenhang.</dd></div>
-      <div><dt>Extrapolation</dt><dd>Die Verwendung eines Modells außerhalb des gemessenen Bereichs. Der Achsenabschnitt wird hier aus Messungen zwischen 50 V und 250 V bis U = 0 fortgesetzt.</dd></div>
-      <div><dt>Aufladevorgang</dt><dd>Beim Laden eines Kondensators steigt U_C und nähert sich der angelegten Spannung U₀ an; gleichzeitig fällt ΔU = U₀ − U_C gegen null.</dd></div>
-      <div><dt>Spannungsdifferenz ΔU</dt><dd>Der beim Aufladen noch fehlende Spannungsanteil U₀ − U_C. Das Δ bezeichnet hier eine Differenz und keine Messunsicherheit.</dd></div>
-      <div><dt>Exponentialfunktion</dt><dd>Eine Funktion, bei der sich eine Größe in gleichen Zeitabschnitten jeweils um denselben Faktor verändert, hier ΔÛ(t) = A · e^(k·t).</dd></div>
-      <div><dt>Regressionsanfangswert A</dt><dd>Der vom Exponentialmodell für t = 0 vorhergesagte Wert; er muss nicht exakt dem ersten Messwert entsprechen.</dd></div>
-      <div><dt>Zeitkonstante τ</dt><dd>Charakteristische Zeit eines exponentiellen Vorgangs. Beim idealen RC-Kreis gilt τ = R · C und k = −1/τ.</dd></div>
-      <div><dt>Halbwertszeit t₁/₂</dt><dd>Die Zeitspanne, in der sich der Modellwert halbiert; bei exponentieller Abnahme gilt t₁/₂ = τ · ln(2).</dd></div>
+      <div><dt>Spannung \(U\)</dt><dd>Die elektrische Spannung in Volt; beim Kondensator ist sie die unabhängige Größe.</dd></div>
+      <div><dt>Elektrische Ladung \(Q\)</dt><dd>Die auf dem Kondensator gespeicherte Ladung in Coulomb.</dd></div>
+      <div><dt>Kapazität \(C\)</dt><dd>Der Quotient \(Q/U\). Seine Einheit ist Farad; hier ergeben sich Werte um \(416\,\mathrm{pF}\).</dd></div>
+      <div><dt>Direkte Proportionalität</dt><dd>Ein Zusammenhang der Form \(y=k\cdot x\); bei realen Messdaten bleibt der Quotient \(y/x\) innerhalb der Messunsicherheit annähernd konstant.</dd></div>
+      <div><dt>Proportionalitätskonstante</dt><dd>Der feste Faktor \(k\); bei \(Q=C\cdot U\) ist dies die Kapazität \(C\).</dd></div>
+      <div><dt>Lineare Funktion</dt><dd>Eine Funktion der Form \(y=m\cdot x+b\). Ihr Graph ist eine Gerade.</dd></div>
+      <div><dt>Steigung \(m\)</dt><dd>Sie gibt an, um wie viel sich der Modellwert \(y\) ändert, wenn \(x\) um eine Einheit zunimmt. Bei \(Q=C\cdot U\) entspricht sie der Kapazität.</dd></div>
+      <div><dt>y-Achsenabschnitt \(b\)</dt><dd>Der Modellwert bei \(x=0\). Für eine direkte Proportionalität wird \(b=0\) erwartet.</dd></div>
+      <div><dt>Ursprungsgerade</dt><dd>Eine Gerade durch den Koordinatenursprung \((0,0)\); sie beschreibt einen direkt proportionalen Zusammenhang.</dd></div>
+      <div><dt>Extrapolation</dt><dd>Die Verwendung eines Modells außerhalb des gemessenen Bereichs. Der Achsenabschnitt wird hier aus Messungen zwischen \(50\,\mathrm V\) und \(250\,\mathrm V\) bis \(U=0\) fortgesetzt.</dd></div>
+      <div><dt>Aufladevorgang</dt><dd>Beim Laden eines Kondensators steigt \(U_C\) und nähert sich der angelegten Spannung \(U_0\) an; gleichzeitig fällt \(\Delta U=U_0-U_C\) gegen null.</dd></div>
+      <div><dt>Spannungsdifferenz \(\Delta U\)</dt><dd>Der beim Aufladen noch fehlende Spannungsanteil \(U_0-U_C\). Das \(\Delta\) bezeichnet hier eine Differenz und keine Messunsicherheit.</dd></div>
+      <div><dt>Exponentialfunktion</dt><dd>Eine Funktion, bei der sich eine Größe in gleichen Zeitabschnitten jeweils um denselben Faktor verändert, hier \(\widehat{\Delta U}(t)=A e^{kt}\).</dd></div>
+      <div><dt>Regressionsanfangswert \(A\)</dt><dd>Der vom Exponentialmodell für \(t=0\) vorhergesagte Wert; er muss nicht exakt dem ersten Messwert entsprechen.</dd></div>
+      <div><dt>Zeitkonstante \(\tau\)</dt><dd>Charakteristische Zeit eines exponentiellen Vorgangs. Beim idealen RC-Kreis gilt \(\tau=R\cdot C\) und \(k=-1/\tau\).</dd></div>
+      <div><dt>Halbwertszeit \(t_{1/2}\)</dt><dd>Die Zeitspanne, in der sich der Modellwert halbiert; bei exponentieller Abnahme gilt \(t_{1/2}=\tau\ln(2)\).</dd></div>
       <div><dt>Auffälliger Messwert</dt><dd>Ein Wert, der wegen Messablauf, Protokoll oder Verlauf geprüft werden muss. Er darf nicht allein wegen einer schlechten Modellpassung entfernt werden.</dd></div>
       <div><dt>Dokumentierter Ausschluss</dt><dd>Ein begründeter und offengelegter Verzicht auf einen Messwert in der Auswertung; das ursprüngliche Protokoll wird dabei nicht stillschweigend verändert.</dd></div>
       <div><dt>Methode des größten Einzelfehlers</dt><dd>Der größte relative Einzelfehler wird als Fehlergrenze auf alle untersuchten Abweichungen übertragen. Darunterliegende Abweichungen können in dieser schulischen Methode durch Messfehler erklärt werden.</dd></div>
