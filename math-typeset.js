@@ -58,9 +58,18 @@ function loadMathJax() {
 export const mathReady = loadMathJax();
 
 let mathOperationQueue = Promise.resolve();
+let pendingMathOperations = 0;
 
 function enqueueMathOperation(operation) {
-  const result = mathOperationQueue.then(operation, operation);
+  pendingMathOperations += 1;
+  const run = async () => {
+    try {
+      return await operation();
+    } finally {
+      pendingMathOperations -= 1;
+    }
+  };
+  const result = mathOperationQueue.then(run, run);
   mathOperationQueue = result.catch(() => undefined);
   return result;
 }
@@ -135,16 +144,17 @@ export function replaceMath(elements, updateContent) {
     return mathOperationQueue;
   }
 
+  if (pendingMathOperations === 0 && typeof window.MathJax?.typesetClear === "function") {
+    try {
+      window.MathJax.typesetClear(targets);
+    } catch (error) {
+      console.warn("Alte Formeln konnten nicht aus MathJax entfernt werden.", error);
+    }
+  }
+  updateContent();
+
   return enqueueMathOperation(async () => {
     const available = await mathReady;
-    if (available && typeof window.MathJax?.typesetClear === "function") {
-      try {
-        window.MathJax.typesetClear(targets);
-      } catch (error) {
-        console.warn("Alte Formeln konnten nicht aus MathJax entfernt werden.", error);
-      }
-    }
-    updateContent();
     if (!available) return false;
     return performTypeset(targets);
   }).catch((error) => {

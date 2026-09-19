@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-test("tauscht dynamische Inhalte erst nach dem laufenden MathJax-Satz aus", async () => {
+test("wechselt Inhalte sofort und setzt ihre Formeln nach dem laufenden MathJax-Satz", async () => {
   const calls = [];
   const events = [];
   let finishInitialTypeset;
@@ -58,20 +58,34 @@ test("tauscht dynamische Inhalte erst nach dem laufenden MathJax-Satz aus", asyn
     events.push(["update", course]);
   });
 
+  assert.equal(course.textContent, "\\(x^2\\)");
+  assert.deepEqual(events, [["update", course]]);
   await mathReady;
   await new Promise((resolve) => setTimeout(resolve, 0));
-  assert.deepEqual(events, [["typeset", [root]]]);
+  assert.deepEqual(events, [
+    ["update", course],
+    ["typeset", [root]]
+  ]);
 
   finishInitialTypeset();
   await Promise.all([initialTypeset, replacement, typesetMath(lesson)]);
   assert.deepEqual(events, [
-    ["typeset", [root]],
-    ["clear", [course]],
     ["update", course],
+    ["typeset", [root]],
     ["typeset", [course]],
     ["typeset", [course]],
     ["typeset", [lesson]]
   ]);
+
+  const idleReplacement = replaceMath(course, () => {
+    course.textContent = "ohne Formel";
+    events.push(["idle-update", course]);
+  });
+  assert.deepEqual(events.slice(-2), [
+    ["clear", [course]],
+    ["idle-update", course]
+  ]);
+  await idleReplacement;
 
   delete globalThis.document;
   delete globalThis.window;
