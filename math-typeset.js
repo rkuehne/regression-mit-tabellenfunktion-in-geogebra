@@ -65,11 +65,56 @@ function enqueueMathOperation(operation) {
   return result;
 }
 
+function afterNextPaint() {
+  if (typeof window.requestAnimationFrame === "function") {
+    return new Promise((resolve) => {
+      window.requestAnimationFrame(() => window.requestAnimationFrame(resolve));
+    });
+  }
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+function containsUnrenderedMath(targets) {
+  const delimiterPattern = /\\(?:\(|\[)/;
+  const skippedParents = "code, pre, select, option, textarea, script, style, mjx-container";
+
+  return targets.some((target) => {
+    if (typeof document.createTreeWalker !== "function" || typeof NodeFilter === "undefined") {
+      return delimiterPattern.test(target.textContent || "");
+    }
+
+    const walker = document.createTreeWalker(target, NodeFilter.SHOW_TEXT);
+    let node = walker.nextNode();
+    while (node) {
+      if (!node.parentElement?.closest(skippedParents) && delimiterPattern.test(node.nodeValue || "")) {
+        return true;
+      }
+      node = walker.nextNode();
+    }
+    return false;
+  });
+}
+
+async function performTypeset(targets) {
+  await afterNextPaint();
+  let firstError = null;
+  try {
+    await window.MathJax.typesetPromise(targets);
+  } catch (error) {
+    firstError = error;
+  }
+
+  if (firstError || containsUnrenderedMath(targets)) {
+    await afterNextPaint();
+    await window.MathJax.typesetPromise(targets);
+  }
+  return true;
+}
+
 async function runTypeset(targets) {
   const available = await mathReady;
   if (!available) return false;
-  await window.MathJax.typesetPromise(targets);
-  return true;
+  return performTypeset(targets);
 }
 
 export function typesetMath(elements) {
@@ -101,8 +146,7 @@ export function replaceMath(elements, updateContent) {
     }
     updateContent();
     if (!available) return false;
-    await window.MathJax.typesetPromise(targets);
-    return true;
+    return performTypeset(targets);
   }).catch((error) => {
     console.warn("Der aktualisierte Inhalt konnte nicht als Formel gesetzt werden.", error);
     return false;

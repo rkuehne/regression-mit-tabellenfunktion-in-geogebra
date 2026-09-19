@@ -11,8 +11,13 @@ test("tauscht dynamische Inhalte erst nach dem laufenden MathJax-Satz aus", asyn
   const root = new FakeElement();
   const course = new FakeElement();
   const lesson = new FakeElement();
+  root.textContent = "";
+  course.textContent = "";
+  lesson.textContent = "";
   globalThis.Element = FakeElement;
-  globalThis.window = {};
+  globalThis.window = {
+    requestAnimationFrame(callback) { queueMicrotask(() => callback(0)); }
+  };
   globalThis.document = {
     body: root,
     createElement() {
@@ -36,6 +41,7 @@ test("tauscht dynamische Inhalte erst nach dem laufenden MathJax-Satz aus", asyn
             if (calls.length === 1) {
               return new Promise((resolve) => { finishInitialTypeset = resolve; });
             }
+            if (targets[0] === course && calls.length === 3) course.textContent = "";
             return Promise.resolve();
           }
         };
@@ -47,7 +53,10 @@ test("tauscht dynamische Inhalte erst nach dem laufenden MathJax-Satz aus", asyn
   const moduleUrl = new URL(`../math-typeset.js?test=${Date.now()}`, import.meta.url);
   const { mathReady, replaceMath, typesetDocument, typesetMath } = await import(moduleUrl);
   const initialTypeset = typesetDocument();
-  const replacement = replaceMath(course, () => events.push(["update", course]));
+  const replacement = replaceMath(course, () => {
+    course.textContent = "\\(x^2\\)";
+    events.push(["update", course]);
+  });
 
   await mathReady;
   await new Promise((resolve) => setTimeout(resolve, 0));
@@ -59,6 +68,7 @@ test("tauscht dynamische Inhalte erst nach dem laufenden MathJax-Satz aus", asyn
     ["typeset", [root]],
     ["clear", [course]],
     ["update", course],
+    ["typeset", [course]],
     ["typeset", [course]],
     ["typeset", [lesson]]
   ]);

@@ -1,7 +1,7 @@
 import { COURSE_IDS, COURSES, typesetCourseText } from "./lesson-data.js";
 import { formatNumber, isWithin } from "./regression.js";
 import { loadState, persistState } from "./state.js";
-import { mathReady, replaceMath, typesetDocument, typesetMath } from "./math-typeset.js?v=20260919-1";
+import { mathReady, replaceMath, typesetDocument, typesetMath } from "./math-typeset.js?v=20260919-2";
 
 const els = {
   startCourseBtn: document.getElementById("startCourseBtn"),
@@ -610,11 +610,11 @@ function renderCourse({ typeset = true } = {}) {
   renderLesson();
 }
 
-function setCurrentStep(index, shouldScroll = true) {
+async function setCurrentStep(index, shouldScroll = true) {
   const progress = activeProgress();
   progress.currentStep = Math.max(0, Math.min(activeCourse().steps.length - 1, index));
   saveState();
-  renderCourse();
+  await renderCourse();
   if (shouldScroll) scrollToElement(els.course);
 }
 
@@ -748,11 +748,11 @@ function renderSummary({ typeset = true } = {}) {
       : "Die abschließende Beurteilung wird eingetragen, sobald alle Ergebnis- und Verständnisprüfungen dieses Lernwegs abgeschlossen sind.");
 }
 
-function selectCourse(courseId, { scroll = true } = {}) {
+async function selectCourse(courseId, { scroll = true } = {}) {
   if (!COURSE_IDS.includes(courseId)) return;
   state.activeCourseId = courseId;
   saveState();
-  replaceMath([els.course, document.getElementById("printSummary"), els.courseChoiceStatus], () => {
+  await replaceMath([els.course, document.getElementById("printSummary"), els.courseChoiceStatus], () => {
     renderCourse({ typeset: false });
     renderSummary({ typeset: false });
     setMathText(els.courseChoiceStatus, `${activeCourse().title} ist ausgewählt.`);
@@ -764,12 +764,12 @@ els.startCourseBtn.addEventListener("click", () => scrollToElement(els.coursePic
 els.courseChoiceButtons.forEach((button) => {
   button.addEventListener("click", () => selectCourse(button.dataset.courseId));
 });
-els.resetCourseBtn.addEventListener("click", () => {
+els.resetCourseBtn.addEventListener("click", async () => {
   const course = activeCourse();
   if (!window.confirm(`Möchtest du die ${course.steps.length} Kapitelkontrollen dieses Lernwegs und ihre Antworten zurücksetzen? Deine anderen Lernwege bleiben erhalten.`)) return;
   state.courses[state.activeCourseId] = { currentStep: 0, completedSteps: [], answers: {} };
   saveState();
-  replaceMath([els.course, document.getElementById("printSummary")], () => {
+  await replaceMath([els.course, document.getElementById("printSummary")], () => {
     renderCourse({ typeset: false });
     renderSummary({ typeset: false });
   });

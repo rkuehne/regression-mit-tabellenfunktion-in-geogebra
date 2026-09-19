@@ -82,6 +82,10 @@ test("verwendet nur vorhandene lokale Seiten-, Stil- und Bildressourcen", () => 
 
 test("liefert MathJax 4.1.3 und die Schrift vollständig lokal aus", () => {
   const loader = source("math-typeset.js");
+  const app = source("app.js");
+  const index = source("index.html");
+  const methodApp = source("groesster-einzelfehler.js");
+  const methodPage = source("groesster-einzelfehler.html");
   const notices = source("THIRD_PARTY_NOTICES.md");
   const bundle = resolve(ROOT, "assets", "vendor", "mathjax", "tex-chtml.js");
   const license = resolve(ROOT, "assets", "vendor", "mathjax", "LICENSE.txt");
@@ -97,6 +101,12 @@ test("liefert MathJax 4.1.3 und die Schrift vollständig lokal aus", () => {
   assert.match(loader, /displayMath:\s*\[\["\\\\\[", "\\\\\]"\]\]/);
   assert.match(source("index.html"), /rel="preload" href="\.\/assets\/vendor\/mathjax\/tex-chtml\.js" as="script"/);
   assert.match(source("groesster-einzelfehler.html"), /rel="preload" href="\.\/assets\/vendor\/mathjax\/tex-chtml\.js" as="script"/);
+  assert.match(index, /src="\.\/app\.js\?v=20260919-2"/);
+  assert.match(app, /from "\.\/math-typeset\.js\?v=20260919-2"/);
+  assert.match(methodPage, /src="\.\/groesster-einzelfehler\.js\?v=20260919-2"/);
+  assert.match(methodApp, /from "\.\/math-typeset\.js\?v=20260919-2"/);
+  assert.match(loader, /requestAnimationFrame/);
+  assert.match(loader, /containsUnrenderedMath/);
   assert.doesNotMatch(source("app.js"), /typesetMath\(els\.lessonCard\)/);
   assert.doesNotMatch(source("app.js") + source("style.css"), /math-pending/);
   assert.match(source("app.js"), /renderCourse\(\{ typeset: false \}\)/);

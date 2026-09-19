@@ -264,7 +264,7 @@ test("enthält die gemeinsame Fehlerseite mit Herleitung, Anwendungen und Pflich
   assert.match(html, /Q=Trendlinie\(C1:C5\)/);
   assert.match(html, /durch die Messfehler erklärt werden/);
   assert.match(html, /name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"/);
-  assert.match(html, /src="\.\/groesster-einzelfehler\.js\?v=20260919-1"/);
+  assert.match(html, /src="\.\/groesster-einzelfehler\.js\?v=20260919-2"/);
 });
 
 test("kennzeichnet mathematische Auswahlantworten und erzeugt konsistente TeX-Begrenzer", () => {
