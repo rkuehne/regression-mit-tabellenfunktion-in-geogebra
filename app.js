@@ -78,7 +78,6 @@ const els = {
 };
 
 let state = loadState(localStorage);
-let courseMathRenderToken = 0;
 
 function activeCourse() {
   return COURSES[state.activeCourseId];
@@ -602,20 +601,13 @@ function renderCourseIdentity() {
   });
 }
 
-function renderCourse() {
-  const renderToken = ++courseMathRenderToken;
+function renderCourse({ typeset = true } = {}) {
   clearMath(els.course);
-  els.lessonCard.classList.add("math-pending");
-  els.lessonCard.setAttribute("aria-busy", "true");
   renderCourseIdentity();
   renderProgress();
   renderStepNav();
   renderLesson();
-  typesetMath(els.course).then(() => {
-    if (renderToken !== courseMathRenderToken) return;
-    els.lessonCard.classList.remove("math-pending");
-    els.lessonCard.removeAttribute("aria-busy");
-  });
+  if (typeset) typesetMath(els.course);
 }
 
 function setCurrentStep(index, shouldScroll = true) {
@@ -677,7 +669,7 @@ function isCheckpointKindComplete(step, kind) {
     .every((field) => isFieldAnswerValid(field, fieldValue(step.id, field.id)));
 }
 
-function renderSummary() {
+function renderSummary({ typeset = true } = {}) {
   clearMath(document.getElementById("printSummary"));
   const course = activeCourse();
   const progress = activeProgress();
@@ -751,17 +743,17 @@ function renderSummary() {
     : course.sharedRequirement && !sharedComplete && completeCount === course.steps.length
       ? "Die acht Kapitel sind abgeschlossen. Die abschließende Beurteilung wird eingetragen, sobald auch die gemeinsame Kontrolle zur Methode des größten Einzelfehlers abgeschlossen ist."
       : "Die abschließende Beurteilung wird eingetragen, sobald alle Ergebnis- und Verständnisprüfungen dieses Lernwegs abgeschlossen sind.");
-  typesetMath(document.getElementById("printSummary"));
+  if (typeset) typesetMath(document.getElementById("printSummary"));
 }
 
 function selectCourse(courseId, { scroll = true } = {}) {
   if (!COURSE_IDS.includes(courseId)) return;
   state.activeCourseId = courseId;
   saveState();
-  renderCourse();
-  renderSummary();
+  renderCourse({ typeset: false });
+  renderSummary({ typeset: false });
   setMathText(els.courseChoiceStatus, `${activeCourse().title} ist ausgewählt.`);
-  typesetMath(els.courseChoiceStatus);
+  typesetMath([els.course, document.getElementById("printSummary"), els.courseChoiceStatus]);
   if (scroll) scrollToElement(els.course);
 }
 
@@ -774,8 +766,9 @@ els.resetCourseBtn.addEventListener("click", () => {
   if (!window.confirm(`Möchtest du die ${course.steps.length} Kapitelkontrollen dieses Lernwegs und ihre Antworten zurücksetzen? Deine anderen Lernwege bleiben erhalten.`)) return;
   state.courses[state.activeCourseId] = { currentStep: 0, completedSteps: [], answers: {} };
   saveState();
-  renderCourse();
-  renderSummary();
+  renderCourse({ typeset: false });
+  renderSummary({ typeset: false });
+  typesetMath([els.course, document.getElementById("printSummary")]);
   scrollToElement(els.course);
 });
 
@@ -834,7 +827,7 @@ els.courseNameInput.addEventListener("input", () => {
 });
 
 els.printSummaryBtn.addEventListener("click", async () => {
-  renderSummary();
+  renderSummary({ typeset: false });
   await mathReady;
   await typesetMath(document.getElementById("printSummary"));
   window.print();
@@ -843,8 +836,8 @@ els.printSummaryBtn.addEventListener("click", async () => {
 function initialize() {
   els.studentNameInput.value = state.student.name;
   els.courseNameInput.value = state.student.course;
-  renderCourse();
-  renderSummary();
+  renderCourse({ typeset: false });
+  renderSummary({ typeset: false });
   saveState();
   typesetDocument();
 }

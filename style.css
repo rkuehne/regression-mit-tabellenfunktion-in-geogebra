@@ -151,9 +151,7 @@ progress::-moz-progress-bar { border-radius: 99px; background: var(--violet-600)
 .text-button { min-height: 44px; border: 0; padding: 8px 4px; background: transparent; color: var(--violet-700); text-decoration: underline; text-decoration-color: var(--violet-200); text-underline-offset: 4px; font-weight: 750; cursor: pointer; }
 .course-rail > .text-button { width: 100%; margin-top: 8px; color: var(--muted); font-size: 0.78rem; }
 
-.lesson-card { position: relative; min-width: 0; overflow: hidden; border-radius: var(--radius-xl); }
-.lesson-card.math-pending > * { visibility: hidden; }
-.lesson-card.math-pending::after { content: "Formeln werden dargestellt …"; position: absolute; inset: 36px auto auto 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 40px); border: 1px solid var(--violet-200); border-radius: 999px; padding: 10px 16px; background: var(--violet-50); color: var(--violet-800); font-weight: 800; text-align: center; }
+.lesson-card { min-width: 0; overflow: hidden; border-radius: var(--radius-xl); }
 .lesson-header { display: flex; gap: 20px; align-items: start; justify-content: space-between; padding: clamp(24px, 4vw, 42px); border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #fff 0%, #fbfaff 100%); }
 .lesson-header h2 { font-size: clamp(1.8rem, 4vw, 3rem); }
 .learning-goal-label { margin: 18px 0 0; }

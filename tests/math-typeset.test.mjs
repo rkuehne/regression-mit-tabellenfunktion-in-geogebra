@@ -1,24 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-test("bündelt schnelle und überlappende MathJax-Anfragen", async () => {
+test("setzt aufeinanderfolgende MathJax-Anfragen zuverlässig", async () => {
   const calls = [];
-  class FakeElement {
-    constructor(parent = null) {
-      this.parent = parent;
-      this.isConnected = true;
-    }
-    contains(candidate) {
-      for (let current = candidate; current; current = current.parent) {
-        if (current === this) return true;
-      }
-      return false;
-    }
-  }
+
+  class FakeElement {}
 
   const root = new FakeElement();
-  const course = new FakeElement(root);
-  const lesson = new FakeElement(course);
+  const course = new FakeElement();
+  const lesson = new FakeElement();
   globalThis.Element = FakeElement;
   globalThis.window = {};
   globalThis.document = {
@@ -55,8 +45,7 @@ test("bündelt schnelle und überlappende MathJax-Anfragen", async () => {
   ]);
 
   assert.equal(results.at(-1), true);
-  assert.equal(calls.length, 1);
-  assert.deepEqual(calls[0], [root]);
+  assert.deepEqual(calls, [[lesson], [course], [root]]);
 
   delete globalThis.document;
   delete globalThis.window;
