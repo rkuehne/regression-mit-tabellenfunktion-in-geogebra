@@ -1,7 +1,7 @@
 import { isWithin } from "./regression.js";
 import { COURSE_IDS, UQ_SHARED_REQUIREMENT_ID } from "./lesson-data.js";
 import { loadState, persistState } from "./state.js";
-import { typesetDocument, typesetMath } from "./math-typeset.js";
+import { typesetDocument, typesetMath } from "./math-typeset.js?v=20260919-1";
 
 const UQ_COURSES = COURSE_IDS.filter((id) => id.startsWith("proportional-"));
 const state = loadState(localStorage);

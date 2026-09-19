@@ -57,26 +57,56 @@ function loadMathJax() {
 
 export const mathReady = loadMathJax();
 
-let typesetQueue = Promise.resolve();
+let mathOperationQueue = Promise.resolve();
 
-export function clearMath(elements) {
-  const targets = normaliseElements(elements);
-  if (targets.length && typeof window.MathJax?.typesetClear === "function") {
-    window.MathJax.typesetClear(targets);
-  }
+function enqueueMathOperation(operation) {
+  const result = mathOperationQueue.then(operation, operation);
+  mathOperationQueue = result.catch(() => undefined);
+  return result;
+}
+
+async function runTypeset(targets) {
+  const available = await mathReady;
+  if (!available) return false;
+  await window.MathJax.typesetPromise(targets);
+  return true;
 }
 
 export function typesetMath(elements) {
   const targets = normaliseElements(elements);
-  if (!targets.length) return typesetQueue;
+  if (!targets.length) return mathOperationQueue;
 
-  typesetQueue = typesetQueue
-    .then(() => mathReady)
-    .then((available) => available && window.MathJax.typesetPromise(targets))
+  return enqueueMathOperation(() => runTypeset(targets))
     .catch((error) => {
       console.warn("Eine Formel konnte nicht gesetzt werden.", error);
+      return false;
     });
-  return typesetQueue;
+}
+
+export function replaceMath(elements, updateContent) {
+  const targets = normaliseElements(elements);
+  if (!targets.length || typeof updateContent !== "function") {
+    updateContent?.();
+    return mathOperationQueue;
+  }
+
+  return enqueueMathOperation(async () => {
+    const available = await mathReady;
+    if (available && typeof window.MathJax?.typesetClear === "function") {
+      try {
+        window.MathJax.typesetClear(targets);
+      } catch (error) {
+        console.warn("Alte Formeln konnten nicht aus MathJax entfernt werden.", error);
+      }
+    }
+    updateContent();
+    if (!available) return false;
+    await window.MathJax.typesetPromise(targets);
+    return true;
+  }).catch((error) => {
+    console.warn("Der aktualisierte Inhalt konnte nicht als Formel gesetzt werden.", error);
+    return false;
+  });
 }
 
 export function typesetDocument() {

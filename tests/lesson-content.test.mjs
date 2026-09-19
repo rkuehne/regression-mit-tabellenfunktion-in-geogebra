@@ -192,7 +192,7 @@ test("führt jeden Lernweg unmittelbar zum Lernnachweis", () => {
   assert.doesNotMatch(app, /transferMethod|TRANSFER_METHOD_IDS|activeTransfer|renderTransfer/);
   assert.doesNotMatch(html, /id="transfer"|Transferrechner|Reflexion/);
   assert.match(app, /Zum Lernnachweis/);
-  assert.match(app, /await mathReady;[\s\S]*await typesetMath\(document\.getElementById\("printSummary"\)\);[\s\S]*window\.print\(\)/);
+  assert.match(app, /await renderSummary\(\);[\s\S]*await mathReady;[\s\S]*window\.print\(\)/);
   assert.doesNotMatch(app, /beforeprint/);
 });
 
@@ -264,7 +264,7 @@ test("enthält die gemeinsame Fehlerseite mit Herleitung, Anwendungen und Pflich
   assert.match(html, /Q=Trendlinie\(C1:C5\)/);
   assert.match(html, /durch die Messfehler erklärt werden/);
   assert.match(html, /name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"/);
-  assert.match(html, /src="\.\/groesster-einzelfehler\.js"/);
+  assert.match(html, /src="\.\/groesster-einzelfehler\.js\?v=20260919-1"/);
 });
 
 test("kennzeichnet mathematische Auswahlantworten und erzeugt konsistente TeX-Begrenzer", () => {

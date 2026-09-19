@@ -1,7 +1,7 @@
 import { COURSE_IDS, COURSES, typesetCourseText } from "./lesson-data.js";
 import { formatNumber, isWithin } from "./regression.js";
 import { loadState, persistState } from "./state.js";
-import { clearMath, mathReady, typesetDocument, typesetMath } from "./math-typeset.js";
+import { mathReady, replaceMath, typesetDocument, typesetMath } from "./math-typeset.js?v=20260919-1";
 
 const els = {
   startCourseBtn: document.getElementById("startCourseBtn"),
@@ -544,7 +544,6 @@ function renderSharedRequirement(step) {
 }
 
 function renderLesson() {
-  clearMath(els.lessonCard);
   const course = activeCourse();
   const progress = activeProgress();
   const step = course.steps[progress.currentStep];
@@ -602,12 +601,13 @@ function renderCourseIdentity() {
 }
 
 function renderCourse({ typeset = true } = {}) {
-  clearMath(els.course);
+  if (typeset) {
+    return replaceMath(els.course, () => renderCourse({ typeset: false }));
+  }
   renderCourseIdentity();
   renderProgress();
   renderStepNav();
   renderLesson();
-  if (typeset) typesetMath(els.course);
 }
 
 function setCurrentStep(index, shouldScroll = true) {
@@ -670,7 +670,10 @@ function isCheckpointKindComplete(step, kind) {
 }
 
 function renderSummary({ typeset = true } = {}) {
-  clearMath(document.getElementById("printSummary"));
+  const summary = document.getElementById("printSummary");
+  if (typeset) {
+    return replaceMath(summary, () => renderSummary({ typeset: false }));
+  }
   const course = activeCourse();
   const progress = activeProgress();
   const completeCount = progress.completedSteps.length;
@@ -743,17 +746,17 @@ function renderSummary({ typeset = true } = {}) {
     : course.sharedRequirement && !sharedComplete && completeCount === course.steps.length
       ? "Die acht Kapitel sind abgeschlossen. Die abschließende Beurteilung wird eingetragen, sobald auch die gemeinsame Kontrolle zur Methode des größten Einzelfehlers abgeschlossen ist."
       : "Die abschließende Beurteilung wird eingetragen, sobald alle Ergebnis- und Verständnisprüfungen dieses Lernwegs abgeschlossen sind.");
-  if (typeset) typesetMath(document.getElementById("printSummary"));
 }
 
 function selectCourse(courseId, { scroll = true } = {}) {
   if (!COURSE_IDS.includes(courseId)) return;
   state.activeCourseId = courseId;
   saveState();
-  renderCourse({ typeset: false });
-  renderSummary({ typeset: false });
-  setMathText(els.courseChoiceStatus, `${activeCourse().title} ist ausgewählt.`);
-  typesetMath([els.course, document.getElementById("printSummary"), els.courseChoiceStatus]);
+  replaceMath([els.course, document.getElementById("printSummary"), els.courseChoiceStatus], () => {
+    renderCourse({ typeset: false });
+    renderSummary({ typeset: false });
+    setMathText(els.courseChoiceStatus, `${activeCourse().title} ist ausgewählt.`);
+  });
   if (scroll) scrollToElement(els.course);
 }
 
@@ -766,9 +769,10 @@ els.resetCourseBtn.addEventListener("click", () => {
   if (!window.confirm(`Möchtest du die ${course.steps.length} Kapitelkontrollen dieses Lernwegs und ihre Antworten zurücksetzen? Deine anderen Lernwege bleiben erhalten.`)) return;
   state.courses[state.activeCourseId] = { currentStep: 0, completedSteps: [], answers: {} };
   saveState();
-  renderCourse({ typeset: false });
-  renderSummary({ typeset: false });
-  typesetMath([els.course, document.getElementById("printSummary")]);
+  replaceMath([els.course, document.getElementById("printSummary")], () => {
+    renderCourse({ typeset: false });
+    renderSummary({ typeset: false });
+  });
   scrollToElement(els.course);
 });
 
@@ -827,9 +831,8 @@ els.courseNameInput.addEventListener("input", () => {
 });
 
 els.printSummaryBtn.addEventListener("click", async () => {
-  renderSummary({ typeset: false });
+  await renderSummary();
   await mathReady;
-  await typesetMath(document.getElementById("printSummary"));
   window.print();
 });
 

@@ -47,7 +47,7 @@ test("findet für jeden relativen Modulimport eine lokale Datei", () => {
   for (const file of BROWSER_MODULES) {
     const imports = [...source(file).matchAll(/\bfrom\s+["'](\.[^"']+)["']/g)];
     for (const match of imports) {
-      const target = resolve(ROOT, dirname(file), match[1]);
+      const target = resolve(ROOT, dirname(file), match[1].split(/[?#]/, 1)[0]);
       assert.equal(existsSync(target), true, `${file}: ${match[1]}`);
     }
   }

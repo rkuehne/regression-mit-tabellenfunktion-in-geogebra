@@ -1,8 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-test("setzt aufeinanderfolgende MathJax-Anfragen zuverlässig", async () => {
+test("tauscht dynamische Inhalte erst nach dem laufenden MathJax-Satz aus", async () => {
   const calls = [];
+  const events = [];
+  let finishInitialTypeset;
 
   class FakeElement {}
 
@@ -27,8 +29,15 @@ test("setzt aufeinanderfolgende MathJax-Anfragen zuverlässig", async () => {
         window.MathJax = {
           ...configuration,
           startup: { promise: Promise.resolve() },
-          typesetClear() {},
-          async typesetPromise(targets) { calls.push(targets); }
+          typesetClear(targets) { events.push(["clear", targets]); },
+          typesetPromise(targets) {
+            calls.push(targets);
+            events.push(["typeset", targets]);
+            if (calls.length === 1) {
+              return new Promise((resolve) => { finishInitialTypeset = resolve; });
+            }
+            return Promise.resolve();
+          }
         };
         queueMicrotask(() => script.listeners.load());
       }
@@ -36,16 +45,23 @@ test("setzt aufeinanderfolgende MathJax-Anfragen zuverlässig", async () => {
   };
 
   const moduleUrl = new URL(`../math-typeset.js?test=${Date.now()}`, import.meta.url);
-  const { mathReady, typesetDocument, typesetMath } = await import(moduleUrl);
-  const results = await Promise.all([
-    typesetMath(lesson),
-    typesetMath(course),
-    typesetDocument(),
-    mathReady
-  ]);
+  const { mathReady, replaceMath, typesetDocument, typesetMath } = await import(moduleUrl);
+  const initialTypeset = typesetDocument();
+  const replacement = replaceMath(course, () => events.push(["update", course]));
 
-  assert.equal(results.at(-1), true);
-  assert.deepEqual(calls, [[lesson], [course], [root]]);
+  await mathReady;
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  assert.deepEqual(events, [["typeset", [root]]]);
+
+  finishInitialTypeset();
+  await Promise.all([initialTypeset, replacement, typesetMath(lesson)]);
+  assert.deepEqual(events, [
+    ["typeset", [root]],
+    ["clear", [course]],
+    ["update", course],
+    ["typeset", [course]],
+    ["typeset", [lesson]]
+  ]);
 
   delete globalThis.document;
   delete globalThis.window;
