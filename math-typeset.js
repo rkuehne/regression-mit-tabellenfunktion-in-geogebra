@@ -13,7 +13,7 @@ function normaliseElements(elements) {
 function compactTargets(elements) {
   const unique = [...new Set(elements)].filter((element) => element?.isConnected !== false);
   return unique.filter((element) => !unique.some(
-    (other) => other !== element && other.contains(element)
+    (other) => other !== element && typeof other.contains === "function" && other.contains(element)
   ));
 }
 
@@ -37,7 +37,23 @@ function loadMathJax() {
       linebreaks: { inline: true, width: "100%", lineleading: 0.2 }
     },
     options: {
-      skipHtmlTags: { "[+]": ["code", "pre", "select", "option", "textarea"] }
+      skipHtmlTags: { "[+]": ["code", "pre", "select", "option", "textarea"] },
+      enableMenu: false,
+      enableEnrichment: false,
+      enableComplexity: false,
+      enableSpeech: false,
+      enableBraille: false,
+      enableExplorer: false,
+      enableExplorerHelp: false,
+      menuOptions: {
+        settings: {
+          enrich: false,
+          speech: false,
+          braille: false,
+          collapsible: false
+        }
+      },
+      a11y: { speech: false, braille: false }
     },
     startup: { typeset: false }
   };
@@ -139,7 +155,7 @@ function requestTypeset(elements) {
 }
 
 function clearMathBeforeDomChange(targets) {
-  if (typeof window.MathJax?.typesetClear !== "function") return;
+  if (flushPromise || typeof window.MathJax?.typesetClear !== "function") return;
 
   try {
     window.MathJax.typesetClear(compactTargets(targets));

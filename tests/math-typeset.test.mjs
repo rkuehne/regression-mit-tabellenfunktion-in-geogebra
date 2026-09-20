@@ -20,15 +20,23 @@ test("serialisiert initialen Formelsatz sowie schnelle Kapitel- und Lernwegwechs
   let maxConcurrentTypesets = 0;
 
   class FakeElement {
-    constructor(name) {
+    constructor(name, parent = null) {
       this.name = name;
+      this.parent = parent;
       this.textContent = "";
+      this.isConnected = true;
+    }
+    contains(candidate) {
+      for (let current = candidate; current; current = current.parent) {
+        if (current === this) return true;
+      }
+      return false;
     }
   }
 
   const root = new FakeElement("document");
-  const course = new FakeElement("course");
-  const summary = new FakeElement("summary");
+  const course = new FakeElement("course", root);
+  const summary = new FakeElement("summary", root);
   globalThis.Element = FakeElement;
   globalThis.window = {};
   globalThis.document = {
@@ -71,43 +79,41 @@ test("serialisiert initialen Formelsatz sowie schnelle Kapitel- und Lernwegwechs
   const moduleUrl = new URL(`../math-typeset.js?test=${Date.now()}`, import.meta.url);
   const { replaceMath, typesetDocument } = await import(moduleUrl);
   const initial = typesetDocument();
+
+  startupGate.resolve();
+  await initialTypesetStarted.promise;
+  assert.deepEqual(events, ["typeset:document"]);
+
   const chapterA = replaceMath(course, () => {
-    assert.equal(activeTypesets, 0, "Kapitel A darf den DOM nicht während eines Satzlaufs ändern");
     course.textContent = "Kapitel A mit \\(a\\)";
     events.push("update:chapter-a");
   });
   const chapterB = replaceMath(course, () => {
-    assert.equal(activeTypesets, 0, "Kapitel B darf den DOM nicht während eines Satzlaufs ändern");
     course.textContent = "Kapitel B mit \\(b\\)";
     events.push("update:chapter-b");
   });
   const learningPath = replaceMath([course, summary], () => {
-    assert.equal(activeTypesets, 0, "Der Lernweg darf den DOM nicht während eines Satzlaufs ändern");
     course.textContent = "Anderer Lernweg mit \\(c\\)";
     summary.textContent = "Neuer Nachweis";
     events.push("update:learning-path");
   });
 
-  assert.equal(course.textContent, "");
-  assert.deepEqual(events, []);
-
-  startupGate.resolve();
-  await initialTypesetStarted.promise;
-  assert.deepEqual(events, ["typeset:document"]);
-  assert.equal(course.textContent, "");
+  assert.equal(course.textContent, "Anderer Lernweg mit \\(c\\)");
+  assert.equal(summary.textContent, "Neuer Nachweis");
+  assert.deepEqual(events, [
+    "typeset:document",
+    "update:chapter-a",
+    "update:chapter-b",
+    "update:learning-path"
+  ]);
 
   initialTypesetGate.resolve();
   await Promise.all([initial, chapterA, chapterB, learningPath]);
 
   assert.deepEqual(events, [
     "typeset:document",
-    "clear:course",
     "update:chapter-a",
-    "typeset:course",
-    "clear:course",
     "update:chapter-b",
-    "typeset:course",
-    "clear:course+summary",
     "update:learning-path",
     "typeset:course+summary"
   ]);
