@@ -1,7 +1,7 @@
 import { COURSE_IDS, COURSES, typesetCourseText } from "./lesson-data.js";
 import { formatNumber, isWithin } from "./regression.js";
 import { loadState, persistState } from "./state.js";
-import { mathReady, replaceMath, typesetDocument, typesetMath } from "./math-typeset.js?v=20260919-3";
+import { mathReady, replaceMath, typesetDocument, typesetMath } from "./math-typeset.js?v=20260920-1";
 
 const els = {
   startCourseBtn: document.getElementById("startCourseBtn"),

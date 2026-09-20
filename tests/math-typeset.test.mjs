@@ -1,23 +1,36 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-test("wechselt Inhalte sofort und setzt ihre Formeln nach dem laufenden MathJax-Satz", async () => {
-  const calls = [];
+function deferred() {
+  let resolve;
+  let reject;
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  return { promise, resolve, reject };
+}
+
+test("serialisiert initialen Formelsatz sowie schnelle Kapitel- und Lernwegwechsel", async () => {
+  const startupGate = deferred();
+  const initialTypesetGate = deferred();
+  const initialTypesetStarted = deferred();
   const events = [];
-  let finishInitialTypeset;
+  let activeTypesets = 0;
+  let maxConcurrentTypesets = 0;
 
-  class FakeElement {}
+  class FakeElement {
+    constructor(name) {
+      this.name = name;
+      this.textContent = "";
+    }
+  }
 
-  const root = new FakeElement();
-  const course = new FakeElement();
-  const lesson = new FakeElement();
-  root.textContent = "";
-  course.textContent = "";
-  lesson.textContent = "";
+  const root = new FakeElement("document");
+  const course = new FakeElement("course");
+  const summary = new FakeElement("summary");
   globalThis.Element = FakeElement;
-  globalThis.window = {
-    requestAnimationFrame(callback) { queueMicrotask(() => callback(0)); }
-  };
+  globalThis.window = {};
   globalThis.document = {
     body: root,
     createElement() {
@@ -33,16 +46,21 @@ test("wechselt Inhalte sofort und setzt ihre Formeln nach dem laufenden MathJax-
         const configuration = window.MathJax;
         window.MathJax = {
           ...configuration,
-          startup: { promise: Promise.resolve() },
-          typesetClear(targets) { events.push(["clear", targets]); },
-          typesetPromise(targets) {
-            calls.push(targets);
-            events.push(["typeset", targets]);
-            if (calls.length === 1) {
-              return new Promise((resolve) => { finishInitialTypeset = resolve; });
+          startup: { promise: startupGate.promise },
+          typesetClear(targets) {
+            assert.equal(activeTypesets, 0, "typesetClear darf nicht während eines Satzlaufs erfolgen");
+            events.push(`clear:${targets.map(({ name }) => name).join("+")}`);
+          },
+          async typesetPromise(targets) {
+            activeTypesets += 1;
+            maxConcurrentTypesets = Math.max(maxConcurrentTypesets, activeTypesets);
+            const names = targets.map(({ name }) => name).join("+");
+            events.push(`typeset:${names}`);
+            if (targets[0] === root) {
+              initialTypesetStarted.resolve();
+              await initialTypesetGate.promise;
             }
-            if (targets[0] === course && calls.length === 3) course.textContent = "";
-            return Promise.resolve();
+            activeTypesets -= 1;
           }
         };
         queueMicrotask(() => script.listeners.load());
@@ -51,41 +69,51 @@ test("wechselt Inhalte sofort und setzt ihre Formeln nach dem laufenden MathJax-
   };
 
   const moduleUrl = new URL(`../math-typeset.js?test=${Date.now()}`, import.meta.url);
-  const { mathReady, replaceMath, typesetDocument, typesetMath } = await import(moduleUrl);
-  const initialTypeset = typesetDocument();
-  const replacement = replaceMath(course, () => {
-    course.textContent = "\\(x^2\\)";
-    events.push(["update", course]);
+  const { replaceMath, typesetDocument } = await import(moduleUrl);
+  const initial = typesetDocument();
+  const chapterA = replaceMath(course, () => {
+    assert.equal(activeTypesets, 0, "Kapitel A darf den DOM nicht während eines Satzlaufs ändern");
+    course.textContent = "Kapitel A mit \\(a\\)";
+    events.push("update:chapter-a");
+  });
+  const chapterB = replaceMath(course, () => {
+    assert.equal(activeTypesets, 0, "Kapitel B darf den DOM nicht während eines Satzlaufs ändern");
+    course.textContent = "Kapitel B mit \\(b\\)";
+    events.push("update:chapter-b");
+  });
+  const learningPath = replaceMath([course, summary], () => {
+    assert.equal(activeTypesets, 0, "Der Lernweg darf den DOM nicht während eines Satzlaufs ändern");
+    course.textContent = "Anderer Lernweg mit \\(c\\)";
+    summary.textContent = "Neuer Nachweis";
+    events.push("update:learning-path");
   });
 
-  assert.equal(course.textContent, "\\(x^2\\)");
-  assert.deepEqual(events, [["update", course]]);
-  await mathReady;
-  await new Promise((resolve) => setTimeout(resolve, 0));
-  assert.deepEqual(events, [
-    ["update", course],
-    ["typeset", [root]]
-  ]);
+  assert.equal(course.textContent, "");
+  assert.deepEqual(events, []);
 
-  finishInitialTypeset();
-  await Promise.all([initialTypeset, replacement, typesetMath(lesson)]);
-  assert.deepEqual(events, [
-    ["update", course],
-    ["typeset", [root]],
-    ["typeset", [course]],
-    ["typeset", [course]],
-    ["typeset", [lesson]]
-  ]);
+  startupGate.resolve();
+  await initialTypesetStarted.promise;
+  assert.deepEqual(events, ["typeset:document"]);
+  assert.equal(course.textContent, "");
 
-  const idleReplacement = replaceMath(course, () => {
-    course.textContent = "ohne Formel";
-    events.push(["idle-update", course]);
-  });
-  assert.deepEqual(events.slice(-2), [
-    ["clear", [course]],
-    ["idle-update", course]
+  initialTypesetGate.resolve();
+  await Promise.all([initial, chapterA, chapterB, learningPath]);
+
+  assert.deepEqual(events, [
+    "typeset:document",
+    "clear:course",
+    "update:chapter-a",
+    "typeset:course",
+    "clear:course",
+    "update:chapter-b",
+    "typeset:course",
+    "clear:course+summary",
+    "update:learning-path",
+    "typeset:course+summary"
   ]);
-  await idleReplacement;
+  assert.equal(course.textContent, "Anderer Lernweg mit \\(c\\)");
+  assert.equal(summary.textContent, "Neuer Nachweis");
+  assert.equal(maxConcurrentTypesets, 1);
 
   delete globalThis.document;
   delete globalThis.window;
