@@ -10,8 +10,17 @@ function normaliseElements(elements) {
   return candidates.filter((element) => element instanceof Element);
 }
 
+function compactTargets(elements) {
+  const unique = [...new Set(elements)].filter((element) => element?.isConnected !== false);
+  return unique.filter((element) => !unique.some(
+    (other) => other !== element && other.contains(element)
+  ));
+}
+
 function loadMathJax() {
-  if (window.MathJax?.startup?.promise) return window.MathJax.startup.promise.then(() => true);
+  if (window.MathJax?.startup?.promise) {
+    return window.MathJax.startup.promise.then(() => true);
+  }
 
   window.MathJax = {
     loader: {
@@ -38,6 +47,7 @@ function loadMathJax() {
     script.src = scriptUrl;
     script.defer = true;
     script.dataset.localMathjax = "4.1.3";
+
     script.addEventListener("load", async () => {
       try {
         await window.MathJax.startup.promise;
@@ -47,63 +57,130 @@ function loadMathJax() {
         resolve(false);
       }
     }, { once: true });
+
     script.addEventListener("error", () => {
       console.warn("Die lokale MathJax-Datei konnte nicht geladen werden.");
       resolve(false);
     }, { once: true });
+
     document.head.append(script);
   });
 }
 
 export const mathReady = loadMathJax();
 
-let mathOperationQueue = Promise.resolve();
+/*
+ * MathJax 4 serialisiert typesetPromise() bereits intern.
+ *
+ * Wir sammeln zusätzliche Typeset-Anfragen nur noch, damit schnelle
+ * Kapitelwechsel zusammengefasst werden. Die DOM-Aktualisierung selbst
+ * darf niemals hinter MathJax warten.
+ */
+const pendingTargets = new Set();
+let flushPromise = null;
 
-function enqueueMathOperation(operation) {
-  const result = mathOperationQueue.then(operation, operation);
-  mathOperationQueue = result.catch(() => undefined);
-  return result;
+async function flushPendingTypeset() {
+  const available = await mathReady;
+
+  if (!available) {
+    pendingTargets.clear();
+    return false;
+  }
+
+  let typesetOccurred = false;
+
+  /*
+   * Während eines laufenden typesetPromise() können neue Kapitelwechsel
+   * stattfinden. Diese fügen ihre Container erneut zu pendingTargets hinzu.
+   * Nach Abschluss des aktuellen Durchlaufs wird deshalb der aktuelle DOM
+   * noch einmal gesetzt. So gewinnt bei schnellen Klicks immer der letzte
+   * sichtbare Zustand.
+   */
+  while (pendingTargets.size > 0) {
+    const targets = compactTargets([...pendingTargets]);
+    pendingTargets.clear();
+
+    if (!targets.length) continue;
+
+    try {
+      await window.MathJax.typesetPromise(targets);
+      typesetOccurred = true;
+    } catch (error) {
+      console.warn("Eine Formel konnte nicht gesetzt werden.", error);
+    }
+  }
+
+  return typesetOccurred;
 }
 
-async function runTypeset(targets) {
-  const available = await mathReady;
-  if (!available) return false;
-  await window.MathJax.typesetPromise(targets);
-  return true;
+function requestTypeset(elements) {
+  compactTargets(elements).forEach((element) => pendingTargets.add(element));
+
+  if (!pendingTargets.size) {
+    return flushPromise || Promise.resolve(false);
+  }
+
+  if (!flushPromise) {
+    flushPromise = flushPendingTypeset().finally(() => {
+      flushPromise = null;
+
+      /*
+       * Normalerweise leert flushPendingTypeset() die Menge vollständig.
+       * Falls unmittelbar am Ende doch noch ein Ziel hinzugekommen ist,
+       * starten wir sicherheitshalber einen weiteren Durchlauf.
+       */
+      if (pendingTargets.size > 0) {
+        requestTypeset([]);
+      }
+    });
+  }
+
+  return flushPromise;
+}
+
+function clearMathBeforeDomChange(targets) {
+  if (typeof window.MathJax?.typesetClear !== "function") return;
+
+  try {
+    window.MathJax.typesetClear(compactTargets(targets));
+  } catch (error) {
+    console.warn("Alte Formeln konnten nicht aus MathJax entfernt werden.", error);
+  }
 }
 
 export function typesetMath(elements) {
   const targets = normaliseElements(elements);
-  if (!targets.length) return mathOperationQueue;
+  if (!targets.length) return Promise.resolve(false);
 
-  return enqueueMathOperation(() => runTypeset(targets))
-    .catch((error) => {
-      console.warn("Eine Formel konnte nicht gesetzt werden.", error);
-      return false;
-    });
+  return requestTypeset(targets);
 }
 
 export function replaceMath(elements, updateContent) {
   const targets = normaliseElements(elements);
-  if (!targets.length || typeof updateContent !== "function") {
-    updateContent?.();
-    return mathOperationQueue;
+
+  if (typeof updateContent !== "function") {
+    return typesetMath(targets);
   }
 
-  return enqueueMathOperation(async () => {
-    const available = await mathReady;
-    if (available && typeof window.MathJax?.typesetClear === "function") {
-      try {
-        window.MathJax.typesetClear(targets);
-      } catch (error) {
-        console.warn("Alte Formeln konnten nicht aus MathJax entfernt werden.", error);
-      }
-    }
-    updateContent();
-    if (!available) return false;
-    await window.MathJax.typesetPromise(targets);
-    return true;
-  }).catch((error) => {
+  /*
+   * Wichtig:
+   * 1. Falls MathJax bereits aktiv ist, alte MathItems vor der DOM-Änderung
+   *    abmelden.
+   * 2. Den DOM SOFORT aktualisieren. Navigation und Lernwegwechsel dürfen
+   *    niemals auf mathReady oder typesetPromise() warten.
+   * 3. Das neue Math-Rendering asynchron nachziehen.
+   *
+   * Ist MathJax beim ersten Seitenaufruf noch nicht geladen, gibt es auch
+   * noch keine alten MathItems, die vor der DOM-Änderung entfernt werden
+   * müssten.
+   */
+  if (targets.length) clearMathBeforeDomChange(targets);
+
+  updateContent();
+
+  if (!targets.length) return Promise.resolve(false);
+
+  return requestTypeset(targets).catch((error) => {
     console.warn("Der aktualisierte Inhalt konnte nicht als Formel gesetzt werden.", error);
     return false;
   });
