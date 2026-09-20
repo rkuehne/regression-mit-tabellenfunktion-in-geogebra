@@ -299,6 +299,14 @@ export const CHARGING_ANALYSIS_DATA = Object.freeze(
   analyzeExponential(CHARGING_FIT_DATA, chargingReferenceRegression).rows.map((row) => Object.freeze(row))
 );
 
+export const CHARGING_ALL_POINTS = Object.freeze(
+  CHARGING_RAW_DATA.map(({ t, deltaU }) => Object.freeze({ t, deltaU }))
+);
+const chargingAllReferenceRegression = exponentialRegression(CHARGING_ALL_POINTS);
+export const CHARGING_ALL_ANALYSIS_DATA = Object.freeze(
+  analyzeExponential(CHARGING_ALL_POINTS, chargingAllReferenceRegression).rows.map((row) => Object.freeze(row))
+);
+
 export function relativeExponentDeviation(exponent, expected = 1) {
   if (!Number.isFinite(exponent) || !Number.isFinite(expected) || expected === 0) return null;
   return Math.abs((exponent - expected) / expected) * 100;

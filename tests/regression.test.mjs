@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  CHARGING_ALL_ANALYSIS_DATA,
+  CHARGING_ALL_POINTS,
   CHARGING_FIT_DATA,
   CHARGING_RAW_DATA,
   EXAMPLE_DATA,
@@ -119,6 +121,19 @@ test("berechnet die Exponentialregression der neun geprüften Aufladewerte", () 
   const excluded = analyzeExponential([{ t: 100, deltaU: 0.251 }], regression).rows[0];
   assert.ok(Math.abs(excluded.deviation - 42.5864056325733) < 1e-10);
   assert.ok(Math.abs((Math.abs(regression.a - 3.78) / 3.78) * 100 - 2.3127295553441662) < 1e-12);
+});
+
+test("berechnet die Exponentialregression aller zehn Aufladewerte", () => {
+  const regression = exponentialRegression(CHARGING_ALL_POINTS);
+  assert.ok(regression);
+  assert.ok(Math.abs(regression.a - 3.477895953936031) < 1e-12);
+  assert.ok(Math.abs(regression.b - (-0.028360676234518302)) < 1e-14);
+
+  assert.equal(CHARGING_ALL_ANALYSIS_DATA.length, 10);
+  assert.ok(Math.abs(CHARGING_ALL_ANALYSIS_DATA[0].predicted - 3.477895953936031) < 1e-12);
+  assert.ok(Math.abs(CHARGING_ALL_ANALYSIS_DATA[9].predicted - 0.20399901298585277) < 1e-12);
+  assert.ok(Math.abs(CHARGING_ALL_ANALYSIS_DATA[9].deviation - 23.039810990363335) < 1e-10);
+  assert.equal(CHARGING_ALL_ANALYSIS_DATA[9].t, 100);
 });
 
 test("bestimmt Zeitkonstante, Halbwertszeit und größten Einzelfehler", () => {

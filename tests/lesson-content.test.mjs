@@ -172,17 +172,26 @@ test("bindet elf Auflade-Abbildungen mit zugänglichen Beschreibungen und Markie
 test("führt den Aufladungskurs fachlich konsistent von ΔU bis zur Fehlerbeurteilung", () => {
   const content = JSON.stringify(CHARGING_EXPONENTIAL_STEPS);
   const formulas = CHARGING_EXPONENTIAL_STEPS.map((step) => step.formula).filter(Boolean);
-  assert.deepEqual(formulas, ["=3.780-B1", "=(A1,C1)", "U(x)=TrendExp(D1:D9)", "=U(A1)", "=(C1-E1)/E1*100"]);
+  assert.deepEqual(formulas, [
+    "=3.780-B1",
+    "=(A1,C1)",
+    "U(x)=TrendExp(D1:D10)",
+    "=U(A1)",
+    "=(C1-E1)/E1*100",
+    "U(x)=TrendExp(D1:D9)"
+  ]);
   assert.match(content, /U_C\(t\).*1 − e\^\(−t\/τ\)/);
   assert.match(content, /τ = R · C/);
   assert.match(content, /t₁\/₂ = τ · ln\(2\)/);
+  assert.match(content, /23(,0| %)/);
   assert.match(content, /42,6 %/);
   assert.match(content, /nicht.*allein.*Modell|nicht.*nur.*Modell/i);
   assert.match(content, /nicht.*90 s|90 s.*nicht/i);
   assert.match(content, /fmax = 10 %/);
   assert.match(content, /vereinbar/i);
   assert.match(content, /beweis/i);
-  assert.doesNotMatch(content, /TrendExp\(D1:D10\)/);
+  assert.match(content, /TrendExp\(D1:D10\)/);
+  assert.match(content, /TrendExp\(D1:D9\)/);
 });
 
 test("führt jeden Lernweg unmittelbar zum Lernnachweis", () => {
