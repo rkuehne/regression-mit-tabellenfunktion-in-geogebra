@@ -1071,7 +1071,7 @@ export const CHARGING_EXPONENTIAL_STEPS = Object.freeze([
     workedExample: { title: "Eine Tabellenzeile lesen", lines: ["In A3 steht t = 20 s.", "In B3 steht U_C = 1,796 V.", "Damit gehört zum Zeitpunkt 20 s die gemessene Spannung 1,796 V."] },
     remember: "A enthält t in s; B enthält U_C in V.",
     actionHeading: "Jetzt in GeoGebra",
-    actions: ["Öffne Grafikrechner und Tabellenkalkulation.", "Trage die Zeitwerte in A1:A10 ein.", "Trage die zugehörigen Spannungen in B1:B10 ein.", "Kontrolliere besonders die Zeilen bei 0 s und 80 s."],
+    actions: ["Öffne Grafikrechner und Tabellenkalkulation.", "Trage die Zeitwerte in A1:A10 ein.", "Trage die zugehörigen Spannungen in B1:B10 ein."],
     dataTable: CHARGING_RAW_DATA, dataHeaders: ["A: t (s)", "B: U_C (V)"], dataKeys: ["t", "uc"], formula: null, images: [CHARGING_IMAGES.deltaFormula],
     troubleshooting: "Siehst du die Tabellenkalkulation nicht, arbeitet GeoGebra möglicherweise noch im CAS-Modus. Öffne das Menü ☰, wähle Grafikrechner und anschließend links das Tabellenkalkulations-Symbol. Dezimalpunkt und Dezimalkomma bezeichnen denselben Zahlenwert.",
     mistake: "Ein Zeitwert darf nicht versehentlich zur Spannung der nächsten Zeile gehören.",
