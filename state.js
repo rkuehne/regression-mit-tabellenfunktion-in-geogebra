@@ -12,12 +12,21 @@ function defaultSharedModules() {
   };
 }
 
+function blankDocumentationProgress() {
+  return {
+    selectedExampleId: "capacitor-exponential",
+    view: "model",
+    selfChecks: Object.fromEntries(COURSE_IDS.map((id) => [id, {}]))
+  };
+}
+
 export function createDefaultState() {
   return {
     activeCourseId: "inverse-square",
     lessonMode: "explain",
     courses: Object.fromEntries(COURSE_IDS.map((id) => [id, blankProgress()])),
     sharedModules: defaultSharedModules(),
+    documentation: blankDocumentationProgress(),
     student: { name: "", course: "" },
     updatedAt: new Date().toISOString()
   };
@@ -50,6 +59,23 @@ function sanitizeSharedModule(candidate) {
   return { completed: candidate?.completed === true, answers };
 }
 
+function sanitizeDocumentation(candidate) {
+  const base = blankDocumentationProgress();
+  const selectedExampleId = COURSE_IDS.includes(candidate?.selectedExampleId)
+    ? candidate.selectedExampleId
+    : base.selectedExampleId;
+  const view = candidate?.view === "practice" ? "practice" : "model";
+  const selfChecks = Object.fromEntries(COURSE_IDS.map((id) => {
+    const checks = candidate?.selfChecks?.[id];
+    const allowed = new Set(["data", "geogebra", "physical", "deviations", "conclusion"]);
+    const sanitized = checks && typeof checks === "object" && !Array.isArray(checks)
+      ? Object.fromEntries(Object.entries(checks).filter(([key, value]) => allowed.has(key) && value === true))
+      : {};
+    return [id, sanitized];
+  }));
+  return { selectedExampleId, view, selfChecks };
+}
+
 export function sanitizeState(candidate) {
   const base = createDefaultState();
   if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) return base;
@@ -62,6 +88,7 @@ export function sanitizeState(candidate) {
     sharedModules: {
       [UQ_SHARED_REQUIREMENT_ID]: sanitizeSharedModule(candidate?.sharedModules?.[UQ_SHARED_REQUIREMENT_ID])
     },
+    documentation: sanitizeDocumentation(candidate.documentation),
     student: preservedStudent(candidate),
     updatedAt: String(candidate.updatedAt ?? base.updatedAt)
   };

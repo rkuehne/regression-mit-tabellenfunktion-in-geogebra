@@ -13,7 +13,9 @@ const BROWSER_MODULES = [
   "state.js",
   "regression.js",
   "math-typeset.js",
-  "groesster-einzelfehler.js"
+  "groesster-einzelfehler.js",
+  "documentation-data.js",
+  "dokumentation.js"
 ];
 
 function source(file) {
@@ -54,7 +56,7 @@ test("findet für jeden relativen Modulimport eine lokale Datei", () => {
 });
 
 test("enthält für alle JavaScript-Zugriffe die zugehörigen HTML-Elemente", () => {
-  for (const [scriptFile, htmlFile] of [["app.js", "index.html"], ["groesster-einzelfehler.js", "groesster-einzelfehler.html"]]) {
+  for (const [scriptFile, htmlFile] of [["app.js", "index.html"], ["groesster-einzelfehler.js", "groesster-einzelfehler.html"], ["dokumentation.js", "dokumentation.html"]]) {
     const script = source(scriptFile);
     const html = source(htmlFile);
     const referencedIds = [...script.matchAll(/getElementById\(["']([^"']+)["']\)/g)].map((match) => match[1]);
@@ -65,7 +67,7 @@ test("enthält für alle JavaScript-Zugriffe die zugehörigen HTML-Elemente", ()
 });
 
 test("verwendet nur vorhandene lokale Seiten-, Stil- und Bildressourcen", () => {
-  for (const htmlFile of ["index.html", "groesster-einzelfehler.html"]) {
+  for (const htmlFile of ["index.html", "groesster-einzelfehler.html", "dokumentation.html"]) {
     for (const reference of localReferences(source(htmlFile))) assertLocalFile(reference, htmlFile);
   }
 
@@ -86,6 +88,8 @@ test("liefert MathJax 4.1.3 und die Schrift vollständig lokal aus", () => {
   const index = source("index.html");
   const methodApp = source("groesster-einzelfehler.js");
   const methodPage = source("groesster-einzelfehler.html");
+  const documentationApp = source("dokumentation.js");
+  const documentationPage = source("dokumentation.html");
   const notices = source("THIRD_PARTY_NOTICES.md");
   const bundle = resolve(ROOT, "assets", "vendor", "mathjax", "tex-chtml.js");
   const license = resolve(ROOT, "assets", "vendor", "mathjax", "LICENSE.txt");
@@ -105,6 +109,8 @@ test("liefert MathJax 4.1.3 und die Schrift vollständig lokal aus", () => {
   assert.match(app, /from "\.\/math-typeset\.js\?v=20260920-1"/);
   assert.match(methodPage, /src="\.\/groesster-einzelfehler\.js\?v=20260920-1"/);
   assert.match(methodApp, /from "\.\/math-typeset\.js\?v=20260920-1"/);
+  assert.match(documentationPage, /src="\.\/dokumentation\.js\?v=20261001-1"/);
+  assert.match(documentationApp, /from "\.\/math-typeset\.js\?v=20260920-1"/);
   assert.doesNotMatch(loader, /pendingMathOperations|requestAnimationFrame|setTimeout|containsUnrenderedMath/);
   assert.doesNotMatch(source("app.js"), /typesetMath\(els\.lessonCard\)/);
   assert.doesNotMatch(source("app.js") + source("style.css"), /math-pending/);
@@ -113,5 +119,5 @@ test("liefert MathJax 4.1.3 und die Schrift vollständig lokal aus", () => {
   assert.equal((source("app.js").match(/typesetDocument\(\)/g) || []).length, 1);
   assert.match(notices, /MathJax 4\.1\.3/);
   assert.match(notices, /Apache License 2\.0/);
-  assert.doesNotMatch(source("index.html") + source("groesster-einzelfehler.html") + loader, /cdn\.jsdelivr|unpkg\.com|cdnjs\.cloudflare/);
+  assert.doesNotMatch(source("index.html") + source("groesster-einzelfehler.html") + documentationPage + loader, /cdn\.jsdelivr|unpkg\.com|cdnjs\.cloudflare/);
 });

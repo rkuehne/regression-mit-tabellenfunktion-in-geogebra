@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#6552c8">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="description" content="Kompakte Klausurdokumentationen zu fünf GeoGebra-Auswertungswegen in der Physik.">
+  <title>So dokumentierst du in der Klausur · GeoGebra-Begleitkurs</title>
+  <link rel="preload" href="./assets/vendor/mathjax/tex-chtml.js" as="script">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body class="documentation-page" data-print-target="screen" data-math-state="loading">
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+  <header class="documentation-header">
+    <div class="wrap documentation-header-inner">
+      <a id="documentationBack" class="documentation-back" href="./index.html#course">← Zum GeoGebra-Begleitkurs</a>
+      <p class="brand-line"><span class="brand-mark" aria-hidden="true">Σ</span> GeoGebra-Begleitkurs</p>
+      <p class="eyebrow">Für die Klausur</p>
+      <h1>So dokumentierst du in der Klausur</h1>
+      <p>Schreibe knapp, aber nachvollziehbar auf, was du mit GeoGebra ausgewertet und physikalisch gedeutet hast.</p>
+    </div>
+  </header>
+
+  <main id="main" class="documentation-main wrap">
+    <section class="documentation-intro" aria-labelledby="documentation-intro-title">
+      <p class="mini-label">Allgemeine Anleitung</p>
+      <h2 id="documentation-intro-title">Was eine gute Dokumentation zeigt</h2>
+      <p>Deine Dokumentation soll zeigen, welche Daten du ausgewertet hast, was du mit GeoGebra berechnet hast und wie du daraus ein physikalisches Ergebnis gewinnst. Schreibe so viel auf, dass dein Rechenweg nachvollziehbar bleibt – auch dann, wenn dir ein Fehler unterlaufen ist.</p>
+      <p>Du musst weder jeden Fingertipp beschreiben noch eine vorgegebene Messwerttabelle abschreiben. Wichtig sind die verwendeten Größen und Einheiten, die entscheidenden Eingaben mit ihren Zellbereichen, die Ergebnisse und eine begründete Schlussfolgerung.</p>
+      <ol id="documentationGuide" class="documentation-guide"></ol>
+      <aside class="documentation-note">
+        <strong>Kurz und fachlich:</strong> Runde Ergebnisse sinnvoll, rechne in GeoGebra mit den ungerundeten Werten weiter und beschreibe Abweichungen mit „oberhalb“ oder „unterhalb“. Beim Fehlervergleich zählt ihre Größe unabhängig von der Richtung.
+      </aside>
+    </section>
+
+    <section class="documentation-workspace" aria-labelledby="documentation-selection-title">
+      <div class="section-heading documentation-heading">
+        <div>
+          <p class="eyebrow">Beispiel auswählen</p>
+          <h2 id="documentation-selection-title">Welchen Zusammenhang dokumentierst du?</h2>
+        </div>
+        <p class="section-intro">Die Muster sind vollständig ausgeführt. Im Lernmodus schreibst du dieselben fünf Abschnitte selbst auf Papier und vergleichst anschließend mit der Musterlösung.</p>
+      </div>
+
+      <div id="documentationExamples" class="documentation-example-picker" role="group" aria-label="Dokumentationsbeispiel auswählen"></div>
+
+      <div class="documentation-tools" aria-label="Ansicht und Druck">
+        <div class="mode-control">
+          <span class="mode-label">Ansicht</span>
+          <div class="mode-switch" role="group" aria-label="Dokumentationsansicht">
+            <button id="modelViewBtn" type="button" aria-pressed="true">Muster ansehen</button>
+            <button id="practiceViewBtn" type="button" aria-pressed="false">Selbst üben</button>
+          </div>
+        </div>
+        <div class="documentation-print-actions">
+          <button id="printModelBtn" class="button secondary compact" type="button">Muster drucken</button>
+          <button id="printWorksheetBtn" class="button primary compact" type="button">Übungsblatt drucken</button>
+        </div>
+      </div>
+
+      <p id="documentationStatus" class="sr-only" role="status" aria-live="polite"></p>
+      <p id="documentationMathLoading" class="documentation-math-loading" role="status" aria-live="polite">Formeln werden vorbereitet …</p>
+
+      <section id="documentationModel" class="documentation-view" aria-label="Ausgeführte Musterdokumentation"></section>
+      <section id="documentationPractice" class="documentation-view" aria-label="Lernmodus: Dokumentation auf Papier üben" hidden></section>
+      <section id="documentationWorksheet" class="documentation-worksheet-root" aria-label="Druckbare Übungsblätter" hidden></section>
+    </section>
+  </main>
+
+  <footer class="site-footer documentation-footer">
+    <div class="wrap footer-inner">
+      <p><strong>GeoGebra-Begleitkurs</strong><br>Dokumentieren, auswerten und physikalisch begründen · ohne Anmeldung</p>
+      <p>Die Selbstkontrollen dienen der Vorbereitung. Sie bewerten keine handschriftliche Lösung.</p>
+    </div>
+  </footer>
+
+  <noscript>Für die Beispielauswahl und die Druckansichten wird JavaScript benötigt.</noscript>
+  <script type="module" src="./dokumentation.js?v=20261001-1"></script>
+</body>
+</html>

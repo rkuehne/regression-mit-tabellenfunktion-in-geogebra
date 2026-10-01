@@ -18,6 +18,7 @@ const els = {
   courseProgress: document.getElementById("courseProgress"),
   explainModeBtn: document.getElementById("explainModeBtn"),
   compactModeBtn: document.getElementById("compactModeBtn"),
+  courseDocumentationLink: document.getElementById("courseDocumentationLink"),
   openGlossaryBtn: document.getElementById("openGlossaryBtn"),
   stepNav: document.getElementById("stepNav"),
   resetCourseBtn: document.getElementById("resetCourseBtn"),
@@ -78,6 +79,8 @@ const els = {
 };
 
 let state = loadState(localStorage);
+const requestedCourse = new URLSearchParams(window.location.search).get("course");
+if (COURSE_IDS.includes(requestedCourse)) state.activeCourseId = requestedCourse;
 
 function activeCourse() {
   return COURSES[state.activeCourseId];
@@ -579,6 +582,7 @@ function renderLesson() {
 
 function renderCourseIdentity() {
   const course = activeCourse();
+  els.courseDocumentationLink.href = `./dokumentation.html?course=${encodeURIComponent(course.id)}`;
   els.courseEyebrow.textContent = course.eyebrow;
   setMathText(els.courseTitle, course.title);
   setMathText(els.courseIntro, `${course.subtitle} · ${course.duration}. Alle Kapitel bleiben frei erreichbar.`);

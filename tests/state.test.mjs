@@ -39,6 +39,9 @@ test("erzeugt fünf Lernstände ohne Transferzustand", () => {
   assert.deepEqual(state.courses["capacitor-exponential"].completedSteps, []);
   assert.equal(Object.hasOwn(state, "transfer"), false);
   assert.deepEqual(state.sharedModules["uq-largest-single-error"], { completed: false, answers: {} });
+  assert.equal(state.documentation.selectedExampleId, "capacitor-exponential");
+  assert.equal(state.documentation.view, "model");
+  assert.deepEqual(state.documentation.selfChecks["inverse-square"], {});
 });
 
 test("bereinigt Auswahl, Kapitel und unbekannte IDs und verwirft alte Zusatzdaten", () => {
@@ -167,8 +170,31 @@ test("speichert ausschließlich das aktuelle Datenformat", () => {
 
   assert.equal(persistState(storage, state), true);
   const saved = JSON.parse(storage.value(STORAGE_KEY));
-  assert.deepEqual(Object.keys(saved).sort(), ["activeCourseId", "courses", "lessonMode", "sharedModules", "student", "updatedAt"]);
+  assert.deepEqual(Object.keys(saved).sort(), ["activeCourseId", "courses", "documentation", "lessonMode", "sharedModules", "student", "updatedAt"]);
   assert.equal(saved.student.name, "Mina");
+  assert.equal(saved.documentation.selectedExampleId, "capacitor-exponential");
   assert.equal(Object.hasOwn(saved, "transfer"), false);
   assert.equal(persistState(memoryStorage({}, { failWrites: true }), state), false);
+});
+
+test("speichert die Dokumentationsauswahl getrennt vom Lernfortschritt", () => {
+  const state = sanitizeState({
+    activeCourseId: "inverse-square",
+    courses: {
+      "inverse-square": { currentStep: 2, completedSteps: ["context"], answers: {} }
+    },
+    documentation: {
+      selectedExampleId: "proportional-linear",
+      view: "practice",
+      selfChecks: {
+        "proportional-linear": { data: true, physical: true, unknown: true }
+      }
+    },
+    student: {}
+  });
+
+  assert.equal(state.documentation.selectedExampleId, "proportional-linear");
+  assert.equal(state.documentation.view, "practice");
+  assert.deepEqual(state.documentation.selfChecks["proportional-linear"], { data: true, physical: true });
+  assert.deepEqual(state.courses["inverse-square"].completedSteps, ["context"]);
 });

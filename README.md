@@ -23,12 +23,15 @@ Die drei Kondensatorwege verwenden gemeinsam die verpflichtende Unterseite „Me
 - einmalig gespeicherte gemeinsame Pflichtkontrolle zur Methode des größten Einzelfehlers
 - lokal gesetzte mathematische Formeln mit MathJax 4.1.3, auch ohne Verbindung zu einem CDN
 - dynamischer Lernnachweis, der auf dem iPad als PDF gesichert werden kann
+- zusätzliche Seite „So dokumentierst du in der Klausur“ mit fünf vollständig ausgeführten Mustern
+- papierbasierter Lernmodus mit aufklappbaren Hilfen, getrennt gespeicherten Selbstkontrollen sowie Muster- und Übungsblatt-Druckansicht
 - aktueller lokaler Lernstand ohne Konto, Backend oder externe Datenübertragung
 
 ## Dateien
 
 - index.html – Kursauswahl, Lernwege und Lernnachweis
 - groesster-einzelfehler.html / groesster-einzelfehler.js – gemeinsame Fehlerseite mit Pflichtkontrolle und Klausurformulierungen
+- dokumentation.html / dokumentation.js / documentation-data.js – allgemeine Anleitung, Muster und Papierübungen zur Klausurdokumentation
 - style.css – Gestaltung, iPad-/Split-View-Anpassungen und Drucklayout
 - app.js – Lernwege, lokaler Zustand, Bedienung und Ausgaben
 - math-typeset.js – lokale MathJax-Konfiguration und erneutes Setzen dynamischer Inhalte
@@ -56,4 +59,4 @@ Die Dateien bleiben im Hauptverzeichnis des Pages-Repositories. Unter Settings �
 
 ## Datenschutz
 
-Lernstand und optionale Namensangaben werden nur unter dem Schlüssel geogebra-begleitkurs-state im localStorage des jeweiligen Browsers gespeichert. Die Anwendung liest ausschließlich dieses aktuelle Datenformat. Der Lernnachweis wird über den Druckdialog lokal erzeugt. MathJax, seine Schriftdateien und alle Kursbilder werden aus demselben GitHub-Pages-Projekt geladen; es werden weder Schülerdaten noch Formelinhalte an einen fremden Server gesendet.
+Lernstand, die ausgewählte Dokumentationsansicht, Selbstkontrollen und optionale Namensangaben werden nur unter dem Schlüssel geogebra-begleitkurs-state im localStorage des jeweiligen Browsers gespeichert. Die Anwendung liest ausschließlich dieses aktuelle Datenformat. Lernnachweis, Muster und Übungsblatt werden über den Druckdialog lokal erzeugt. MathJax, seine Schriftdateien und alle Kursbilder werden aus demselben GitHub-Pages-Projekt geladen; es werden weder Schülerdaten noch Formelinhalte an einen fremden Server gesendet.
