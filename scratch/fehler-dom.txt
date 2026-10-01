@@ -1,0 +1,1558 @@
+﻿<!DOCTYPE html>
+<html lang="de"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <title>GeoGebra-Trainer · Methode des größten Einzelfehlers</title>
+  <link rel="preload" href="./assets/vendor/mathjax/tex-chtml.js" as="script">
+  <link rel="stylesheet" href="./style.css">
+<script src="http://localhost:8085/assets/vendor/mathjax/tex-chtml.js" defer="" data-local-mathjax="4.1.3"></script><style id="MJX-sx-styles">:root {
+  --mjx-fg-red: 255, 0, 0;
+  --mjx-fg-green: 0, 255, 0;
+  --mjx-fg-blue: 0, 0, 255;
+  --mjx-fg-yellow: 255, 255, 0;
+  --mjx-fg-cyan: 0, 255, 255;
+  --mjx-fg-magenta: 255, 0, 255;
+  --mjx-fg-white: 255, 255, 255;
+  --mjx-fg-black: 0, 0, 0;
+  --mjx-bg-red: 255, 0, 0;
+  --mjx-bg-green: 0, 255, 0;
+  --mjx-bg-blue: 0, 0, 255;
+  --mjx-bg-yellow: 255, 255, 0;
+  --mjx-bg-cyan: 0, 255, 255;
+  --mjx-bg-magenta: 255, 0, 255;
+  --mjx-bg-white: 255, 255, 255;
+  --mjx-bg-black: 0, 0, 0;
+  --mjx-live-bg-color: white;
+  --mjx-live-shadow-color: #888;
+  --mjx-live-border-color: #CCCCCC;
+  --mjx-bg1-color: rgba(var(--mjx-bg-blue), var(--mjx-bg1-alpha));
+  --mjx-fg1-color: rgba(var(--mjx-fg-black), 1);
+  --mjx-bg2-color: rgba(var(--mjx-bg-red), 1);
+  --mjx-fg2-color: rgba(var(--mjx-fg-black), 1);
+  --mjx-bg1-alpha: 0.2;
+  --mjx-fg1-alpha: 1;
+  --mjx-bg2-alpha: 1;
+  --mjx-fg2-alpha: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --mjx-bg-blue: 132, 132, 255;
+      --mjx-bg-white: 0, 0, 0;
+      --mjx-bg-black: 255, 255, 255;
+      --mjx-fg-white: 0, 0, 0;
+      --mjx-fg-black: 255, 255, 255;
+      --mjx-live-bg-color: #222025;
+      --mjx-live-shadow-color: black;
+      --mjx-live-border-color: #7C7C7C;
+      --mjx-bg1-alpha: 0.3;
+      --mjx-fg1-alpha: 1;
+      --mjx-bg2-alpha: 1;
+      --mjx-fg2-alpha: 1;
+  }
+}
+
+.MJX_LiveRegion {
+  position: absolute;
+  top: 0;
+  display: none;
+  width: auto;
+  height: auto;
+  padding: 0;
+  opacity: 1;
+  z-index: 202;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  background-color: var(--mjx-live-bg-color);
+  box-shadow: 0px 5px 20px var(--mjx-live-shadow-color);
+  border: 2px solid var(--mjx-live-border-color);
+}
+
+.MJX_LiveRegion_Show {
+  display: block;
+}
+
+.MJX_LiveRegion > div {
+  color: var(--mjx-fg1-color);
+  background-color: var(--mjx-bg1-color);
+}
+
+mjx-container [data-sre-highlight-1]:not([data-mjx-collapsed], rect) {
+  color: var(--mjx-fg1-color) ! important;
+  fill: var(--mjx-fg1-color) ! important;
+}
+
+mjx-container:not([data-mjx-clone-container]) [data-sre-highlight-1]:not([data-sre-enclosed], rect) {
+  background-color: var(--mjx-bg1-color) ! important;
+}
+
+mjx-container rect[data-sre-highlight-1]:not([data-sre-enclosed]) {
+  fill: var(--mjx-bg1-color) ! important;
+}
+
+mjx-container [data-sre-highlight-2] {
+  color: var(--mjx-fg2-color) ! important;
+  background-color: var(--mjx-bg2-color) ! important;
+  fill: var(--mjx-fg2-color) ! important;
+}
+
+mjx-container rect[data-sre-highlight-2] {
+  fill: var(--mjx-bg2-color) ! important;
+}</style><style id="MJX-rx-styles">.MJX_HoverRegion {
+  display: block;
+  position: absolute;
+  width: max-content;
+  height: auto;
+  padding: 0;
+  opacity: 1;
+  z-index: 202;
+  margin: 0 auto;
+  background-color: white;
+  line-height: 0;
+  box-shadow: 0px 10px 20px #888;
+  border: 2px solid #CCCCCC;
+}
+
+.MJX_HoverRegion > div {
+  overflow: hidden;
+  color: var(--mjx-fg1-color);
+  background-color: var(--mjx-bg1-color);
+}
+
+@media (prefers-color-scheme: dark) {
+  .MJX_HoverRegion {
+    background-color: #222025;
+      box-shadow: 0px 5px 20px #000;
+      border: 1px solid #7C7C7C;
+  }
+}
+
+mjx-container[data-mjx-clone-container] {
+  padding: 2px ! important;
+}
+
+mjx-math > mjx-mlabeledtr {
+  display: inline-block;
+  margin-right: .5em ! important;
+}
+
+mjx-math > mjx-mtd {
+  float: right;
+}</style><style id="MJX-ex-styles">.MJX_ToolTip {
+  width: auto;
+  height: auto;
+  opacity: 1;
+  text-align: center;
+  border-radius: 4px;
+  padding: 0;
+  border-bottom: 1px dotted black;
+  position: absolute;
+  display: inline-block;
+  background-color: white;
+  z-index: 202;
+}
+
+.MJX_ToolTip > div {
+  border-radius: inherit;
+  padding: 0 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .MJX_ToolTip {
+    background-color: #222025;
+      box-shadow: 0px 5px 20px #000;
+      border: 1px solid #7C7C7C;
+  }
+}</style><style id="MJX-Menu-styles">.CtxtMenu_Menu {
+  position: absolute;
+  background-color: white;
+  color: black;
+  width: auto;
+  padding: 5px 0px;
+  border: 1px solid #CCCCCC;
+  margin: 0;
+  cursor: default;
+  font: menu;
+  text-align: left;
+  text-indent: 0;
+  text-transform: none;
+  line-height: normal;
+  letter-spacing: normal;
+  word-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  float: none;
+  z-index: 1001;
+  border-radius: 5px;
+  box-shadow: 0px 10px 20px #808080;
+}
+.CtxtMenu_MenuItem {
+  padding: 1px 2em;
+  background: transparent;
+}
+.CtxtMenu_MenuArrow {
+  position: absolute;
+  right: 0.5em;
+  padding-top: 0.25em;
+  color: #666666;
+  font-family: null;
+  font-size: 0.75em;
+}
+.CtxtMenu_MenuActive .CtxtMenu_MenuArrow {
+  color: white;
+}
+.CtxtMenu_MenuArrow.CtxtMenu_RTL {
+  left: 0.5em;
+  right: auto;
+}
+.CtxtMenu_MenuCheck {
+  position: absolute;
+  left: 0.7em;
+  font-family: null;
+}
+.CtxtMenu_MenuCheck.CtxtMenu_RTL {
+  right: 0.7em;
+  left: auto;
+}
+.CtxtMenu_MenuRadioCheck {
+  position: absolute;
+  left: 0.7em;
+}
+.CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {
+  right: 0.7em;
+  left: auto;
+}
+.CtxtMenu_MenuInputBox {
+  padding-left: 1em;
+  right: 0.5em;
+  color: #666666;
+  font-family: null;
+}
+.CtxtMenu_MenuInputBox.CtxtMenu_RTL {
+  left: 0.1em;
+}
+.CtxtMenu_MenuComboBox {
+  left: 0.1em;
+  padding-bottom: 0.5em;
+}
+.CtxtMenu_MenuSlider {
+  left: 0.1em;
+}
+.CtxtMenu_SliderValue {
+  position: absolute;
+  right: 0.1em;
+  padding-top: 0.25em;
+  color: #333333;
+  font-size: 0.75em;
+}
+.CtxtMenu_MenuActive .CtxtMenu_SliderValue {
+  color: #DDDDDD;
+}
+.CtxtMenu_SliderBar {
+  outline: none;
+  background: #D3D3D3;
+}
+.CtxtMenu_MenuLabel {
+  padding: 1px 2em 3px 1.33em;
+  font-style: italic;
+}
+.CtxtMenu_MenuRule {
+  border-top: 1px solid #DDDDDD;
+  margin: 4px 3px;
+}
+.CtxtMenu_MenuDisabled {
+  color: #999;
+}
+.CtxtMenu_MenuActive {
+  background-color: #606872;
+  color: white;
+}
+.CtxtMenu_MenuDisabled:focus {
+  background-color: #E8E8E8;
+}
+.CtxtMenu_MenuLabel:focus {
+  background-color: #E8E8E8;
+}
+.CtxtMenu_ContextMenu:focus {
+  outline: none;
+}
+.CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {
+  outline: none;
+}
+.CtxtMenu_SelectionMenu {
+  position: relative;
+  float: left;
+  border-bottom: none;
+  box-shadow: none ! important;
+  border-radius: 0px !important;
+}
+.CtxtMenu_SelectionItem {
+  padding-right: 1em;
+}
+.CtxtMenu_Selection {
+  right: 40%;
+  width: 50%;
+}
+.CtxtMenu_SelectionBox {
+  padding: 0em;
+  max-height: 20em;
+  max-width: none;
+  background-color: #FFFFFF;
+}
+.CtxtMenu_SelectionDivider {
+  clear: both;
+  border-top: 2px solid #000000;
+}
+.CtxtMenu_Menu .CtxtMenu_MenuClose {
+  top: -10px;
+  left: -10px;
+}
+@media (prefers-color-scheme: dark) /* menu */ {
+  .CtxtMenu_Menu {
+  color: #E0E0E0;
+  background-color: #242436;
+  box-shadow: 0px 10px 20px #000;
+  border: 1px solid #808080;
+}
+  .CtxtMenu_SliderValue {
+  color: #D0D0D0;
+}
+  .CtxtMenu_MenuDisabled:focus {
+  background-color: #383838;
+}
+  .CtxtMenu_MenuLabel:focus {
+  background-color: #585858;
+}
+  .CtxtMenu_MenuRule {
+  border-top: 1px solid #808080;
+}
+  .CtxtMenu_SelectionDivider {
+  border-top: 2px solid #808080;
+};
+}
+.CtxtMenu_MenuClose {
+  position: absolute;
+  cursor: pointer;
+  display: inline-block;
+  border: 2px solid #AAA;
+  border-radius: 18px;
+  font-family:  "Courier New", Courier;
+  font-size: 24px;
+  color: #F0F0F0;
+}
+.CtxtMenu_MenuClose span {
+  display: block;
+  background-color: #AAA;
+  border: 1.5px solid;
+  border-radius: 18px;
+  line-height: 0;
+  padding: 8px 0 6px;
+}
+.CtxtMenu_MenuClose:hover {
+  color: white !important;
+  border: 2px solid #CCC !important;
+}
+.CtxtMenu_MenuClose:hover span {
+  background-color: #CCC !important;
+}
+.CtxtMenu_MenuClose:hover:focus {
+  outline: none;
+}</style><style id="MJX-CHTML-styles">
+mjx-container[overflow="scroll"][display] {
+  overflow: auto clip;
+  min-width: initial !important;
+}
+
+mjx-container[overflow="truncate"][display] {
+  overflow: hidden clip;
+  min-width: initial !important;
+}
+
+mjx-container[display] {
+  display: block;
+  text-align: center;
+  justify-content: center;
+  margin: .7em 0;
+  padding: .3em 2px;
+}
+
+mjx-container[display][width="full"] {
+  display: flex;
+}
+
+mjx-container[justify="left"] {
+  text-align: left;
+  justify-content: left;
+}
+
+mjx-container[justify="right"] {
+  text-align: right;
+  justify-content: right;
+}
+
+mjx-container[jax="CHTML"] {
+  white-space: nowrap;
+}
+
+mjx-mo > mjx-c, mjx-mi > mjx-c, mjx-mn > mjx-c, mjx-ms > mjx-c, mjx-mtext > mjx-c {
+  clip-path: padding-box polygon(-1em -2px, calc(100% + 1em) -2px, calc(100% + 1em) calc(100% + 2px), -1em calc(100% + 2px));
+}
+
+mjx-stretchy-h {
+  clip-path: padding-box polygon(0 -2px, 100% -2px, 100% calc(100% + 2px), 0 calc(100% + 2px));
+  display: inline-block;
+}
+
+mjx-stretchy-v {
+  clip-path: padding-box polygon(-2px 0, calc(100% + 2px) 0, calc(100% + 2px) 100%, -2px 100%);
+  display: inline-block;
+  text-align: center;
+}
+
+mjx-container [space="1"] {
+  margin-left: .111em;
+}
+
+mjx-container [space="2"] {
+  margin-left: .167em;
+}
+
+mjx-container [space="3"] {
+  margin-left: .222em;
+}
+
+mjx-container [space="4"] {
+  margin-left: .278em;
+}
+
+mjx-container [space="5"] {
+  margin-left: .333em;
+}
+
+mjx-container [rspace="1"] {
+  margin-right: .111em;
+}
+
+mjx-container [rspace="2"] {
+  margin-right: .167em;
+}
+
+mjx-container [rspace="3"] {
+  margin-right: .222em;
+}
+
+mjx-container [rspace="4"] {
+  margin-right: .278em;
+}
+
+mjx-container [rspace="5"] {
+  margin-right: .333em;
+}
+
+mjx-container [size="s"] {
+  font-size: 70.7%;
+}
+
+mjx-container [size="ss"] {
+  font-size: 50%;
+}
+
+mjx-container [size="Tn"] {
+  font-size: 60%;
+}
+
+mjx-container [size="sm"] {
+  font-size: 85%;
+}
+
+mjx-container [size="lg"] {
+  font-size: 120%;
+}
+
+mjx-container [size="Lg"] {
+  font-size: 144%;
+}
+
+mjx-container [size="LG"] {
+  font-size: 173%;
+}
+
+mjx-container [size="hg"] {
+  font-size: 207%;
+}
+
+mjx-container [size="HG"] {
+  font-size: 249%;
+}
+
+mjx-container [width="full"] {
+  width: 100%;
+}
+
+mjx-box {
+  display: inline-block;
+}
+
+mjx-block {
+  display: block;
+}
+
+mjx-itable {
+  display: inline-table;
+}
+
+mjx-row {
+  display: table-row;
+}
+
+mjx-row > mjx-cell, mjx-row > mjx-base, mjx-row > mjx-under, mjx-row > mjx-over, mjx-row > mjx-den {
+  display: table-cell;
+}
+
+mjx-container [inline-breaks] {
+  display: inline;
+}
+
+mjx-container .mjx-selected {
+  outline: 2px solid black;
+}
+
+@media (prefers-color-scheme: dark) {
+  mjx-container .mjx-selected {
+    outline: 2px solid #C8C8C8;
+  }
+}
+
+mjx-mtext {
+  display: inline-block;
+}
+
+mjx-mstyle {
+  display: inline-block;
+}
+
+mjx-merror {
+  display: inline-block;
+  color: red;
+  background-color: yellow;
+}
+
+mjx-mphantom {
+  visibility: hidden;
+}
+
+mjx-container[has-speech="true"] {
+  position: relative;
+  cursor: default;
+}
+
+mjx-speech {
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+}
+
+mjx-speech:focus {
+  outline: none;
+}
+
+mjx-container a[data-mjx-href] {
+  color: LinkText;
+  cursor: pointer;
+}
+
+mjx-container a[data-mjx-href].mjx-visited {
+  color: VisitedText;
+}
+
+mjx-container > mjx-help {
+  display: none;
+  position: absolute;
+  top: -.3em;
+  right: -.5em;
+  width: .6em;
+  height: .6em;
+  cursor: pointer;
+}
+
+mjx-container[display="true"] > mjx-help {
+  position: sticky;
+  inset: -100% 0 100% 0;
+  margin: -.3em -.5em 0 -.1em;
+  right: 0;
+  top: initial;
+}
+
+mjx-help > svg {
+  stroke: black;
+  width: 100%;
+  height: 100%;
+}
+
+mjx-help > svg > circle {
+  stroke-width: 1.5px;
+  cx: 9px;
+  cy: 9px;
+  r: 9px;
+  fill: white;
+}
+
+mjx-help > svg > circle:nth-child(2) {
+  fill: var(--mjx-bg1-color);
+  r: 7px;
+}
+
+mjx-help > svg > line {
+  stroke-width: 2.5px;
+  stroke-linecap: round;
+}
+
+mjx-help:hover > svg > circle:nth-child(2) {
+  fill: white;
+}
+
+mjx-container.mjx-explorer-active > mjx-help {
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (prefers-color-scheme: dark) /* explorer */ {
+  mjx-help > svg {
+    stroke: #E0E0E0;
+  }
+  mjx-help > svg > circle {
+    fill: #404040;
+  }
+  mjx-help > svg > circle:nth-child(2) {
+    fill: rgba(132, 132, 255, .3);
+  }
+  mjx-help:hover > svg > circle:nth-child(2) {
+    stroke: #AAAAAA;
+      fill: #404040;
+  }
+}
+
+mjx-math {
+  display: inline-block;
+  text-align: left;
+  line-height: 0;
+  text-indent: 0;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 100%;
+  font-size-adjust: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  word-spacing: normal;
+  direction: ltr;
+  padding: 1px 0;
+}
+
+mjx-container[jax="CHTML"][display="true"] mjx-math {
+  padding: 0;
+}
+
+mjx-math[breakable] {
+  display: inline;
+}
+
+mjx-container[jax="CHTML"] mjx-break {
+  white-space: normal;
+  line-height: 0;
+  clip-path: rect(0 0 0 0);
+  font-family: MJX-BRK !important;
+}
+
+mjx-break[size="0"] {
+  letter-spacing: -0.999em;
+}
+
+mjx-break[size="1"] {
+  letter-spacing: -0.889em;
+}
+
+mjx-break[size="2"] {
+  letter-spacing: -0.833em;
+}
+
+mjx-break[size="3"] {
+  letter-spacing: -0.778em;
+}
+
+mjx-break[size="4"] {
+  letter-spacing: -0.722em;
+}
+
+mjx-break[size="5"] {
+  letter-spacing: -0.667em;
+}
+
+mjx-inferredMrow {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-linestack, mjx-mrow[break-top] {
+  display: inline-table;
+  width: 100%;
+}
+
+mjx-linestack[break-align="bottom"], mjx-mrow[break-top][break-align="bottom"] {
+  display: inline-block;
+}
+
+mjx-linestack[break-align="middle"], mjx-mrow[break-top][break-align="middle"] {
+  vertical-align: middle;
+}
+
+mjx-linestack[break-align="center"], mjx-mrow[break-top][break-align="center"] {
+  vertical-align: middle;
+}
+
+mjx-linestack[breakable] {
+  display: inline;
+}
+
+mjx-linestack[breakable] > mjx-linebox {
+  display: inline;
+}
+
+mjx-linestack[breakable] > mjx-linebox::before {
+  white-space: pre;
+  content: "\A";
+}
+
+mjx-linestack[breakable] > mjx-linebox::after {
+  white-space: normal;
+  content: " ";
+  letter-spacing: -.999em;
+  font-family: MJX-BRK;
+}
+
+mjx-linestack[breakable] > mjx-linebox:first-of-type::before {
+  display: none;
+}
+
+mjx-linestack[breakable] > mjx-linebox:last-of-type::after {
+  display: none;
+}
+
+mjx-linebox {
+  display: block;
+}
+
+mjx-linebox[align="left"] {
+  text-align: left;
+}
+
+mjx-linebox[align="center"] {
+  text-align: center;
+}
+
+mjx-linebox[align="right"] {
+  text-align: right;
+}
+
+mjx-linestrut {
+  display: inline-block;
+  height: 1em;
+  vertical-align: -.25em;
+}
+
+mjx-mi {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-c {
+  display: inline-block;
+  width: 0;
+  text-align: right;
+}
+
+mjx-utext {
+  display: inline-block;
+  padding: .75em 0 .2em 0;
+}
+
+mjx-mo {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-stretchy-h > mjx-beg, mjx-stretchy-h > mjx-ext, mjx-stretchy-h > mjx-end, mjx-stretchy-h > mjx-mid {
+  display: inline-block;
+  width: 0;
+  text-align: right;
+}
+
+mjx-stretchy-h > mjx-ext {
+  clip-path: padding-box polygon(0 -1em, 100% -1em, 100% calc(100% + 1em), 0 calc(100% + 1em));
+  width: 100%;
+  border: 0px solid transparent;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+mjx-stretchy-v > mjx-beg, mjx-stretchy-v > mjx-ext, mjx-stretchy-v > mjx-end, mjx-stretchy-v > mjx-mid {
+  display: block;
+  height: 0;
+  margin: 0 auto;
+}
+
+mjx-stretchy-v > mjx-ext > mjx-spacer {
+  display: block;
+}
+
+mjx-stretchy-v > mjx-ext {
+  clip-path: padding-box polygon(-1em 0, calc(100% + 1em) 0, calc(100% + 1em) 100%, -1em 100%);
+  height: 100%;
+  border: 0.1px solid transparent;
+  box-sizing: border-box;
+  white-space: pre;
+}
+
+mjx-mark {
+  display: inline-block;
+  height: 0;
+}
+
+mjx-mn {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-mspace {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-TeXAtom {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-msup {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-msubsup {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-script {
+  display: inline-block;
+  padding-right: .05em;
+  padding-left: .033em;
+}
+
+mjx-script > mjx-spacer {
+  display: block;
+}
+
+mjx-mfrac {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-frac {
+  display: inline-block;
+  vertical-align: 0.17em;
+  padding: 0 .22em;
+}
+
+mjx-frac[type="d"] {
+  vertical-align: .04em;
+}
+
+mjx-frac[delims] {
+  padding: 0 .1em;
+}
+
+mjx-frac[atop] {
+  padding: 0 .12em;
+}
+
+mjx-frac[atop][delims] {
+  padding: 0;
+}
+
+mjx-dtable {
+  display: inline-table;
+  width: 100%;
+}
+
+mjx-dtable > mjx-line, mjx-dtable > mjx-row {
+  font-size: 2000%;
+}
+
+mjx-dbox {
+  display: block;
+  font-size: 5%;
+}
+
+mjx-num {
+  display: block;
+  text-align: center;
+}
+
+mjx-den {
+  display: block;
+  text-align: center;
+}
+
+mjx-mfrac[bevelled] > mjx-num {
+  display: inline-block;
+}
+
+mjx-mfrac[bevelled] > mjx-den {
+  display: inline-block;
+}
+
+mjx-den[align="right"], mjx-num[align="right"] {
+  text-align: right;
+}
+
+mjx-den[align="left"], mjx-num[align="left"] {
+  text-align: left;
+}
+
+mjx-nstrut {
+  display: inline-block;
+  height: .054em;
+  width: 0;
+  vertical-align: -.054em;
+}
+
+mjx-nstrut[type="d"] {
+  height: .217em;
+  vertical-align: -.217em;
+}
+
+mjx-dstrut {
+  display: inline-block;
+  height: .505em;
+  width: 0;
+}
+
+mjx-dstrut[type="d"] {
+  height: .726em;
+}
+
+mjx-line {
+  display: block;
+  box-sizing: border-box;
+  min-height: 1px;
+  height: .06em;
+  border-top: .075em solid;
+  margin: .06em -.1em;
+  overflow: hidden;
+}
+
+mjx-line[type="d"] {
+  margin: .18em -.1em;
+}
+
+mjx-mrow {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-msub {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-container[jax="CHTML"] > mjx-math.NCM-N[breakable] > * {
+  font-family: MJX-NCM-ZERO, MJX-NCM-N;
+}
+
+.NCM-N {
+  font-family: MJX-NCM-ZERO, MJX-NCM-N;
+}
+
+.NCM-B {
+  font-family: MJX-NCM-ZERO, MJX-NCM-B;
+}
+
+.NCM-I {
+  font-family: MJX-NCM-ZERO, MJX-NCM-I;
+}
+
+.NCM-BI {
+  font-family: MJX-NCM-ZERO, MJX-NCM-BI;
+}
+
+.NCM-DS {
+  font-family: MJX-NCM-ZERO, MJX-NCM-DS;
+}
+
+.NCM-F {
+  font-family: MJX-NCM-ZERO, MJX-NCM-F;
+}
+
+.NCM-FB {
+  font-family: MJX-NCM-ZERO, MJX-NCM-FB;
+}
+
+.NCM-SS {
+  font-family: MJX-NCM-ZERO, MJX-NCM-SS;
+}
+
+.NCM-SSB {
+  font-family: MJX-NCM-ZERO, MJX-NCM-SSB;
+}
+
+.NCM-SSI {
+  font-family: MJX-NCM-ZERO, MJX-NCM-SSI;
+}
+
+.NCM-SSBI {
+  font-family: MJX-NCM-ZERO, MJX-NCM-SSBI;
+}
+
+.NCM-M {
+  font-family: MJX-NCM-ZERO, MJX-NCM-M;
+}
+
+.NCM-SO {
+  font-family: MJX-NCM-ZERO, MJX-NCM-SO;
+}
+
+.NCM-LO {
+  font-family: MJX-NCM-ZERO, MJX-NCM-LO;
+}
+
+.NCM-S3 {
+  font-family: MJX-NCM-ZERO, MJX-NCM-S3;
+}
+
+.NCM-S4 {
+  font-family: MJX-NCM-ZERO, MJX-NCM-S4;
+}
+
+.NCM-S5 {
+  font-family: MJX-NCM-ZERO, MJX-NCM-S5;
+}
+
+.NCM-S6 {
+  font-family: MJX-NCM-ZERO, MJX-NCM-S6;
+}
+
+.NCM-S7 {
+  font-family: MJX-NCM-ZERO, MJX-NCM-S7;
+}
+
+.NCM-MI {
+  font-family: MJX-NCM-ZERO, MJX-NCM-MI;
+}
+
+.NCM-C {
+  font-family: MJX-NCM-ZERO, MJX-NCM-C;
+}
+
+.NCM-CB {
+  font-family: MJX-NCM-ZERO, MJX-NCM-CB;
+}
+
+.NCM-OS {
+  font-family: MJX-NCM-ZERO, MJX-NCM-OS;
+}
+
+.NCM-OB {
+  font-family: MJX-NCM-ZERO, MJX-NCM-OB;
+}
+
+.NCM-V {
+  font-family: MJX-NCM-ZERO, MJX-NCM-V;
+}
+
+.NCM-LT {
+  font-family: MJX-NCM-ZERO, MJX-NCM-LT;
+}
+
+.NCM-RB {
+  font-family: MJX-NCM-ZERO, MJX-NCM-RB;
+}
+
+.NCM-EM {
+  font-family: MJX-NCM-ZERO, MJX-NCM-EM;
+}
+
+.NCM-B-a {
+  font-family: MJX-NCM-ZERO, MJX-NCM-B-a;
+}
+
+.NCM-U {
+  font-family: MJX-NCM-ZERO, MJX-NCM-U;
+}
+
+.NCM-U-a {
+  font-family: MJX-NCM-ZERO, MJX-NCM-U-a;
+}
+
+.NCM-S {
+  font-family: MJX-NCM-ZERO, MJX-NCM-S;
+}
+
+.NCM-SB {
+  font-family: MJX-NCM-ZERO, MJX-NCM-SB;
+}
+
+@font-face /* MJX-NCM-ZERO */ {
+  font-family: MJX-NCM-ZERO;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-zero.woff2") format("woff2");
+}
+
+@font-face /* MJX-BRK */ {
+  font-family: MJX-BRK;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-brk.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-N */ {
+  font-family: MJX-NCM-N;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-n.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-B */ {
+  font-family: MJX-NCM-B;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-b.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-I */ {
+  font-family: MJX-NCM-I;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-i.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-BI */ {
+  font-family: MJX-NCM-BI;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-bi.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-DS */ {
+  font-family: MJX-NCM-DS;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-ds.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-F */ {
+  font-family: MJX-NCM-F;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-f.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-FB */ {
+  font-family: MJX-NCM-FB;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-fb.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-SS */ {
+  font-family: MJX-NCM-SS;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-ss.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-SSB */ {
+  font-family: MJX-NCM-SSB;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-ssb.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-SSI */ {
+  font-family: MJX-NCM-SSI;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-ssi.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-SSBI */ {
+  font-family: MJX-NCM-SSBI;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-ssbi.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-M */ {
+  font-family: MJX-NCM-M;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-m.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-SO */ {
+  font-family: MJX-NCM-SO;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-so.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-LO */ {
+  font-family: MJX-NCM-LO;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-lo.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-S3 */ {
+  font-family: MJX-NCM-S3;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-s3.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-S4 */ {
+  font-family: MJX-NCM-S4;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-s4.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-S5 */ {
+  font-family: MJX-NCM-S5;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-s5.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-S6 */ {
+  font-family: MJX-NCM-S6;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-s6.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-S7 */ {
+  font-family: MJX-NCM-S7;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-s7.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-MI */ {
+  font-family: MJX-NCM-MI;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-mi.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-C */ {
+  font-family: MJX-NCM-C;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-c.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-CB */ {
+  font-family: MJX-NCM-CB;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-cb.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-OS */ {
+  font-family: MJX-NCM-OS;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-os.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-OB */ {
+  font-family: MJX-NCM-OB;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-ob.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-V */ {
+  font-family: MJX-NCM-V;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-v.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-LT */ {
+  font-family: MJX-NCM-LT;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-lt.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-RB */ {
+  font-family: MJX-NCM-RB;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-rb.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-EM */ {
+  font-family: MJX-NCM-EM;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-em.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-B-a */ {
+  font-family: MJX-NCM-B-a;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-b-a.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-U */ {
+  font-family: MJX-NCM-U;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-u.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-U-a */ {
+  font-family: MJX-NCM-U-a;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-u-a.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-S */ {
+  font-family: MJX-NCM-S;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-s.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-SB */ {
+  font-family: MJX-NCM-SB;
+  src: url("http://localhost:8085/assets/vendor/mathjax-newcm-font/chtml/woff2/mjx-ncm-sb.woff2") format("woff2");
+}
+
+mjx-c.mjx-c394 {
+  padding: 0.716em 0.833em 0 0;
+}
+
+mjx-c.mjx-c1D448 {
+  padding: 0.683em 0.76em 0.022em 0;
+}
+
+mjx-c.mjx-c3D {
+  padding: 0.367em 0.778em 0 0;
+}
+
+mjx-c.mjx-c35 {
+  padding: 0.666em 0.5em 0.022em 0;
+}
+
+mjx-c.mjx-c56 {
+  padding: 0.683em 0.75em 0.022em 0;
+}
+
+mjx-c.mjx-c2C {
+  padding: 0.106em 0.278em 0.193em 0;
+}
+
+mjx-c.mjx-c1D444 {
+  padding: 0.705em 0.791em 0.194em 0;
+}
+
+mjx-c.mjx-c30 {
+  padding: 0.666em 0.5em 0.022em 0;
+}
+
+mjx-c.mjx-c31 {
+  padding: 0.666em 0.5em 0 0;
+}
+
+mjx-c.mjx-c22C5 {
+  padding: 0.303em 0.278em 0 0;
+}
+
+mjx-c.mjx-c2212 {
+  padding: 0.583em 0.778em 0.083em 0;
+}
+
+mjx-c.mjx-c38 {
+  padding: 0.666em 0.5em 0.022em 0;
+}
+
+mjx-c.mjx-c43 {
+  padding: 0.705em 0.722em 0.022em 0;
+}
+
+mjx-c.mjx-c25 {
+  padding: 0.75em 0.833em 0.056em 0;
+}
+
+mjx-c.mjx-c32 {
+  padding: 0.666em 0.5em 0 0;
+}
+
+mjx-c.mjx-c1D453 {
+  padding: 0.705em 0.552em 0.205em 0;
+}
+
+mjx-c.mjx-c6D {
+  padding: 0.442em 0.833em 0 0;
+}
+
+mjx-c.mjx-c61 {
+  padding: 0.448em 0.5em 0.011em 0;
+}
+
+mjx-c.mjx-c78 {
+  padding: 0.431em 0.528em 0 0;
+}
+
+mjx-c.mjx-c28 {
+  padding: 0.748em 0.389em 0.248em 0;
+}
+
+mjx-c.mjx-c29 {
+  padding: 0.748em 0.389em 0.248em 0;
+}
+
+mjx-c.mjx-c1D44E {
+  padding: 0.442em 0.529em 0.011em 0;
+}
+
+mjx-c.mjx-c1D45B {
+  padding: 0.442em 0.6em 0.011em 0;
+}
+
+mjx-c.mjx-c36 {
+  padding: 0.666em 0.5em 0.022em 0;
+}
+
+mjx-c.mjx-c7C {
+  padding: 0.75em 0.278em 0.25em 0;
+}
+
+mjx-c.mjx-c2248 {
+  padding: 0.457em 0.773em 0 0;
+}
+
+mjx-c.mjx-c33 {
+  padding: 0.666em 0.5em 0.022em 0;
+}
+
+mjx-c.mjx-c37 {
+  padding: 0.676em 0.5em 0.022em 0;
+}
+
+mjx-c.mjx-c34 {
+  padding: 0.677em 0.5em 0 0;
+}
+
+mjx-c.mjx-c3C {
+  padding: 0.547em 0.778em 0.052em 0;
+}
+
+mjx-c.mjx-c2B {
+  padding: 0.583em 0.778em 0.083em 0;
+}
+
+mjx-c.mjx-c1D44F {
+  padding: 0.694em 0.429em 0.011em 0;
+}
+
+mjx-c.mjx-c69 {
+  padding: 0.657em 0.278em 0 0;
+}
+
+mjx-c.mjx-c6E {
+  padding: 0.442em 0.556em 0 0;
+}
+
+mjx-c.mjx-c1D45A {
+  padding: 0.442em 0.878em 0.011em 0;
+}
+
+mjx-c.mjx-c221D {
+  padding: 0.442em 0.778em 0.011em 0;
+}
+
+mjx-c.mjx-c70 {
+  padding: 0.442em 0.556em 0.194em 0;
+}
+
+mjx-c.mjx-c46 {
+  padding: 0.68em 0.653em 0 0;
+}
+
+mjx-c.mjx-c2F {
+  padding: 0.75em 0.5em 0.25em 0;
+}
+</style></head>
+<body class="error-method-page">
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+  <nav class="site-nav" aria-label="Hauptnavigation">
+    <div class="wrap site-nav-inner">
+      <a class="nav-brand" href="./index.html"><span class="brand-mark" aria-hidden="true">∑</span> GeoGebra-Trainer</a>
+      <ul class="nav-menu">
+        <li><a class="nav-link" data-nav="learn" href="./index.html">Geführte Lernwege</a></li>
+        <li><a class="nav-link" data-nav="practice" href="./selbst-auswerten.html">Selbst auswerten</a></li>
+        <li><a class="nav-link" data-nav="documentation" href="./dokumentation.html">Für die Klausur dokumentieren</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="method-header">
+    <div class="wrap method-header-inner">
+      <a id="returnLink" class="method-back-link" href="./index.html?course=inverse-square#course">← Zurück zum Lernweg</a>
+      <p class="eyebrow">Ergänzende Methodenhilfe zu: Regression lernen</p>
+      <h1>Methode des größten Einzelfehlers</h1>
+      <p class="hero-lead">Wir übertragen den größten relativen Einzelfehler als vereinfachte schulische Vergleichsregel auf die untersuchten Abweichungen.</p>
+      <div id="moduleStatus" class="method-status" role="status" aria-live="polite">Noch offen – der gewählte Q–U-Lernweg ist erst nach dieser Kontrolle vollständig.</div>
+    </div>
+  </header>
+
+  <main id="main" class="wrap method-main">
+    <section class="method-intro" aria-labelledby="idea-title">
+      <p class="mini-label">Grundgedanke</p>
+      <h2 id="idea-title">Eine gemeinsame Fehlergrenze</h2>
+      <blockquote>Der größte relative Einzelfehler wird als Fehlergrenze auf alle untersuchten relativen Abweichungen übertragen.</blockquote>
+      <p>Liegt eine Abweichung unter dieser Grenze, kann sie im Rahmen dieser vereinfachten Unterrichtsmethode durch die Messfehler erklärt werden. Erreicht oder überschreitet sie die Grenze, ist sie nicht mehr kleiner als der größte relative Einzelfehler; der Kurs gibt dann keine automatische Fehlererklärung aus. Daraus folgt weder ein mathematischer Beweis noch automatisch eine Widerlegung der Theorie.</p>
+    </section>
+
+    <section class="method-section" aria-labelledby="calculation-title">
+      <p class="mini-label">Schritt für Schritt</p>
+      <h2 id="calculation-title">Den größten relativen Einzelfehler bestimmen</h2>
+      <div class="calculation-flow">
+        <article><span>1</span><h3>Absolute Einzelfehler</h3><p class="display-equation"><mjx-container class="MathJax" jax="CHTML" overflow="linebreak" display="true" style="font-size: 110.8%;"><mjx-math data-latex="\Delta U=5\,\mathrm V,\qquad \Delta Q=0{,}1\cdot10^{-8}\,\mathrm C" display="true" class="NCM-N"><mjx-linestack><mjx-linebox lineno="0" align="center" style="margin-bottom: 0.2em;"><mjx-mi data-latex="\Delta"><mjx-c class="mjx-c394">Δ</mjx-c></mjx-mi><mjx-mi data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi><mjx-mo space="4" data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mn space="4" data-latex="5"><mjx-c class="mjx-c35">5</mjx-c></mjx-mn><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-texatom data-latex="\mathrm V" texclass="ORD"><mjx-mi data-latex="V"><mjx-c class="mjx-c56">V</mjx-c></mjx-mi></mjx-texatom><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo><mjx-mspace data-latex="\qquad" style="width: 2em;"></mjx-mspace><mjx-mi space="2" data-latex="\Delta"><mjx-c class="mjx-c394">Δ</mjx-c></mjx-mi><mjx-mi data-latex="Q"><mjx-c class="mjx-c1D444">𝑄</mjx-c></mjx-mi><mjx-linestrut></mjx-linestrut></mjx-linebox><mjx-linebox lineno="1" align="center"><mjx-linestrut></mjx-linestrut><mjx-mo data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mn space="4" data-latex="0"><mjx-c class="mjx-c30">0</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="1"><mjx-c class="mjx-c31">1</mjx-c></mjx-mn><mjx-mo space="3" data-latex="\cdot"><mjx-c class="mjx-c22C5">⋅</mjx-c></mjx-mo><mjx-msup space="3" data-latex="10^{-8}"><mjx-mn data-latex="10"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-script style="vertical-align: 0.413em;"><mjx-texatom size="s" data-latex="{-8}" texclass="ORD"><mjx-mo data-latex="-"><mjx-c class="mjx-c2212">−</mjx-c></mjx-mo><mjx-mn data-latex="8"><mjx-c class="mjx-c38">8</mjx-c></mjx-mn></mjx-texatom></mjx-script></mjx-msup><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-texatom data-latex="\mathrm C" texclass="ORD"><mjx-mi data-latex="C"><mjx-c class="mjx-c43">C</mjx-c></mjx-mi></mjx-texatom></mjx-linebox></mjx-linestack></mjx-math></mjx-container></p><p>Das sind die angenommenen absoluten Messfehler des Kondensatorversuchs.</p></article>
+        <article><span>2</span><h3>Spannung relativ</h3><p class="display-equation"><mjx-container class="MathJax" jax="CHTML" overflow="linebreak" display="true" style="font-size: 110.8%;"><mjx-math data-latex="\frac{5}{50}\cdot100=10\,\%" display="true" class="NCM-N"><mjx-mfrac data-latex="\frac{5}{50}"><mjx-frac type="d"><mjx-num><mjx-nstrut type="d"></mjx-nstrut><mjx-mn data-latex="5"><mjx-c class="mjx-c35">5</mjx-c></mjx-mn></mjx-num><mjx-dbox><mjx-dtable><mjx-line type="d"></mjx-line><mjx-row><mjx-den><mjx-dstrut type="d"></mjx-dstrut><mjx-mn data-latex="50"><mjx-c class="mjx-c35" noic="true" style="padding-top: 0.666em;">5</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac><mjx-mo space="3" data-latex="\cdot"><mjx-c class="mjx-c22C5">⋅</mjx-c></mjx-mo><mjx-mn space="3" data-latex="100"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" noic="true" style="padding-top: 0.666em;">0</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-mo space="4" data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mn space="4" data-latex="10"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container></p><p>Der kleinste Spannungswert ist <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="50\,\mathrm V" breakable="true" class="NCM-N"><mjx-mn data-latex="50"><mjx-c class="mjx-c35" noic="true" style="padding-top: 0.666em;">5</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-texatom data-latex="\mathrm V" texclass="ORD"><mjx-mi data-latex="V"><mjx-c class="mjx-c56">V</mjx-c></mjx-mi></mjx-texatom></mjx-math></mjx-container>.</p></article>
+        <article><span>3</span><h3>Ladung relativ</h3><p class="display-equation"><mjx-container class="MathJax" jax="CHTML" overflow="linebreak" display="true" style="font-size: 110.8%;"><mjx-math data-latex="\frac{0{,}1}{2{,}0}\cdot100=5\,\%" display="true" class="NCM-N"><mjx-mfrac data-latex="\frac{0{,}1}{2{,}0}"><mjx-frac type="d"><mjx-num><mjx-nstrut type="d"></mjx-nstrut><mjx-mrow data-latex="0{,}1"><mjx-mn data-latex="0"><mjx-c class="mjx-c30">0</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="1"><mjx-c class="mjx-c31">1</mjx-c></mjx-mn></mjx-mrow></mjx-num><mjx-dbox><mjx-dtable><mjx-line type="d"></mjx-line><mjx-row><mjx-den><mjx-dstrut type="d"></mjx-dstrut><mjx-mrow data-latex="2{,}0"><mjx-mn data-latex="2"><mjx-c class="mjx-c32">2</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="0"><mjx-c class="mjx-c30">0</mjx-c></mjx-mn></mjx-mrow></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac><mjx-mo space="3" data-latex="\cdot"><mjx-c class="mjx-c22C5">⋅</mjx-c></mjx-mo><mjx-mn space="3" data-latex="100"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" noic="true" style="padding-top: 0.666em;">0</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-mo space="4" data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mn space="4" data-latex="5"><mjx-c class="mjx-c35">5</mjx-c></mjx-mn><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container></p><p>Der kleinste Ladungswert ist <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="2{,}0\cdot10^{-8}\,\mathrm C" breakable="true" class="NCM-N"><mjx-mn data-latex="2"><mjx-c class="mjx-c32">2</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="0"><mjx-c class="mjx-c30">0</mjx-c></mjx-mn><mjx-break size="3"> </mjx-break><mjx-mo data-latex="\cdot"><mjx-c class="mjx-c22C5">⋅</mjx-c></mjx-mo><mjx-msup space="3" data-latex="10^{-8}"><mjx-mn data-latex="10"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-script style="vertical-align: 0.393em;"><mjx-texatom size="s" data-latex="{-8}" texclass="ORD"><mjx-mo data-latex="-"><mjx-c class="mjx-c2212">−</mjx-c></mjx-mo><mjx-mn data-latex="8"><mjx-c class="mjx-c38">8</mjx-c></mjx-mn></mjx-texatom></mjx-script></mjx-msup><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-texatom data-latex="\mathrm C" texclass="ORD"><mjx-mi data-latex="C"><mjx-c class="mjx-c43">C</mjx-c></mjx-mi></mjx-texatom></mjx-math></mjx-container>.</p></article>
+        <article><span>4</span><h3>Größten Wert wählen</h3><p class="display-equation"><mjx-container class="MathJax" jax="CHTML" overflow="linebreak" display="true" style="font-size: 110.8%;"><mjx-math data-latex="f_{\max}=\max(10\,\%,5\,\%)=10\,\%" display="true" class="NCM-N"><mjx-msub data-latex="f_{\max}"><mjx-mi data-latex="f"><mjx-c class="mjx-c1D453">𝑓</mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em; margin-left: -0.062em;"><mjx-texatom size="s" data-latex="{\max}" texclass="ORD"><mjx-mo data-latex="\max"><mjx-c class="mjx-c6D" noic="true" style="padding-top: 0.448em;">m</mjx-c><mjx-c class="mjx-c61" noic="true" style="padding-top: 0.448em;">a</mjx-c><mjx-c class="mjx-c78" style="padding-top: 0.448em;">x</mjx-c></mjx-mo></mjx-texatom></mjx-script></mjx-msub><mjx-mo space="4" data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mo space="4" data-latex="\max"><mjx-c class="mjx-c6D" noic="true" style="padding-top: 0.448em;">m</mjx-c><mjx-c class="mjx-c61" noic="true" style="padding-top: 0.448em;">a</mjx-c><mjx-c class="mjx-c78" style="padding-top: 0.448em;">x</mjx-c></mjx-mo><mjx-mo data-latex="("><mjx-c class="mjx-c28">(</mjx-c></mjx-mo><mjx-mn data-latex="10"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo><mjx-mn space="2" data-latex="5"><mjx-c class="mjx-c35">5</mjx-c></mjx-mn><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi><mjx-mo data-latex=")"><mjx-c class="mjx-c29">)</mjx-c></mjx-mo><mjx-mo space="4" data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mn space="4" data-latex="10"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container></p><p>Es wird bewusst nicht addiert und kein Mittelwert gebildet.</p></article>
+      </div>
+      <aside class="method-note"><strong>Warum die kleinsten Messwerte?</strong><p>Bei gleichbleibendem absoluten Fehler ist der relative Fehler dort am größten: Derselbe Fehler wird durch einen kleineren Messwert geteilt.</p></aside>
+    </section>
+
+    <section class="method-section" aria-labelledby="application-title">
+      <p class="mini-label">Auf alle drei Verfahren übertragen</p>
+      <h2 id="application-title">Welche Abweichungen werden verglichen?</h2>
+      <div class="application-grid">
+        <article>
+          <p class="method-tag">Potenzregression</p>
+          <h3>Exponent und Modellwerte</h3>
+          <p class="display-equation"><mjx-container class="MathJax" jax="CHTML" overflow="linebreak" display="true" style="font-size: 110.8%;"><mjx-math data-latex="Q(U)=aU^n,\qquad n=1{,}011566" display="true" class="NCM-N"><mjx-mi data-latex="Q"><mjx-c class="mjx-c1D444">𝑄</mjx-c></mjx-mi><mjx-mo data-latex="("><mjx-c class="mjx-c28">(</mjx-c></mjx-mo><mjx-mi data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi><mjx-mo data-latex=")"><mjx-c class="mjx-c29">)</mjx-c></mjx-mo><mjx-mo space="4" data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mi space="4" data-latex="a"><mjx-c class="mjx-c1D44E">𝑎</mjx-c></mjx-mi><mjx-msup data-latex="U^n"><mjx-mi data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi><mjx-script style="vertical-align: 0.413em; margin-left: 0.054em;"><mjx-mi size="s" data-latex="n"><mjx-c class="mjx-c1D45B">𝑛</mjx-c></mjx-mi></mjx-script></mjx-msup><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo><mjx-mspace data-latex="\qquad" style="width: 2em;"></mjx-mspace><mjx-mi space="2" data-latex="n"><mjx-c class="mjx-c1D45B">𝑛</mjx-c></mjx-mi><mjx-mo space="4" data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mn space="4" data-latex="1{,}011"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c2C" noic="true" style="padding-top: 0.666em;">,</mjx-c><mjx-c class="mjx-c30" noic="true" style="padding-top: 0.666em;">0</mjx-c><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c31" style="padding-top: 0.666em;">1</mjx-c></mjx-mn><mjx-mn data-latex="566"><mjx-c class="mjx-c35" noic="true" style="padding-top: 0.666em;">5</mjx-c><mjx-c class="mjx-c36" noic="true" style="padding-top: 0.666em;">6</mjx-c><mjx-c class="mjx-c36" style="padding-top: 0.666em;">6</mjx-c></mjx-mn></mjx-math></mjx-container></p>
+          <p>Relative Exponentabweichung:</p>
+          <p class="display-equation"><mjx-container class="MathJax" jax="CHTML" overflow="linebreak" display="true" style="font-size: 110.8%;"><mjx-math data-latex="\frac{|1{,}011566-1|}{1}\cdot100\approx1{,}16\,\%" display="true" class="NCM-N"><mjx-mfrac data-latex="\frac{|1{,}011566-1|}{1}"><mjx-frac type="d"><mjx-num><mjx-nstrut type="d"></mjx-nstrut><mjx-mrow data-latex="|1{,}011566-1|"><mjx-mo data-latex="|"><mjx-c class="mjx-c7C">|</mjx-c></mjx-mo><mjx-mn data-latex="1{,}011"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c2C" noic="true" style="padding-top: 0.666em;">,</mjx-c><mjx-c class="mjx-c30" noic="true" style="padding-top: 0.666em;">0</mjx-c><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c31" style="padding-top: 0.666em;">1</mjx-c></mjx-mn><mjx-mn data-latex="566"><mjx-c class="mjx-c35" noic="true" style="padding-top: 0.666em;">5</mjx-c><mjx-c class="mjx-c36" noic="true" style="padding-top: 0.666em;">6</mjx-c><mjx-c class="mjx-c36" style="padding-top: 0.666em;">6</mjx-c></mjx-mn><mjx-mo space="3" data-latex="-"><mjx-c class="mjx-c2212">−</mjx-c></mjx-mo><mjx-mn space="3" data-latex="1"><mjx-c class="mjx-c31">1</mjx-c></mjx-mn><mjx-mo data-latex="|"><mjx-c class="mjx-c7C">|</mjx-c></mjx-mo></mjx-mrow></mjx-num><mjx-dbox><mjx-dtable><mjx-line type="d"></mjx-line><mjx-row><mjx-den><mjx-dstrut type="d"></mjx-dstrut><mjx-mn data-latex="1"><mjx-c class="mjx-c31">1</mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac><mjx-mo space="3" data-latex="\cdot"><mjx-c class="mjx-c22C5">⋅</mjx-c></mjx-mo><mjx-mn space="3" data-latex="100"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" noic="true" style="padding-top: 0.666em;">0</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-mo space="4" data-latex="\approx"><mjx-c class="mjx-c2248">≈</mjx-c></mjx-mo><mjx-mn space="4" data-latex="1"><mjx-c class="mjx-c31">1</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="16"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c36" style="padding-top: 0.666em;">6</mjx-c></mjx-mn><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container></p>
+          <p>Die größte Modellabweichung beträgt <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="3{,}74\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="3"><mjx-c class="mjx-c33">3</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="74"><mjx-c class="mjx-c37" noic="true" style="padding-top: 0.677em;">7</mjx-c><mjx-c class="mjx-c34" style="padding-top: 0.677em;">4</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container>. Beide Werte liegen unter <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="10\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="10"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container> und können nach der Methode durch die Messfehler erklärt werden. Der Exponent darf näherungsweise als <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="n\approx1" breakable="true" class="NCM-N"><mjx-mi data-latex="n"><mjx-c class="mjx-c1D45B">𝑛</mjx-c></mjx-mi><mjx-break size="4"> </mjx-break><mjx-mo data-latex="\approx"><mjx-c class="mjx-c2248">≈</mjx-c></mjx-mo><mjx-mn space="4" data-latex="1"><mjx-c class="mjx-c31">1</mjx-c></mjx-mn></mjx-math></mjx-container> behandelt werden.</p>
+        </article>
+        <article>
+          <p class="method-tag">Konstantenverfahren</p>
+          <h3>Streuung der Kapazitäten</h3>
+          <p>Die größte Abweichung einer Einzelkapazität vom Mittelwert beträgt <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="3{,}83\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="3"><mjx-c class="mjx-c33">3</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="83"><mjx-c class="mjx-c38" noic="true" style="padding-top: 0.666em;">8</mjx-c><mjx-c class="mjx-c33" style="padding-top: 0.666em;">3</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container>.</p>
+          <p class="display-equation"><mjx-container class="MathJax" jax="CHTML" overflow="linebreak" display="true" style="font-size: 110.8%;"><mjx-math data-latex="3{,}83\,\%&lt;10\,\%" display="true" class="NCM-N"><mjx-mn data-latex="3"><mjx-c class="mjx-c33">3</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="83"><mjx-c class="mjx-c38" noic="true" style="padding-top: 0.666em;">8</mjx-c><mjx-c class="mjx-c33" style="padding-top: 0.666em;">3</mjx-c></mjx-mn><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi><mjx-mo space="4" data-latex="&lt;"><mjx-c class="mjx-c3C">&lt;</mjx-c></mjx-mo><mjx-mn space="4" data-latex="10"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container></p>
+          <p>Die Streuung kann nach der Methode durch die Messfehler erklärt werden. Die Kapazität darf in diesem Rahmen als konstant angesehen werden.</p>
+        </article>
+        <article>
+          <p class="method-tag">Lineare Regression</p>
+          <h3>Modellwerte und y-Achsenabschnitt</h3>
+          <p>GeoGebra-Eingabe: <code>Q=Trendlinie(C1:C5)</code></p>
+          <p class="display-equation"><mjx-container class="MathJax" jax="CHTML" overflow="linebreak" display="true" style="font-size: 110.8%;"><mjx-math data-latex="Q(U)=0{,}0408\,U+0{,}12" display="true" class="NCM-N"><mjx-mi data-latex="Q"><mjx-c class="mjx-c1D444">𝑄</mjx-c></mjx-mi><mjx-mo data-latex="("><mjx-c class="mjx-c28">(</mjx-c></mjx-mo><mjx-mi data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi><mjx-mo data-latex=")"><mjx-c class="mjx-c29">)</mjx-c></mjx-mo><mjx-mo space="4" data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mn space="4" data-latex="0{,}040"><mjx-c class="mjx-c30" noic="true" style="padding-top: 0.677em;">0</mjx-c><mjx-c class="mjx-c2C" noic="true" style="padding-top: 0.677em;">,</mjx-c><mjx-c class="mjx-c30" noic="true" style="padding-top: 0.677em;">0</mjx-c><mjx-c class="mjx-c34" noic="true" style="padding-top: 0.677em;">4</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.677em;">0</mjx-c></mjx-mn><mjx-mn data-latex="8"><mjx-c class="mjx-c38">8</mjx-c></mjx-mn><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi><mjx-mo space="3" data-latex="+"><mjx-c class="mjx-c2B">+</mjx-c></mjx-mo><mjx-mn space="3" data-latex="0"><mjx-c class="mjx-c30">0</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="12"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c32" style="padding-top: 0.666em;">2</mjx-c></mjx-mn></mjx-math></mjx-container></p>
+          <p>Die größte Modellabweichung beträgt <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="7{,}41\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="7"><mjx-c class="mjx-c37">7</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="41"><mjx-c class="mjx-c34" noic="true" style="padding-top: 0.677em;">4</mjx-c><mjx-c class="mjx-c31" style="padding-top: 0.677em;">1</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container>. Eine relative Abweichung von <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="b" class="NCM-N"><mjx-mi data-latex="b"><mjx-c class="mjx-c1D44F">𝑏</mjx-c></mjx-mi></mjx-math></mjx-container> gegenüber dem theoretischen Wert <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="0" class="NCM-N"><mjx-mn data-latex="0"><mjx-c class="mjx-c30">0</mjx-c></mjx-mn></mjx-math></mjx-container> wäre wegen der Division durch null nicht definiert. Deshalb beziehen wir den Anteil von <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="b" class="NCM-N"><mjx-mi data-latex="b"><mjx-c class="mjx-c1D44F">𝑏</mjx-c></mjx-mi></mjx-math></mjx-container> auf den kleinsten gemessenen Ladungswert:</p>
+          <p class="display-equation"><mjx-container class="MathJax" jax="CHTML" overflow="linebreak" display="true" style="font-size: 110.8%;"><mjx-math data-latex="\frac{|b|}{Q_{\min}}\cdot100=\frac{0{,}12}{2{,}0}\cdot100=6\,\%" display="true" class="NCM-N"><mjx-mfrac data-latex="\frac{|b|}{Q_{\min}}"><mjx-frac type="d"><mjx-num><mjx-nstrut type="d"></mjx-nstrut><mjx-mrow data-latex="|b|"><mjx-mo data-latex="|"><mjx-c class="mjx-c7C">|</mjx-c></mjx-mo><mjx-mi data-latex="b"><mjx-c class="mjx-c1D44F">𝑏</mjx-c></mjx-mi><mjx-mo data-latex="|"><mjx-c class="mjx-c7C">|</mjx-c></mjx-mo></mjx-mrow></mjx-num><mjx-dbox><mjx-dtable><mjx-line type="d"></mjx-line><mjx-row><mjx-den><mjx-dstrut type="d"></mjx-dstrut><mjx-msub data-latex="Q_{\min}"><mjx-mi data-latex="Q"><mjx-c class="mjx-c1D444">𝑄</mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-texatom size="s" data-latex="{\min}" texclass="ORD"><mjx-mo data-latex="\min"><mjx-c class="mjx-c6D" noic="true" style="padding-top: 0.657em;">m</mjx-c><mjx-c class="mjx-c69" noic="true" style="padding-top: 0.657em;">i</mjx-c><mjx-c class="mjx-c6E" style="padding-top: 0.657em;">n</mjx-c></mjx-mo></mjx-texatom></mjx-script></mjx-msub></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac><mjx-mo space="3" data-latex="\cdot"><mjx-c class="mjx-c22C5">⋅</mjx-c></mjx-mo><mjx-mn space="3" data-latex="100"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" noic="true" style="padding-top: 0.666em;">0</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-mo space="4" data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mfrac space="4" data-latex="\frac{0{,}12}{2{,}0}"><mjx-frac type="d"><mjx-num><mjx-nstrut type="d"></mjx-nstrut><mjx-mrow data-latex="0{,}12"><mjx-mn data-latex="0"><mjx-c class="mjx-c30">0</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="12"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c32" style="padding-top: 0.666em;">2</mjx-c></mjx-mn></mjx-mrow></mjx-num><mjx-dbox><mjx-dtable><mjx-line type="d"></mjx-line><mjx-row><mjx-den><mjx-dstrut type="d"></mjx-dstrut><mjx-mrow data-latex="2{,}0"><mjx-mn data-latex="2"><mjx-c class="mjx-c32">2</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="0"><mjx-c class="mjx-c30">0</mjx-c></mjx-mn></mjx-mrow></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac><mjx-mo space="3" data-latex="\cdot"><mjx-c class="mjx-c22C5">⋅</mjx-c></mjx-mo><mjx-mn space="3" data-latex="100"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" noic="true" style="padding-top: 0.666em;">0</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-mo space="4" data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mn space="4" data-latex="6"><mjx-c class="mjx-c36">6</mjx-c></mjx-mn><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container></p>
+          <p><mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="7{,}41\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="7"><mjx-c class="mjx-c37">7</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="41"><mjx-c class="mjx-c34" noic="true" style="padding-top: 0.677em;">4</mjx-c><mjx-c class="mjx-c31" style="padding-top: 0.677em;">1</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container> und <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="6\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="6"><mjx-c class="mjx-c36">6</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container> liegen unter <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="10\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="10"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container>. Beide Abweichungen können nach der Methode durch die Messfehler erklärt werden; <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="b" class="NCM-N"><mjx-mi data-latex="b"><mjx-c class="mjx-c1D44F">𝑏</mjx-c></mjx-mi></mjx-math></mjx-container> darf näherungsweise vernachlässigt werden: <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="Q(U)\approx mU" breakable="true" class="NCM-N"><mjx-mi data-latex="Q"><mjx-c class="mjx-c1D444">𝑄</mjx-c></mjx-mi><mjx-mo data-latex="("><mjx-c class="mjx-c28">(</mjx-c></mjx-mo><mjx-mi data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi><mjx-mo data-latex=")"><mjx-c class="mjx-c29">)</mjx-c></mjx-mo><mjx-break size="4"> </mjx-break><mjx-mo data-latex="\approx"><mjx-c class="mjx-c2248">≈</mjx-c></mjx-mo><mjx-mi space="4" data-latex="m"><mjx-c class="mjx-c1D45A">𝑚</mjx-c></mjx-mi><mjx-mi data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi></mjx-math></mjx-container>. Das ist keine statistische Bestätigung von <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="b=0" breakable="true" class="NCM-N"><mjx-mi data-latex="b"><mjx-c class="mjx-c1D44F">𝑏</mjx-c></mjx-mi><mjx-break size="4"> </mjx-break><mjx-mo data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mn space="4" data-latex="0"><mjx-c class="mjx-c30">0</mjx-c></mjx-mn></mjx-math></mjx-container>.</p>
+          <p class="source-link"><a href="https://geogebra.github.io/docs/manual/de/commands/Trendlinie/" target="_blank" rel="noopener">GeoGebra-Handbuch: Trendlinie ↗</a></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="method-section" aria-labelledby="phrases-title">
+      <p class="mini-label">Für die Klausur</p>
+      <h2 id="phrases-title">Formulierungsbausteine</h2>
+      <div class="phrase-list">
+        <article>
+          <div><h3>Potenzregression</h3><button class="copy-button" type="button" data-copy-target="phrase-power">Kopieren</button></div>
+          <p id="phrase-power">Die Potenzregression ergibt den Exponenten <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="n\approx1{,}0116" breakable="true" class="NCM-N"><mjx-mi data-latex="n"><mjx-c class="mjx-c1D45B">𝑛</mjx-c></mjx-mi><mjx-break size="4"> </mjx-break><mjx-mo data-latex="\approx"><mjx-c class="mjx-c2248">≈</mjx-c></mjx-mo><mjx-mn space="4" data-latex="1{,}011"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c2C" noic="true" style="padding-top: 0.666em;">,</mjx-c><mjx-c class="mjx-c30" noic="true" style="padding-top: 0.666em;">0</mjx-c><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c31" style="padding-top: 0.666em;">1</mjx-c></mjx-mn><mjx-mn data-latex="6"><mjx-c class="mjx-c36">6</mjx-c></mjx-mn></mjx-math></mjx-container>. Aus <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="\Delta U=5\,\mathrm V" breakable="true" class="NCM-N"><mjx-mi data-latex="\Delta"><mjx-c class="mjx-c394">Δ</mjx-c></mjx-mi><mjx-mi data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi><mjx-break size="4"> </mjx-break><mjx-mo data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mn space="4" data-latex="5"><mjx-c class="mjx-c35">5</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-texatom data-latex="\mathrm V" texclass="ORD"><mjx-mi data-latex="V"><mjx-c class="mjx-c56">V</mjx-c></mjx-mi></mjx-texatom></mjx-math></mjx-container> und <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="\Delta Q=0{,}1\cdot10^{-8}\,\mathrm C" breakable="true" class="NCM-N"><mjx-mi data-latex="\Delta"><mjx-c class="mjx-c394">Δ</mjx-c></mjx-mi><mjx-mi data-latex="Q"><mjx-c class="mjx-c1D444">𝑄</mjx-c></mjx-mi><mjx-break size="4"> </mjx-break><mjx-mo data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mn space="4" data-latex="0"><mjx-c class="mjx-c30">0</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="1"><mjx-c class="mjx-c31">1</mjx-c></mjx-mn><mjx-break size="3"> </mjx-break><mjx-mo data-latex="\cdot"><mjx-c class="mjx-c22C5">⋅</mjx-c></mjx-mo><mjx-msup space="3" data-latex="10^{-8}"><mjx-mn data-latex="10"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-script style="vertical-align: 0.393em;"><mjx-texatom size="s" data-latex="{-8}" texclass="ORD"><mjx-mo data-latex="-"><mjx-c class="mjx-c2212">−</mjx-c></mjx-mo><mjx-mn data-latex="8"><mjx-c class="mjx-c38">8</mjx-c></mjx-mn></mjx-texatom></mjx-script></mjx-msup><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-texatom data-latex="\mathrm C" texclass="ORD"><mjx-mi data-latex="C"><mjx-c class="mjx-c43">C</mjx-c></mjx-mi></mjx-texatom></mjx-math></mjx-container> ergibt sich nach der Methode des größten Einzelfehlers ein größter relativer Einzelfehler von <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="10\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="10"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container>. Die relative Exponentabweichung beträgt etwa <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="1{,}16\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="1"><mjx-c class="mjx-c31">1</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="16"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c36" style="padding-top: 0.666em;">6</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container>, die größte Modellabweichung etwa <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="3{,}74\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="3"><mjx-c class="mjx-c33">3</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="74"><mjx-c class="mjx-c37" noic="true" style="padding-top: 0.677em;">7</mjx-c><mjx-c class="mjx-c34" style="padding-top: 0.677em;">4</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container>. Beide Abweichungen liegen unter <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="10\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="10"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container> und können daher durch die Messfehler erklärt werden. Der Exponent kann näherungsweise als <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="n\approx1" breakable="true" class="NCM-N"><mjx-mi data-latex="n"><mjx-c class="mjx-c1D45B">𝑛</mjx-c></mjx-mi><mjx-break size="4"> </mjx-break><mjx-mo data-latex="\approx"><mjx-c class="mjx-c2248">≈</mjx-c></mjx-mo><mjx-mn space="4" data-latex="1"><mjx-c class="mjx-c31">1</mjx-c></mjx-mn></mjx-math></mjx-container> behandelt werden. Die Messwerte sind damit mit <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="Q\propto U" breakable="true" class="NCM-N"><mjx-mi data-latex="Q"><mjx-c class="mjx-c1D444">𝑄</mjx-c></mjx-mi><mjx-break size="4"> </mjx-break><mjx-mo data-latex="\propto"><mjx-c class="mjx-c221D">∝</mjx-c></mjx-mo><mjx-mi space="4" data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi></mjx-math></mjx-container> vereinbar, beweisen die Proportionalität aber nicht.</p>
+        </article>
+        <article>
+          <div><h3>Konstantenverfahren</h3><button class="copy-button" type="button" data-copy-target="phrase-constants">Kopieren</button></div>
+          <p id="phrase-constants">Die mittlere Kapazität beträgt etwa <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="416\,\mathrm{pF}" breakable="true" class="NCM-N"><mjx-mn data-latex="416"><mjx-c class="mjx-c34" noic="true" style="padding-top: 0.677em;">4</mjx-c><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.677em;">1</mjx-c><mjx-c class="mjx-c36" style="padding-top: 0.677em;">6</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-texatom data-latex="\mathrm{pF}" texclass="ORD"><mjx-mi data-latex="pF"><mjx-c class="mjx-c70" noic="true" style="padding-top: 0.68em;">p</mjx-c><mjx-c class="mjx-c46" style="padding-top: 0.68em;">F</mjx-c></mjx-mi></mjx-texatom></mjx-math></mjx-container>. Nach der Methode des größten Einzelfehlers ergibt sich aus den Messfehlern ein größter relativer Einzelfehler von <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="10\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="10"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container>. Die größte Abweichung einer Einzelkapazität vom Mittelwert beträgt etwa <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="3{,}83\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="3"><mjx-c class="mjx-c33">3</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="83"><mjx-c class="mjx-c38" noic="true" style="padding-top: 0.666em;">8</mjx-c><mjx-c class="mjx-c33" style="padding-top: 0.666em;">3</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container> und liegt damit unter <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="10\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="10"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container>. Die Streuung kann durch die Messfehler erklärt und die Kapazität im Rahmen dieser Methode als konstant angesehen werden. Die Messwerte sind mit <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="Q\propto U" breakable="true" class="NCM-N"><mjx-mi data-latex="Q"><mjx-c class="mjx-c1D444">𝑄</mjx-c></mjx-mi><mjx-break size="4"> </mjx-break><mjx-mo data-latex="\propto"><mjx-c class="mjx-c221D">∝</mjx-c></mjx-mo><mjx-mi space="4" data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi></mjx-math></mjx-container> vereinbar, beweisen die Proportionalität aber nicht.</p>
+        </article>
+        <article>
+          <div><h3>Lineare Regression</h3><button class="copy-button" type="button" data-copy-target="phrase-linear">Kopieren</button></div>
+          <p id="phrase-linear">Die lineare Regression ergibt <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="Q(U)=0{,}0408U+0{,}12" breakable="true" class="NCM-N"><mjx-mi data-latex="Q"><mjx-c class="mjx-c1D444">𝑄</mjx-c></mjx-mi><mjx-mo data-latex="("><mjx-c class="mjx-c28">(</mjx-c></mjx-mo><mjx-mi data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi><mjx-mo data-latex=")"><mjx-c class="mjx-c29">)</mjx-c></mjx-mo><mjx-break size="4"> </mjx-break><mjx-mo data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mn space="4" data-latex="0{,}040"><mjx-c class="mjx-c30" noic="true" style="padding-top: 0.677em;">0</mjx-c><mjx-c class="mjx-c2C" noic="true" style="padding-top: 0.677em;">,</mjx-c><mjx-c class="mjx-c30" noic="true" style="padding-top: 0.677em;">0</mjx-c><mjx-c class="mjx-c34" noic="true" style="padding-top: 0.677em;">4</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.677em;">0</mjx-c></mjx-mn><mjx-mn data-latex="8"><mjx-c class="mjx-c38">8</mjx-c></mjx-mn><mjx-mi data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi><mjx-break size="3"> </mjx-break><mjx-mo data-latex="+"><mjx-c class="mjx-c2B">+</mjx-c></mjx-mo><mjx-mn space="3" data-latex="0"><mjx-c class="mjx-c30">0</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="12"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c32" style="padding-top: 0.666em;">2</mjx-c></mjx-mn></mjx-math></mjx-container>. Aus <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="\Delta U=5\,\mathrm V" breakable="true" class="NCM-N"><mjx-mi data-latex="\Delta"><mjx-c class="mjx-c394">Δ</mjx-c></mjx-mi><mjx-mi data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi><mjx-break size="4"> </mjx-break><mjx-mo data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mn space="4" data-latex="5"><mjx-c class="mjx-c35">5</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-texatom data-latex="\mathrm V" texclass="ORD"><mjx-mi data-latex="V"><mjx-c class="mjx-c56">V</mjx-c></mjx-mi></mjx-texatom></mjx-math></mjx-container> und <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="\Delta Q=0{,}1\cdot10^{-8}\,\mathrm C" breakable="true" class="NCM-N"><mjx-mi data-latex="\Delta"><mjx-c class="mjx-c394">Δ</mjx-c></mjx-mi><mjx-mi data-latex="Q"><mjx-c class="mjx-c1D444">𝑄</mjx-c></mjx-mi><mjx-break size="4"> </mjx-break><mjx-mo data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mn space="4" data-latex="0"><mjx-c class="mjx-c30">0</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="1"><mjx-c class="mjx-c31">1</mjx-c></mjx-mn><mjx-break size="3"> </mjx-break><mjx-mo data-latex="\cdot"><mjx-c class="mjx-c22C5">⋅</mjx-c></mjx-mo><mjx-msup space="3" data-latex="10^{-8}"><mjx-mn data-latex="10"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-script style="vertical-align: 0.393em;"><mjx-texatom size="s" data-latex="{-8}" texclass="ORD"><mjx-mo data-latex="-"><mjx-c class="mjx-c2212">−</mjx-c></mjx-mo><mjx-mn data-latex="8"><mjx-c class="mjx-c38">8</mjx-c></mjx-mn></mjx-texatom></mjx-script></mjx-msup><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-texatom data-latex="\mathrm C" texclass="ORD"><mjx-mi data-latex="C"><mjx-c class="mjx-c43">C</mjx-c></mjx-mi></mjx-texatom></mjx-math></mjx-container> ergibt sich nach der Methode des größten Einzelfehlers ein größter relativer Einzelfehler von <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="10\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="10"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container>. Die größte Modellabweichung beträgt <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="7{,}41\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="7"><mjx-c class="mjx-c37">7</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="41"><mjx-c class="mjx-c34" noic="true" style="padding-top: 0.677em;">4</mjx-c><mjx-c class="mjx-c31" style="padding-top: 0.677em;">1</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container>. Der Anteil des y-Achsenabschnitts am kleinsten Ladungswert beträgt <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="0{,}12/2{,}0\cdot100=6\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="0"><mjx-c class="mjx-c30">0</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="12"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c32" style="padding-top: 0.666em;">2</mjx-c></mjx-mn><mjx-mo data-latex="/"><mjx-c class="mjx-c2F">/</mjx-c></mjx-mo><mjx-mn data-latex="2"><mjx-c class="mjx-c32">2</mjx-c></mjx-mn><mjx-texatom data-latex="{,}" texclass="ORD"><mjx-mo data-latex=","><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo></mjx-texatom><mjx-mn data-latex="0"><mjx-c class="mjx-c30">0</mjx-c></mjx-mn><mjx-break size="3"> </mjx-break><mjx-mo data-latex="\cdot"><mjx-c class="mjx-c22C5">⋅</mjx-c></mjx-mo><mjx-mn space="3" data-latex="100"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" noic="true" style="padding-top: 0.666em;">0</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-break size="4"> </mjx-break><mjx-mo data-latex="="><mjx-c class="mjx-c3D">=</mjx-c></mjx-mo><mjx-mn space="4" data-latex="6"><mjx-c class="mjx-c36">6</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container>. Beide Abweichungen liegen unter <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="10\,\%" breakable="true" class="NCM-N"><mjx-mn data-latex="10"><mjx-c class="mjx-c31" noic="true" style="padding-top: 0.666em;">1</mjx-c><mjx-c class="mjx-c30" style="padding-top: 0.666em;">0</mjx-c></mjx-mn><mjx-break size="0"> </mjx-break><mjx-mspace data-latex="\," style="width: 0.167em;"></mjx-mspace><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container> und können daher durch die Messfehler erklärt werden. Der y-Achsenabschnitt kann näherungsweise vernachlässigt werden, sodass <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="Q(U)\approx mU" breakable="true" class="NCM-N"><mjx-mi data-latex="Q"><mjx-c class="mjx-c1D444">𝑄</mjx-c></mjx-mi><mjx-mo data-latex="("><mjx-c class="mjx-c28">(</mjx-c></mjx-mo><mjx-mi data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi><mjx-mo data-latex=")"><mjx-c class="mjx-c29">)</mjx-c></mjx-mo><mjx-break size="4"> </mjx-break><mjx-mo data-latex="\approx"><mjx-c class="mjx-c2248">≈</mjx-c></mjx-mo><mjx-mi space="4" data-latex="m"><mjx-c class="mjx-c1D45A">𝑚</mjx-c></mjx-mi><mjx-mi data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi></mjx-math></mjx-container> gilt. Die Messwerte sind damit mit <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="Q\propto U" breakable="true" class="NCM-N"><mjx-mi data-latex="Q"><mjx-c class="mjx-c1D444">𝑄</mjx-c></mjx-mi><mjx-break size="4"> </mjx-break><mjx-mo data-latex="\propto"><mjx-c class="mjx-c221D">∝</mjx-c></mjx-mo><mjx-mi space="4" data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi></mjx-math></mjx-container> vereinbar, beweisen die Proportionalität aber nicht.</p>
+        </article>
+      </div>
+      <p id="copyMethodStatus" class="sr-only" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="method-checkpoint" aria-labelledby="method-check-title">
+      <div class="checkpoint-heading"><span class="checkpoint-icon" aria-hidden="true">✓</span><div><p class="mini-label">Gemeinsame Pflichtkontrolle</p><h2 id="method-check-title">Prüfe die Methode einmal für alle drei Wege</h2></div></div>
+      <p>Dein Abschluss wird lokal gespeichert und gilt anschließend für Potenzregression, Konstantenverfahren und lineare Regression.</p>
+      <form id="methodCheckForm" novalidate="">
+        <div class="checkpoint-fields">
+          <div class="checkpoint-field result"><span class="check-kind">Ergebnis</span><label class="field" for="uError"><span>Größter relativer <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="U" class="NCM-N"><mjx-mi data-latex="U"><mjx-c class="mjx-c1D448">𝑈</mjx-c></mjx-mi></mjx-math></mjx-container>-Einzelfehler in <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="\%" class="NCM-N"><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container></span><input id="uError" name="uError" type="text" inputmode="decimal" placeholder="10" aria-describedby="feedback-uError"></label><p id="feedback-uError" class="field-feedback" aria-live="polite"></p></div>
+          <div class="checkpoint-field result"><span class="check-kind">Ergebnis</span><label class="field" for="qError"><span>Größter relativer <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="Q" class="NCM-N"><mjx-mi data-latex="Q"><mjx-c class="mjx-c1D444">𝑄</mjx-c></mjx-mi></mjx-math></mjx-container>-Einzelfehler in <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="\%" class="NCM-N"><mjx-mi data-latex="\%"><mjx-c class="mjx-c25">%</mjx-c></mjx-mi></mjx-math></mjx-container></span><input id="qError" name="qError" type="text" inputmode="decimal" placeholder="5" aria-describedby="feedback-qError"></label><p id="feedback-qError" class="field-feedback" aria-live="polite"></p></div>
+          <div class="checkpoint-field result"><span class="check-kind">Ergebnis</span><label class="field" for="maxError"><span><mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="f_{\max}" class="NCM-N"><mjx-msub data-latex="f_{\max}"><mjx-mi data-latex="f"><mjx-c class="mjx-c1D453">𝑓</mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em; margin-left: -0.062em;"><mjx-texatom size="s" data-latex="{\max}" texclass="ORD"><mjx-mo data-latex="\max"><mjx-c class="mjx-c6D" noic="true" style="padding-top: 0.448em;">m</mjx-c><mjx-c class="mjx-c61" noic="true" style="padding-top: 0.448em;">a</mjx-c><mjx-c class="mjx-c78" style="padding-top: 0.448em;">x</mjx-c></mjx-mo></mjx-texatom></mjx-script></mjx-msub></mjx-math></mjx-container> in %</span><input id="maxError" name="maxError" type="text" inputmode="decimal" placeholder="10" aria-describedby="feedback-maxError"></label><p id="feedback-maxError" class="field-feedback" aria-live="polite"></p></div>
+          <div class="checkpoint-field understanding"><span class="check-kind">Verständnis</span><label class="field" for="minimumReason"><span>Warum verwenden wir die kleinsten Messwerte?</span><select id="minimumReason" name="minimumReason" aria-describedby="feedback-minimumReason"><option value="">Bitte auswählen …</option><option value="largest-relative">Bei gleichem absoluten Fehler ist dort der relative Fehler am größten.</option><option value="smallest-error">Dort ist auch der absolute Fehler am kleinsten.</option><option value="geogebra">GeoGebra verlangt immer den kleinsten Wert.</option></select></label><p id="feedback-minimumReason" class="field-feedback" aria-live="polite"></p></div>
+          <div class="checkpoint-field understanding"><span class="check-kind">Verständnis</span><label class="field" for="methodMeaning"><span>Was bedeutet eine Abweichung unter <mjx-container class="MathJax" jax="CHTML" overflow="linebreak" style="font-size: 113.1%;"><mjx-math data-latex="f_{\max}" class="NCM-N"><mjx-msub data-latex="f_{\max}"><mjx-mi data-latex="f"><mjx-c class="mjx-c1D453">𝑓</mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em; margin-left: -0.062em;"><mjx-texatom size="s" data-latex="{\max}" texclass="ORD"><mjx-mo data-latex="\max"><mjx-c class="mjx-c6D" noic="true" style="padding-top: 0.448em;">m</mjx-c><mjx-c class="mjx-c61" noic="true" style="padding-top: 0.448em;">a</mjx-c><mjx-c class="mjx-c78" style="padding-top: 0.448em;">x</mjx-c></mjx-mo></mjx-texatom></mjx-script></mjx-msub></mjx-math></mjx-container>?</span><select id="methodMeaning" name="methodMeaning" aria-describedby="feedback-methodMeaning"><option value="">Bitte auswählen …</option><option value="explainable">Sie kann nach dieser Methode durch Messfehler erklärt werden, beweist aber nichts.</option><option value="proven">Die Theorie ist damit mathematisch bewiesen.</option><option value="zero">Die tatsächliche Abweichung ist null.</option></select></label><p id="feedback-methodMeaning" class="field-feedback" aria-live="polite"></p></div>
+        </div>
+        <button class="button primary" type="submit">Pflichtkontrolle prüfen</button>
+      </form>
+      <p id="methodCheckFeedback" class="feedback" role="status" aria-live="polite"></p>
+      <a id="returnToCourse" class="button secondary method-return" href="./index.html?course=inverse-square#course">Ohne Abschluss zurückkehren</a>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="wrap footer-inner"><p>Der Lernstand bleibt ausschließlich im lokalen Speicher dieses Geräts.</p><p>Vereinfachte schulische Fehlerbeurteilung · keine vollständige Fehlerfortpflanzung</p></div></footer>
+  <script type="module" src="./groesster-einzelfehler.js?v=20260920-1"></script>
+
+
+</body></html>

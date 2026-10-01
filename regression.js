@@ -25,7 +25,7 @@ export const CHARGING_RAW_DATA = Object.freeze([
   Object.freeze({ t: 60, uc: 3.192, deltaU: 0.588 }),
   Object.freeze({ t: 70, uc: 3.343, deltaU: 0.437 }),
   Object.freeze({ t: 80, uc: 3.448, deltaU: 0.332 }),
-  Object.freeze({ t: 100, uc: 3.529, deltaU: 0.251, excluded: true })
+  Object.freeze({ t: 100, uc: 3.529, deltaU: 0.251, flagged: true })
 ]);
 
 export const CHARGING_FIT_DATA = Object.freeze(
@@ -38,6 +38,8 @@ export function parseLocaleNumber(value) {
 
   let normalized = value.trim().replace(/\s+/g, "");
   if (!normalized) return NaN;
+
+  normalized = normalized.replace(/\u2212/g, "-");
 
   const comma = normalized.lastIndexOf(",");
   const point = normalized.lastIndexOf(".");

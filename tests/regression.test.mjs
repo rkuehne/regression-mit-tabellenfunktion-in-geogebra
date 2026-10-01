@@ -29,12 +29,17 @@ import {
   validatePowerPoints
 } from "../regression.js";
 
-test("liest Dezimalkomma, Dezimalpunkt und gruppierte Zahlen", () => {
+test("liest Dezimalkomma, Dezimalpunkt und gruppierte Zahlen sowie Unicode-Minus", () => {
   assert.equal(parseLocaleNumber("18,6"), 18.6);
   assert.equal(parseLocaleNumber("18.6"), 18.6);
   assert.equal(parseLocaleNumber("1.234,56"), 1234.56);
   assert.equal(parseLocaleNumber("1,234.56"), 1234.56);
+  assert.equal(parseLocaleNumber("−0,02836"), -0.02836);
+  assert.equal(parseLocaleNumber("−0,02836"), parseLocaleNumber("-0,02836"));
+  assert.equal(parseLocaleNumber("−2,075"), -2.075);
   assert.ok(Number.isNaN(parseLocaleNumber("")));
+  assert.ok(Number.isNaN(parseLocaleNumber("   ")));
+  assert.ok(Number.isNaN(parseLocaleNumber("ungültig")));
 });
 
 test("berechnet die Referenz-Potenzregression wie GeoGebra", () => {

@@ -1,13 +1,19 @@
-import { isWithin } from "./regression.js";
 import { COURSE_IDS, UQ_SHARED_REQUIREMENT_ID } from "./lesson-data.js";
 import { loadState, persistState } from "./state.js";
 import { typesetDocument, typesetMath } from "./math-typeset.js?v=20260920-1";
+import { SHARED_ERROR_FIELDS, validateSharedErrorField } from "./shared-error-module.js";
 
 const UQ_COURSES = COURSE_IDS.filter((id) => id.startsWith("proportional-"));
 const state = loadState(localStorage);
-const requestedCourse = new URLSearchParams(window.location.search).get("course");
+const urlParams = new URLSearchParams(window.location.search);
+const requestedCourse = urlParams.get("course");
+const returnCourse = urlParams.get("return") || requestedCourse;
+const returnStep = urlParams.get("step");
+
 if (UQ_COURSES.includes(requestedCourse)) {
   state.activeCourseId = requestedCourse;
+} else if (UQ_COURSES.includes(returnCourse)) {
+  state.activeCourseId = returnCourse;
 }
 
 state.sharedModules ||= {};
@@ -18,27 +24,29 @@ const form = document.getElementById("methodCheckForm");
 const overallFeedback = document.getElementById("methodCheckFeedback");
 const moduleStatus = document.getElementById("moduleStatus");
 const returnLink = document.getElementById("returnToCourse");
+const returnTopLink = document.getElementById("returnLink");
 const copyStatus = document.getElementById("copyMethodStatus");
+
+const backCourseId = returnCourse && COURSE_IDS.includes(returnCourse) ? returnCourse : (state.activeCourseId || "proportional-linear");
+let backUrl = `./index.html?course=${encodeURIComponent(backCourseId)}`;
+if (returnStep) backUrl += `&step=${encodeURIComponent(returnStep)}`;
+backUrl += "#course";
+if (returnLink) returnLink.href = backUrl;
+if (returnTopLink) returnTopLink.href = backUrl;
 const copyPhrases = new Map([
   ["phrase-power", "Die Potenzregression ergibt den Exponenten n ≈ 1,0116. Aus ΔU = 5 V und ΔQ = 0,1 · 10⁻⁸ C ergibt sich nach der Methode des größten Einzelfehlers ein größter relativer Einzelfehler von 10 %. Die relative Exponentabweichung beträgt etwa 1,16 %, die größte Modellabweichung etwa 3,74 %. Beide Abweichungen liegen unter 10 % und können daher durch die Messfehler erklärt werden. Der Exponent kann näherungsweise als n ≈ 1 behandelt werden. Die Messwerte sind damit mit Q ∝ U vereinbar, beweisen die Proportionalität aber nicht."],
   ["phrase-constants", "Die mittlere Kapazität beträgt etwa 416 pF. Nach der Methode des größten Einzelfehlers ergibt sich aus den Messfehlern ein größter relativer Einzelfehler von 10 %. Die größte Abweichung einer Einzelkapazität vom Mittelwert beträgt etwa 3,83 % und liegt damit unter 10 %. Die Streuung kann durch die Messfehler erklärt und die Kapazität im Rahmen dieser Methode als konstant angesehen werden. Die Messwerte sind mit Q ∝ U vereinbar, beweisen die Proportionalität aber nicht."],
   ["phrase-linear", "Die lineare Regression ergibt Q(U) = 0,0408U + 0,12. Aus ΔU = 5 V und ΔQ = 0,1 · 10⁻⁸ C ergibt sich nach der Methode des größten Einzelfehlers ein größter relativer Einzelfehler von 10 %. Die größte Modellabweichung beträgt 7,41 %. Der Anteil des y-Achsenabschnitts am kleinsten Ladungswert beträgt 0,12/2,0 · 100 = 6 %. Beide Abweichungen liegen unter 10 % und können daher durch die Messfehler erklärt werden. Der y-Achsenabschnitt kann näherungsweise vernachlässigt werden, sodass Q(U) ≈ mU gilt. Die Messwerte sind damit mit Q ∝ U vereinbar, beweisen die Proportionalität aber nicht."]
 ]);
 
-const fields = [
-  { id: "uError", type: "number", expected: 10, tolerance: 0.05, correct: "\\(10\\,\\%\\) stimmt.", incorrect: "Berechne \\(\\frac{5}{50}\\cdot100\\)." },
-  { id: "qError", type: "number", expected: 5, tolerance: 0.05, correct: "\\(5\\,\\%\\) stimmt.", incorrect: "Berechne \\(\\frac{0{,}1}{2{,}0}\\cdot100\\)." },
-  { id: "maxError", type: "number", expected: 10, tolerance: 0.05, correct: "\\(f_{\\max}=10\\,\\%\\) stimmt.", incorrect: "Wähle den größeren Wert aus \\(10\\,\\%\\) und \\(5\\,\\%\\)." },
-  { id: "minimumReason", type: "choice", expected: "largest-relative", correct: "Richtig: Bei gleichem absoluten Fehler ist der relative Fehler am kleinsten Messwert am größten.", incorrect: "Vergleiche denselben Zähler bei einem kleinen und einem großen Nenner." },
-  { id: "methodMeaning", type: "choice", expected: "explainable", correct: "Richtig: erklärbar, aber nicht bewiesen.", incorrect: "Die Methode erlaubt eine Fehlererklärung, keinen mathematischen Beweis." }
-];
+const fields = SHARED_ERROR_FIELDS;
 
 function save() {
   persistState(localStorage, state);
 }
 
 function valid(field, value) {
-  return field.type === "number" ? isWithin(value, field.expected, field.tolerance) : value === field.expected;
+  return validateSharedErrorField(field, value);
 }
 
 function renderStatus() {

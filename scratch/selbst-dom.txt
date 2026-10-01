@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html lang="de"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#6552c8">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="description" content="GeoGebra-Trainer: Drei Übungsaufgaben zur selbstständigen Anwendung von Linear-, Potenz- und Exponentialregression.">
+  <title>GeoGebra-Trainer · Selbstständig auswerten</title>
+  <link rel="preload" href="./assets/vendor/mathjax/tex-chtml.js" as="script">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body class="practice-page" data-math-state="loading">
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+  <nav class="site-nav" aria-label="Hauptnavigation">
+    <div class="wrap site-nav-inner">
+      <a class="nav-brand" href="./index.html"><span class="brand-mark" aria-hidden="true">∑</span> GeoGebra-Trainer</a>
+      <ul class="nav-menu">
+        <li><a class="nav-link" data-nav="learn" href="./index.html?course=proportional-linear#course">Geführte Lernwege</a></li>
+        <li><a class="nav-link" data-nav="practice" href="./selbst-auswerten.html?task=linear-7" aria-current="page">Selbst auswerten</a></li>
+        <li><a class="nav-link" data-nav="documentation" href="./dokumentation.html?course=proportional-linear">Für die Klausur dokumentieren</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="practice-header">
+    <div class="wrap practice-header-inner">
+      <p class="eyebrow">GeoGebra-Trainer · Eigenständige Anwendung</p>
+      <h1>Selbstständig auswerten</h1>
+      <p class="header-lead">Wende das Gelernte auf eine neue Messreihe an. Werte die Daten in GeoGebra aus und überprüfe deine Ergebnisse.</p>
+    </div>
+  </header>
+
+  <main id="main" class="wrap practice-main">
+    <section id="taskPicker" class="task-picker" aria-label="Aufgabe auswählen">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Übungsaufgabe wählen</p>
+          <h2 id="taskPickerTitle">Wähle eine Regressionsart</h2>
+        </div>
+        <p class="section-intro">Drei didaktische Übungsdatensätze mit jeweils sieben Messpaaren stehen zur Auswahl.</p>
+      </div>
+      <div id="taskChoiceList" class="task-choice-list" role="tablist" aria-label="Aufgaben">
+        <button id="taskBtn-linear-7" class="task-choice-btn" type="button" role="tab" aria-selected="true" data-task-id="linear-7">
+          <strong>Lineare Regression</strong>
+          <small>Kondensator · 7 Messpaare</small>
+        </button>
+        <button id="taskBtn-power-7" class="task-choice-btn" type="button" role="tab" aria-selected="false" data-task-id="power-7">
+          <strong>Potenzregression</strong>
+          <small>Abstand &amp; Kraft · 7 Messpaare</small>
+        </button>
+        <button id="taskBtn-exponential-7" class="task-choice-btn" type="button" role="tab" aria-selected="false" data-task-id="exponential-7">
+          <strong>Exponentialregression</strong>
+          <small>Aufladung · 7 Messpaare</small>
+        </button>
+      </div>
+    </section>
+
+    <section id="taskWorkspace" class="task-workspace" aria-labelledby="taskTitle">
+      <div id="taskContent" class="task-content"></div>
+    </section>
+  </main>
+
+  <script type="module" src="./selbst-auswerten.js"></script>
+
+
+</body></html>

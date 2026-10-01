@@ -15,7 +15,11 @@ const BROWSER_MODULES = [
   "math-typeset.js",
   "groesster-einzelfehler.js",
   "documentation-data.js",
-  "dokumentation.js"
+  "dokumentation.js",
+  "navigation.js",
+  "shared-error-module.js",
+  "practice-data.js",
+  "selbst-auswerten.js"
 ];
 
 function source(file) {
@@ -56,7 +60,12 @@ test("findet für jeden relativen Modulimport eine lokale Datei", () => {
 });
 
 test("enthält für alle JavaScript-Zugriffe die zugehörigen HTML-Elemente", () => {
-  for (const [scriptFile, htmlFile] of [["app.js", "index.html"], ["groesster-einzelfehler.js", "groesster-einzelfehler.html"], ["dokumentation.js", "dokumentation.html"]]) {
+  for (const [scriptFile, htmlFile] of [
+    ["app.js", "index.html"],
+    ["groesster-einzelfehler.js", "groesster-einzelfehler.html"],
+    ["dokumentation.js", "dokumentation.html"],
+    ["selbst-auswerten.js", "selbst-auswerten.html"]
+  ]) {
     const script = source(scriptFile);
     const html = source(htmlFile);
     const referencedIds = [...script.matchAll(/getElementById\(["']([^"']+)["']\)/g)].map((match) => match[1]);
@@ -67,7 +76,7 @@ test("enthält für alle JavaScript-Zugriffe die zugehörigen HTML-Elemente", ()
 });
 
 test("verwendet nur vorhandene lokale Seiten-, Stil- und Bildressourcen", () => {
-  for (const htmlFile of ["index.html", "groesster-einzelfehler.html", "dokumentation.html"]) {
+  for (const htmlFile of ["index.html", "groesster-einzelfehler.html", "dokumentation.html", "selbst-auswerten.html"]) {
     for (const reference of localReferences(source(htmlFile))) assertLocalFile(reference, htmlFile);
   }
 
@@ -120,4 +129,30 @@ test("liefert MathJax 4.1.3 und die Schrift vollständig lokal aus", () => {
   assert.match(notices, /MathJax 4\.1\.3/);
   assert.match(notices, /Apache License 2\.0/);
   assert.doesNotMatch(source("index.html") + source("groesster-einzelfehler.html") + documentationPage + loader, /cdn\.jsdelivr|unpkg\.com|cdnjs\.cloudflare/);
+});
+
+test("bindet die einheitliche Navigationsleiste auf allen vier Seiten ein und ordnet Methoden nach AP 03", () => {
+  const pages = ["index.html", "selbst-auswerten.html", "dokumentation.html", "groesster-einzelfehler.html"];
+  for (const page of pages) {
+    const html = source(page);
+    assert.match(html, /class="site-nav"/, `${page} fehlt .site-nav`);
+    assert.match(html, /href="\.\/index\.html"/, `${page} fehlt Link zu index.html`);
+    assert.match(html, /href="\.\/selbst-auswerten\.html"/, `${page} fehlt Link zu selbst-auswerten.html`);
+    assert.match(html, /href="\.\/dokumentation\.html"/, `${page} fehlt Link zu dokumentation.html`);
+  }
+
+  assert.match(source("index.html"), /href="\.\/index\.html"[^>]*aria-current="page"/);
+  assert.match(source("selbst-auswerten.html"), /href="\.\/selbst-auswerten\.html"[^>]*aria-current="page"/);
+  assert.match(source("dokumentation.html"), /href="\.\/dokumentation\.html"[^>]*aria-current="page"/);
+
+  const indexHtml = source("index.html");
+  const buttonMatches = [...indexHtml.matchAll(/data-course-id="([^"]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(buttonMatches, [
+    "proportional-linear",
+    "inverse-square",
+    "proportional-power",
+    "capacitor-exponential",
+    "proportional-constants"
+  ]);
+  assert.match(indexHtml, /alternative mathematische Methoden für denselben Datensatz/);
 });

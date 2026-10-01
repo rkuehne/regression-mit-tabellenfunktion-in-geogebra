@@ -4,19 +4,30 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
-  <title>Methode des größten Einzelfehlers · GeoGebra-Begleitkurs</title>
+  <title>GeoGebra-Trainer · Methode des größten Einzelfehlers</title>
   <link rel="preload" href="./assets/vendor/mathjax/tex-chtml.js" as="script">
   <link rel="stylesheet" href="./style.css">
 </head>
 <body class="error-method-page">
   <a class="skip-link" href="#main">Zum Inhalt springen</a>
 
+  <nav class="site-nav" aria-label="Hauptnavigation">
+    <div class="wrap site-nav-inner">
+      <a class="nav-brand" href="./index.html"><span class="brand-mark" aria-hidden="true">∑</span> GeoGebra-Trainer</a>
+      <ul class="nav-menu">
+        <li><a class="nav-link" data-nav="learn" href="./index.html">Regression lernen</a></li>
+        <li><a class="nav-link" data-nav="practice" href="./selbst-auswerten.html">Selbstständig auswerten</a></li>
+        <li><a class="nav-link" data-nav="documentation" href="./dokumentation.html">Für die Klausur dokumentieren</a></li>
+      </ul>
+    </div>
+  </nav>
+
   <header class="method-header">
     <div class="wrap method-header-inner">
-      <a class="method-back-link" href="./index.html#course">← Zurück zum Lernweg</a>
-      <p class="eyebrow">Gemeinsame Pflichtseite für alle \(Q\)–\(U\)-Wege</p>
+      <a id="returnLink" class="method-back-link" href="./index.html#course">← Zurück zum Lernweg</a>
+      <p class="eyebrow">Ergänzende Methodenhilfe zu: Regression lernen</p>
       <h1>Methode des größten Einzelfehlers</h1>
-      <p class="hero-lead">Wir übertragen den größten relativen Einzelfehler als Fehlergrenze auf die untersuchten Abweichungen. So beurteilen wir schulisch, ob Abweichungen durch die Messfehler erklärt werden können.</p>
+      <p class="hero-lead">Wir übertragen den größten relativen Einzelfehler als vereinfachte schulische Vergleichsregel auf die untersuchten Abweichungen.</p>
       <div id="moduleStatus" class="method-status" role="status" aria-live="polite"></div>
     </div>
   </header>
@@ -98,9 +109,9 @@
       <p>Dein Abschluss wird lokal gespeichert und gilt anschließend für Potenzregression, Konstantenverfahren und lineare Regression.</p>
       <form id="methodCheckForm" novalidate>
         <div class="checkpoint-fields">
-          <div class="checkpoint-field result"><span class="check-kind">Ergebnis</span><label class="field" for="uError"><span>Größter relativer \(U\)-Einzelfehler in \(\%\)</span><input id="uError" name="uError" type="text" inputmode="decimal" placeholder="10" aria-describedby="feedback-uError"></label><p id="feedback-uError" class="field-feedback" aria-live="polite"></p></div>
-          <div class="checkpoint-field result"><span class="check-kind">Ergebnis</span><label class="field" for="qError"><span>Größter relativer \(Q\)-Einzelfehler in \(\%\)</span><input id="qError" name="qError" type="text" inputmode="decimal" placeholder="5" aria-describedby="feedback-qError"></label><p id="feedback-qError" class="field-feedback" aria-live="polite"></p></div>
-          <div class="checkpoint-field result"><span class="check-kind">Ergebnis</span><label class="field" for="maxError"><span>\(f_{\max}\) in %</span><input id="maxError" name="maxError" type="text" inputmode="decimal" placeholder="10" aria-describedby="feedback-maxError"></label><p id="feedback-maxError" class="field-feedback" aria-live="polite"></p></div>
+          <div class="checkpoint-field result"><span class="check-kind">Ergebnis</span><label class="field" for="uError"><span>Größter relativer \(U\)-Einzelfehler in \(\%\)</span><input id="uError" name="uError" type="text" inputmode="decimal" placeholder="Ergebnis eingeben" aria-describedby="feedback-uError"></label><p id="feedback-uError" class="field-feedback" aria-live="polite"></p></div>
+          <div class="checkpoint-field result"><span class="check-kind">Ergebnis</span><label class="field" for="qError"><span>Größter relativer \(Q\)-Einzelfehler in \(\%\)</span><input id="qError" name="qError" type="text" inputmode="decimal" placeholder="Ergebnis eingeben" aria-describedby="feedback-qError"></label><p id="feedback-qError" class="field-feedback" aria-live="polite"></p></div>
+          <div class="checkpoint-field result"><span class="check-kind">Ergebnis</span><label class="field" for="maxError"><span>\(f_{\max}\) in %</span><input id="maxError" name="maxError" type="text" inputmode="decimal" placeholder="Ergebnis eingeben" aria-describedby="feedback-maxError"></label><p id="feedback-maxError" class="field-feedback" aria-live="polite"></p></div>
           <div class="checkpoint-field understanding"><span class="check-kind">Verständnis</span><label class="field" for="minimumReason"><span>Warum verwenden wir die kleinsten Messwerte?</span><select id="minimumReason" name="minimumReason" aria-describedby="feedback-minimumReason"><option value="">Bitte auswählen …</option><option value="largest-relative">Bei gleichem absoluten Fehler ist dort der relative Fehler am größten.</option><option value="smallest-error">Dort ist auch der absolute Fehler am kleinsten.</option><option value="geogebra">GeoGebra verlangt immer den kleinsten Wert.</option></select></label><p id="feedback-minimumReason" class="field-feedback" aria-live="polite"></p></div>
           <div class="checkpoint-field understanding"><span class="check-kind">Verständnis</span><label class="field" for="methodMeaning"><span>Was bedeutet eine Abweichung unter \(f_{\max}\)?</span><select id="methodMeaning" name="methodMeaning" aria-describedby="feedback-methodMeaning"><option value="">Bitte auswählen …</option><option value="explainable">Sie kann nach dieser Methode durch Messfehler erklärt werden, beweist aber nichts.</option><option value="proven">Die Theorie ist damit mathematisch bewiesen.</option><option value="zero">Die tatsächliche Abweichung ist null.</option></select></label><p id="feedback-methodMeaning" class="field-feedback" aria-live="polite"></p></div>
         </div>

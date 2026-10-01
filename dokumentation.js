@@ -5,6 +5,7 @@ import {
 } from "./documentation-data.js";
 import { loadState, persistState } from "./state.js";
 import { mathReady, typesetDocument } from "./math-typeset.js?v=20260920-1";
+import { renderSiteNavigation, buildNavUrl, taskForCourse } from "./navigation.js";
 
 const els = {
   guide: document.getElementById("documentationGuide"),
@@ -22,14 +23,33 @@ const els = {
 };
 
 const state = loadState(localStorage);
-const requestedCourse = new URLSearchParams(window.location.search).get("course");
+const params = new URLSearchParams(window.location.search);
+const requestedCourse = params.get("course");
+const requestedStep = params.get("step");
+const requestedSection = params.get("section");
+
 if (DOCUMENTATION_EXAMPLE_IDS.includes(requestedCourse)) {
   state.documentation.selectedExampleId = requestedCourse;
 }
 const returnCourseId = DOCUMENTATION_EXAMPLE_IDS.includes(requestedCourse)
   ? requestedCourse
   : state.activeCourseId;
-els.back.href = `./index.html?course=${encodeURIComponent(returnCourseId)}#course`;
+
+function updateNavigationLinks() {
+  const exId = state.documentation.selectedExampleId;
+  renderSiteNavigation("documentation", {
+    courseId: exId,
+    stepId: requestedStep,
+    taskId: taskForCourse(exId)
+  });
+  if (els.back) {
+    els.back.href = buildNavUrl("learn", {
+      courseId: returnCourseId,
+      stepId: requestedStep
+    });
+  }
+}
+updateNavigationLinks();
 
 function save() {
   persistState(localStorage, state);
@@ -206,6 +226,7 @@ function selectExample(exampleId) {
   state.documentation.selectedExampleId = exampleId;
   save();
   renderSelection({ announce: true });
+  updateNavigationLinks();
 }
 
 function setView(view) {
@@ -276,4 +297,12 @@ const documentTypeset = typesetDocument();
 Promise.all([mathReady, documentTypeset]).then(([available]) => {
   document.body.dataset.mathState = available ? "ready" : "fallback";
   els.mathLoading.hidden = true;
+  if (requestedSection) {
+    const activePanel = document.querySelector(".documentation-paper:not([hidden]), .documentation-practice-paper:not([hidden])");
+    const secEl = activePanel?.querySelector(`[data-section-id="${requestedSection}"]`)
+      || document.querySelector(`[data-section-id="${requestedSection}"]`);
+    if (secEl) {
+      secEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
 });

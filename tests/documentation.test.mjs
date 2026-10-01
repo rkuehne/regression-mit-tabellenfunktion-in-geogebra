@@ -29,6 +29,10 @@ test("enthält fünf vollständige Dokumentationsbeispiele mit denselben fünf A
       assert.ok(item.checklist.length >= 3, `${example.id}/${item.id} besitzt eine Prüfliste`);
       assert.ok(item.starter.length > 20, `${example.id}/${item.id} besitzt eine Starthilfe`);
     }
+    const devSection = example.sections.find((s) => s.id === "deviations");
+    assert.ok(devSection, `${example.id} besitzt deviations-Abschnitt`);
+    assert.match(devSection.model, /\\frac\{/, `${example.id} deviations enthält eingesetzte Bruchformel`);
+    assert.match(devSection.model, /\\cdot100/, `${example.id} deviations enthält Prozentmultiplikation`);
   }
   assert.equal(DOCUMENTATION_GENERAL_GUIDE.length, 5);
 });
@@ -86,4 +90,68 @@ test("bietet Muster, Papierübung, Selbstkontrolle und getrennte Druckansichten"
   assert.match(app, /buildStaticContent\(\)[\s\S]*typesetDocument\(\)/);
   assert.match(css, /data-print-target="model"/);
   assert.match(css, /data-print-target="worksheet"/);
+});
+
+test("gewährleistet intakte Formelzeichen in allen Dokumentationsfeldern und saubere Phasenklassen", () => {
+  const css = source("style.css");
+  assert.doesNotMatch(css, /\.learning-map\s+li\s+span\b/, "Pauschaler Selektor .learning-map li span muss beseitigt sein");
+  assert.match(css, /\.learning-map-number\b/, "Spezifischer Selektor .learning-map-number vorhanden");
+  assert.match(css, /\.learning-map-label\b/, "Spezifischer Selektor .learning-map-label vorhanden");
+
+  for (const example of Object.values(DOCUMENTATION_EXAMPLES)) {
+    assert.doesNotMatch(example.introduction, /\t/, `${example.id} Intro enthält keinen Tabulator`);
+    assert.doesNotMatch(example.introduction, /Ccdot|\(10,%\)/);
+    for (const item of example.sections) {
+      const texts = [item.task, item.starter, ...(item.checklist || []), item.model];
+      for (const text of texts) {
+        assert.doesNotMatch(text, /\t/, `${example.id}/${item.id} enthält kein unmaskiertes \\t`);
+        assert.doesNotMatch(text, /Q=Ccdot U/, `${example.id}/${item.id} enthält kein Q=Ccdot U`);
+        assert.doesNotMatch(text, /Ccdot/, `${example.id}/${item.id} enthält kein Ccdot`);
+        assert.doesNotMatch(text, /\(10,%\)/, `${example.id}/${item.id} enthält kein (10,%)`);
+        assert.doesNotMatch(text, /\(Delta U\(t\)\)/, `${example.id}/${item.id} enthält kein (Delta U(t))`);
+        assert.doesNotMatch(text, /\bau\b\s+anstelle/, `${example.id}/${item.id} enthält kein beschädigtes \\tau`);
+      }
+    }
+  }
+
+  const expPhysical = DOCUMENTATION_EXAMPLES["capacitor-exponential"].sections.find((s) => s.id === "physical");
+  assert.match(expPhysical.task, /\\tau/);
+  assert.match(expPhysical.checklist.join(" "), /\\tau/);
+  assert.match(expPhysical.checklist.join(" "), /\\Delta U\(t\)/);
+  assert.match(expPhysical.starter, /\\tau/);
+
+  const constData = DOCUMENTATION_EXAMPLES["proportional-constants"].sections.find((s) => s.id === "data");
+  assert.match(constData.starter, /Q=C\\cdot U/);
+});
+
+test("erfüllt alle Vorgaben für Abschnittstitel, Phasenverknüpfung und Drucktypografie (AP 09)", () => {
+  const expectedTitles = [
+    "1. Daten und Einheiten",
+    "2. GeoGebra-Auswertung",
+    "3. Physikalische Formel und Parameter",
+    "4. Abweichungen und Vergleichsregel",
+    "5. Begründete Schlussfolgerung"
+  ];
+  for (const example of Object.values(DOCUMENTATION_EXAMPLES)) {
+    assert.deepEqual(
+      example.sections.map((s) => s.title),
+      expectedTitles,
+      `${example.id} muss die 5 vorgeschriebenen Abschnittstitel tragen`
+    );
+  }
+
+  const app = source("app.js");
+  const html = source("index.html");
+  const docApp = source("dokumentation.js");
+  const css = source("style.css");
+
+  assert.match(html, /id="phaseDocHint"/);
+  assert.match(app, /PHASE_TO_DOC_SECTION/);
+  assert.match(app, /phaseDocHint/);
+  assert.match(app, /Abschnitt „.*“ im Klausurmuster ansehen/);
+  assert.match(docApp, /requestedSection/);
+  assert.match(docApp, /activePanel/);
+  assert.doesNotMatch(css, /font-size:\s*7\.6pt/, "Print CSS darf keine unleserliche 7.6pt-Schrift enthalten");
+  assert.match(css, /\.phase-doc-hint/);
+  assert.match(css, /\.phase-doc-btn/);
 });

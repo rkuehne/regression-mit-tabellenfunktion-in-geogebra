@@ -24,36 +24,46 @@
 <body>
   <a class="skip-link" href="#main">Zum Inhalt springen</a>
 
+  <nav class="site-nav" aria-label="Hauptnavigation">
+    <div class="wrap site-nav-inner">
+      <a class="nav-brand" href="./index.html"><span class="brand-mark" aria-hidden="true">∑</span> GeoGebra-Trainer</a>
+      <ul class="nav-menu">
+        <li><a class="nav-link" data-nav="learn" href="./index.html" aria-current="page">Regression lernen</a></li>
+        <li><a class="nav-link" data-nav="practice" href="./selbst-auswerten.html">Selbstständig auswerten</a></li>
+        <li><a class="nav-link" data-nav="documentation" href="./dokumentation.html">Für die Klausur dokumentieren</a></li>
+      </ul>
+    </div>
+  </nav>
+
   <header class="site-header">
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <p class="brand-line"><span class="brand-mark" aria-hidden="true">∑</span> GeoGebra-Begleitkurs</p>
+        <p class="brand-line"><span class="brand-mark" aria-hidden="true">∑</span> GeoGebra-Trainer</p>
         <p class="eyebrow">Oberstufe Physik · selbstständig auf dem iPad</p>
         <h1>Messdaten auswerten – Schritt für Schritt</h1>
         <p class="hero-lead">
-          Arbeite in der GeoGebra Rechner Suite und nutze diese Seite als digitales Lernbuch und Arbeitsanleitung.
-          Du wählst den vermuteten physikalischen Zusammenhang und erfährst nicht nur, was du antippen musst,
-          sondern auch, warum die Auswertung sinnvoll ist.
+          Arbeite in der GeoGebra Rechner Suite und nutze diese Seite als digitale Arbeitsanleitung.
+          Wähle eine mathematische Methode, führe die Auswertung durch und begründe dein Ergebnis fachlich.
         </p>
         <div class="hero-actions">
           <button id="startCourseBtn" class="button primary" type="button">Lernweg starten</button>
-          <a class="button secondary" href="./dokumentation.html">So dokumentierst du in der Klausur</a>
-          <a class="button secondary" href="https://www.geogebra.org/calculator" target="_blank" rel="noopener">GeoGebra-Webversion öffnen <span aria-hidden="true">↗</span></a>
+          <a class="button secondary" href="./selbst-auswerten.html">Selbst auswerten</a>
+          <a class="button secondary" href="./dokumentation.html">Klausurdokumentation</a>
         </div>
         <ul class="hero-facts" aria-label="Kursinformationen">
           <li>5 wählbare Lernwege</li>
-          <li>je 8–11 Kapitel</li>
-          <li>Fortschritt nur auf diesem Gerät</li>
+          <li>5 einheitliche Phasen</li>
+          <li>Fortschritt bleibt lokal gespeichert</li>
         </ul>
       </div>
 
       <aside class="setup-card" aria-labelledby="setup-title">
         <p class="setup-kicker">Vor dem Start</p>
-        <h2 id="setup-title">Zwei Apps, ein Arbeitsweg</h2>
+        <h2 id="setup-title">Zwei Apps nebeneinander</h2>
         <ol class="setup-list">
-          <li><span>1</span><div><strong>GeoGebra öffnen</strong><small>Starte die Rechner Suite auf dem iPad.</small></div></li>
-          <li><span>2</span><div><strong>Nebeneinander anordnen</strong><small>Öffne das Dock und ziehe die zweite App an den linken oder rechten Rand. Auf älteren iPads heißt diese Ansicht Split View.</small></div></li>
-          <li><span>3</span><div><strong>Schrittweise wechseln</strong><small>Führe die Anweisung in GeoGebra aus, übertrage das Ergebnis und prüfe dein Verständnis.</small></div></li>
+          <li><span>1</span><div><strong>GeoGebra öffnen</strong><small>Rechner Suite auf dem iPad starten.</small></div></li>
+          <li><span>2</span><div><strong>Split View nutzen</strong><small>Trainer daneben anordnen.</small></div></li>
+          <li><span>3</span><div><strong>Schritte ausführen</strong><small>Anleitung umsetzen und Verständnis prüfen.</small></div></li>
         </ol>
         <p class="privacy-note">Keine Anmeldung: Antworten und Name verlassen dein iPad nicht.</p>
       </aside>
@@ -62,56 +72,95 @@
 
   <main id="main">
     <section id="coursePicker" class="wrap course-picker" aria-labelledby="course-picker-title">
+      <aside id="courseResumeCard" class="course-resume-card" hidden>
+        <div class="resume-info">
+          <p class="mini-label">Zuletzt bearbeitet</p>
+          <h3 id="resumeCourseTitle">Lernweg</h3>
+          <p id="resumeCourseMeta">Fortschritt: 0 %</p>
+        </div>
+        <button id="resumeCourseBtn" class="button primary" type="button">Fortsetzen →</button>
+      </aside>
+
       <div class="section-heading">
         <div>
-          <p class="eyebrow">Vor der Auswertung</p>
-          <h2 id="course-picker-title">Welchen Zusammenhang vermutest du?</h2>
+          <p class="eyebrow">Auswertungsmethode wählen</p>
+          <h2 id="course-picker-title">Welche mathematische Methode wählst du?</h2>
         </div>
         <p class="section-intro">Wähle den Lernweg, der zu deiner theoretischen Erwartung und zur Messreihe passt. Du kannst später jederzeit wechseln.</p>
       </div>
-      <div class="course-choice-grid">
-        <article class="course-choice-group inverse">
-          <p class="mini-label">Coulomb-Versuch · \(r\) und \(F\)</p>
-          <h3>Umgekehrtes Quadratgesetz</h3>
-          <p class="choice-equation">\[F\propto\frac{1}{r^2}\]</p>
-          <p>Prüfe mit einer Potenzregression, ob Verlauf, Exponent und Abweichungen mit \(b=-2\) vereinbar sind.</p>
-          <button class="course-choice-button" type="button" data-course-id="inverse-square">
-            <span>Potenzregression wählen</span><small>10 Kapitel · r–F</small>
-          </button>
-        </article>
-        <article class="course-choice-group proportional">
+
+      <aside class="course-methods-note">
+        <strong>Hinweis zur Methodenauswahl:</strong> Die drei Lernwege zum Kondensatorversuch (Lineare Regression, Potenzregression, Konstantenverfahren) sind alternative mathematische Methoden für denselben Datensatz – keine Pflichtabfolge! Wähle die Methode, die du gerade üben möchtest.
+      </aside>
+
+      <div class="course-choice-grid course-methods-grid">
+        <!-- 1. Lineare Regression -->
+        <article class="course-choice-group proportional linear-group">
+          <div class="method-badge">1. Lineare Regression</div>
           <p class="mini-label">Kondensator-Versuch · \(U\) und \(Q\)</p>
           <h3>Direkte Proportionalität</h3>
-          <p class="choice-equation">\[Q=C\cdot U\]</p>
-          <p>Wähle, ob du den Exponenten eines Potenzmodells, die Quotienten \(Q/U\) oder Steigung und Achsenabschnitt einer Regressionsgeraden untersuchen möchtest.</p>
+          <p class="choice-equation">\[Q(U) = m \cdot U + b\]</p>
+          <p>Passe eine Ausgleichsgerade an und prüfe, ob die Steigung die Kapazität darstellt und der Achsenabschnitt \(b\) im Rahmen der Messunsicherheit vernachlässigt werden kann.</p>
+          <button class="course-choice-button" type="button" data-course-id="proportional-linear">
+            <span>Lineare Regression wählen</span><small>9 Schritte · \(m\) und \(b\) untersuchen</small>
+          </button>
+        </article>
+
+        <!-- 2. Potenzregression -->
+        <article class="course-choice-group inverse power-group">
+          <div class="method-badge">2. Potenzregression</div>
+          <p class="mini-label">Zwei physikalische Zusammenhänge</p>
+          <h3>Potenzfunktionen anpassen</h3>
+          <p class="choice-equation">\[y = a \cdot x^n\]</p>
+          <p>Untersuche den Exponenten \(n\) und vergleiche ihn mit dem theoretisch erwarteten Exponenten.</p>
           <div class="choice-button-stack">
+            <button class="course-choice-button" type="button" data-course-id="inverse-square">
+              <span>Coulomb-Versuch: \(F \propto \frac{1}{r^2}\)</span><small>11 Schritte · Exponent \(n \approx -2\)</small>
+            </button>
             <button class="course-choice-button" type="button" data-course-id="proportional-power">
-              <span>Potenzregression wählen</span><small>8 Kapitel · Exponent \(n\) mit \(1\) vergleichen</small>
-            </button>
-            <button class="course-choice-button" type="button" data-course-id="proportional-constants">
-              <span>Konstantenverfahren wählen</span><small>8 Kapitel · Kapazitäten vergleichen</small>
-            </button>
-            <button class="course-choice-button" type="button" data-course-id="proportional-linear">
-              <span>Lineare Regression wählen</span><small>8 Kapitel · \(m\) und \(b\) untersuchen</small>
+              <span>Kondensator-Versuch: \(Q \propto U\)</span><small>9 Schritte · Exponent \(n \approx 1\)</small>
             </button>
           </div>
         </article>
-        <article class="course-choice-group charging">
+
+        <!-- 3. Exponentialregression -->
+        <article class="course-choice-group charging exp-group">
+          <div class="method-badge">3. Exponentialregression</div>
           <div>
             <p class="mini-label">Kondensator-Aufladung · \(t\) und \(U_C\)</p>
             <h3>Exponentieller Aufladevorgang</h3>
-            <p class="choice-equation">\[\Delta U(t)=U_0e^{-t/\tau}\]</p>
-            <p>Berechne \(\Delta U=U_0-U_C\), prüfe die Messdaten und bestimme mit einer Exponentialregression Zeitkonstante und Halbwertszeit.</p>
+            <p class="choice-equation">\[\Delta U(t) = U_0 e^{-t/\tau}\]</p>
+            <p>Berechne die Spannungsdifferenz \(\Delta U = U_0 - U_C\), passe eine Exponentialfunktion an und bestimme Zeitkonstante \(\tau\) und Halbwertszeit \(t_{1/2}\).</p>
           </div>
           <button class="course-choice-button" type="button" data-course-id="capacitor-exponential">
-              <span>Exponentialregression wählen</span><small>11 Kapitel · \(t\)–\(\Delta U\)</small>
+            <span>Exponentialregression wählen</span><small>10 Schritte · \(t\)–\(\Delta U\)</small>
+          </button>
+        </article>
+
+        <!-- 4. Ergänzend: Konstantenverfahren -->
+        <article class="course-choice-group proportional constants-group">
+          <div class="method-badge">4. Ergänzend: Konstantenverfahren</div>
+          <p class="mini-label">Kondensator-Versuch · \(U\) und \(Q\)</p>
+          <h3>Quotientengleichheit prüfen</h3>
+          <p class="choice-equation">\[\frac{Q}{U} = C \approx \text{konstant}\]</p>
+          <p>Berechne die Einzelquotienten in der Tabelle, bestimme den Mittelwert und prüfe, ob die Abweichungen im Rahmen der Messgenauigkeit liegen.</p>
+          <button class="course-choice-button" type="button" data-course-id="proportional-constants">
+            <span>Konstantenverfahren wählen</span><small>8 Schritte · Kapazitäten vergleichen</small>
           </button>
         </article>
       </div>
       <p id="courseChoiceStatus" class="choice-status" role="status" aria-live="polite"></p>
     </section>
 
-    <section id="course" class="wrap course-section" aria-labelledby="course-title">
+    <section id="course" class="wrap course-section" aria-labelledby="course-title" hidden>
+      <div class="workspace-top-bar">
+        <button id="changeCourseBtn" class="button secondary" type="button">← Lernweg wechseln</button>
+        <div class="workspace-top-actions">
+          <a id="courseDocumentationLink" class="glossary-button" href="./dokumentation.html">Klausurdokumentation</a>
+          <button id="openGlossaryBtn" class="glossary-button" type="button">Begriffshilfe</button>
+        </div>
+      </div>
+
       <div class="section-heading">
         <div>
           <p id="courseEyebrow" class="eyebrow">Geführter Lernweg</p>
@@ -126,22 +175,20 @@
         <div class="mode-control">
           <span class="mode-label">Ansicht</span>
           <div class="mode-switch" role="group" aria-label="Umfang der Erklärungen">
-            <button id="explainModeBtn" type="button" aria-pressed="true">Erklärmodus</button>
-            <button id="compactModeBtn" type="button" aria-pressed="false">Kurzansicht</button>
+            <button id="compactModeBtn" type="button" aria-pressed="false">Anleitung</button>
+            <button id="explainModeBtn" type="button" aria-pressed="true">Mit Erklärung</button>
           </div>
         </div>
-        <a id="courseDocumentationLink" class="glossary-button" href="./dokumentation.html">Klausurdokumentation üben</a>
-        <button id="openGlossaryBtn" class="glossary-button" type="button">Begriffshilfe</button>
       </div>
 
       <div class="course-shell">
         <aside class="course-rail" aria-label="Kursfortschritt">
           <div class="progress-card">
             <div class="progress-copy">
-              <strong id="progressLabel">0 von 10 Kapiteln</strong>
+              <strong id="progressLabel">0 von 11 Schritten</strong>
               <span id="progressPercent">0 %</span>
             </div>
-            <progress id="courseProgress" max="10" value="0">0 von 10</progress>
+            <progress id="courseProgress" max="11" value="0">0 von 11 Schritten</progress>
           </div>
           <nav aria-label="Lernschritte">
             <ol id="stepNav" class="step-nav"></ol>
@@ -150,6 +197,7 @@
         </aside>
 
         <article id="lessonCard" class="lesson-card" aria-labelledby="stepTitle">
+          <!-- 1. Titel & Lernziel -->
           <header class="lesson-header">
             <div>
               <p id="stepEyebrow" class="step-eyebrow"></p>
@@ -160,15 +208,75 @@
             <span id="stepStateBadge" class="state-badge"></span>
           </header>
 
-          <div id="lessonGrid" class="lesson-grid">
-            <div class="instruction-column">
+          <div id="lessonGrid" class="lesson-flow">
+            <!-- 2. Handlungsanweisung mit Zweck -->
+            <section class="instruction-block" aria-labelledby="ipad-heading">
               <section class="why-block" aria-labelledby="why-heading">
                 <p class="mini-label">Orientierung</p>
                 <h3 id="why-heading">Warum machen wir das?</h3>
                 <p id="stepWhy"></p>
               </section>
+              <p class="mini-label">Auf dem iPad</p>
+              <h3 id="ipad-heading"></h3>
+              <ol id="stepActions" class="action-list"></ol>
+            </section>
 
-              <div id="depthContent" class="depth-content">
+            <!-- 3. Formel / Messwerte -->
+            <div id="stepDataTable" class="source-data" hidden></div>
+
+            <div id="formulaBlock" class="formula-block" hidden>
+              <div>
+                <span>Diese Eingabe verwenden</span>
+                <code id="formulaText"></code>
+              </div>
+              <button id="copyFormulaBtn" class="copy-button" type="button">Kopieren</button>
+            </div>
+            <p id="copyStatus" class="sr-only" role="status" aria-live="polite"></p>
+
+            <!-- 4. Bildmaterial -->
+            <div id="stepImages" class="step-images" aria-label="Abbildungen zum Lernschritt"></div>
+
+            <!-- 5. Ergebniserkennung -->
+            <section id="stepResultRecognition" class="result-recognition-box" aria-labelledby="result-recognition-heading">
+              <div class="result-recognition-header">
+                <span class="result-recognition-icon" aria-hidden="true">👁</span>
+                <h3 id="result-recognition-heading">Daran erkennst du das Ergebnis</h3>
+              </div>
+              <p id="resultRecognitionText" class="result-recognition-text"></p>
+            </section>
+
+            <!-- Ggf. gemeinsame Pflichtseite vor Checkpoint -->
+            <aside id="sharedRequirementCard" class="shared-requirement-card" aria-labelledby="sharedRequirementTitle" hidden>
+              <div>
+                <p class="mini-label">Gemeinsame Pflichtseite</p>
+                <h3 id="sharedRequirementTitle">Methode des größten Einzelfehlers</h3>
+                <p id="sharedRequirementText"></p>
+              </div>
+              <a id="sharedRequirementLink" class="button secondary" href="./groesster-einzelfehler.html">Fehlerseite öffnen</a>
+            </aside>
+
+            <!-- 6. Checkpoint -->
+            <section class="checkpoint" aria-labelledby="checkpoint-title">
+              <div class="checkpoint-heading">
+                <span class="checkpoint-icon" aria-hidden="true">✓</span>
+                <div>
+                  <p class="mini-label">Kontrollpunkt</p>
+                  <h3 id="checkpoint-title">Prüfe Ergebnis und Verständnis</h3>
+                </div>
+              </div>
+              <p id="checkpointPrompt"></p>
+              <form id="checkpointForm" novalidate>
+                <div id="checkpointFields" class="checkpoint-fields"></div>
+                <div id="optionalCheckpointContainer"></div>
+                <button class="button primary" type="submit">Alles prüfen</button>
+              </form>
+              <p id="checkpointFeedback" class="feedback" role="status" aria-live="polite"></p>
+            </section>
+
+            <!-- 7. Ausklappbare Vertiefung / Erklärung -->
+            <details id="depthContent" class="depth-content explanation-depth-box">
+              <summary class="explanation-depth-summary">Erklärungen &amp; Vertiefung (Begriffe, Rechenbeispiel, Stolpersteine)</summary>
+              <div class="explanation-depth-body">
                 <section class="concept-block" aria-labelledby="concept-heading">
                   <p class="mini-label">Grundlagen</p>
                   <h3 id="concept-heading">Begriffe verstehen</h3>
@@ -180,72 +288,31 @@
                   <h3 id="example-heading"></h3>
                   <div id="stepWorkedExample" class="worked-example"></div>
                 </section>
-              </div>
 
-              <section class="instruction-block" aria-labelledby="ipad-heading">
-                <p class="mini-label">Auf dem iPad</p>
-                <h3 id="ipad-heading"></h3>
-                <ol id="stepActions" class="action-list"></ol>
-              </section>
-
-              <div id="stepDataTable" class="source-data" hidden></div>
-
-              <div id="formulaBlock" class="formula-block" hidden>
-                <div>
-                  <span>Diese Eingabe verwenden</span>
-                  <code id="formulaText"></code>
+                <details class="help-box">
+                  <summary>Wenn etwas anders aussieht</summary>
+                  <p id="stepTroubleshooting"></p>
+                </details>
+                <div class="mistake-box">
+                  <strong>Typischer Stolperstein</strong>
+                  <p id="stepMistake"></p>
                 </div>
-                <button id="copyFormulaBtn" class="copy-button" type="button">Kopieren</button>
               </div>
-              <p id="copyStatus" class="sr-only" role="status" aria-live="polite"></p>
+            </details>
 
-              <details class="help-box">
-                <summary>Wenn etwas anders aussieht</summary>
-                <p id="stepTroubleshooting"></p>
-              </details>
-              <div class="mistake-box">
-                <strong>Typischer Stolperstein</strong>
-                <p id="stepMistake"></p>
-              </div>
-            </div>
+            <!-- 8. Merksatz & Navigation -->
+            <aside class="remember-box" aria-labelledby="remember-heading">
+              <span aria-hidden="true">!</span>
+              <div><strong id="remember-heading">Merke</strong><p id="stepRemember"></p></div>
+            </aside>
 
-            <div id="stepImages" class="step-images" aria-label="Abbildungen zum Lernschritt"></div>
+            <div id="phaseDocHint" class="phase-doc-hint" hidden></div>
+
+            <footer class="lesson-footer">
+              <button id="previousStepBtn" class="button secondary" type="button">← Zurück</button>
+              <button id="nextStepBtn" class="button primary" type="button">Weiter →</button>
+            </footer>
           </div>
-
-          <aside class="remember-box" aria-labelledby="remember-heading">
-            <span aria-hidden="true">!</span>
-            <div><strong id="remember-heading">Merke</strong><p id="stepRemember"></p></div>
-          </aside>
-
-          <aside id="sharedRequirementCard" class="shared-requirement-card" aria-labelledby="sharedRequirementTitle" hidden>
-            <div>
-              <p class="mini-label">Gemeinsame Pflichtseite</p>
-              <h3 id="sharedRequirementTitle">Methode des größten Einzelfehlers</h3>
-              <p id="sharedRequirementText"></p>
-            </div>
-            <a id="sharedRequirementLink" class="button secondary" href="./groesster-einzelfehler.html">Fehlerseite öffnen</a>
-          </aside>
-
-          <section class="checkpoint" aria-labelledby="checkpoint-title">
-            <div class="checkpoint-heading">
-              <span class="checkpoint-icon" aria-hidden="true">✓</span>
-              <div>
-                <p class="mini-label">Kontrollpunkt</p>
-                <h3 id="checkpoint-title">Prüfe Ergebnis und Verständnis</h3>
-              </div>
-            </div>
-            <p id="checkpointPrompt"></p>
-            <form id="checkpointForm" novalidate>
-              <div id="checkpointFields" class="checkpoint-fields"></div>
-              <button class="button primary" type="submit">Alles prüfen</button>
-            </form>
-            <p id="checkpointFeedback" class="feedback" role="status" aria-live="polite"></p>
-          </section>
-
-          <footer class="lesson-footer">
-            <button id="previousStepBtn" class="button secondary" type="button">← Zurück</button>
-            <button id="nextStepBtn" class="button primary" type="button">Weiter →</button>
-          </footer>
         </article>
       </div>
 
@@ -254,16 +321,23 @@
         <div>
           <p class="eyebrow">Lernweg abgeschlossen</p>
           <h3 id="completionTitle">Du kannst den gesamten Auswertungsweg fachlich erklären.</h3>
-          <p id="completionText">Erstelle jetzt deinen persönlichen Lernnachweis.</p>
+          <p id="completionText">Hier kannst du deine Bearbeitungsübersicht einsehen und als PDF sichern.</p>
         </div>
-        <a id="completionActionLink" class="button light" href="#summary">Zum Lernnachweis</a>
+        <a id="completionActionLink" class="button light" href="#summary">Zur Bearbeitungsübersicht</a>
+      </div>
+
+      <div class="summary-toggle-bar">
+        <button id="openSummaryBtn" class="button secondary" type="button">Bearbeitungsübersicht öffnen ↓</button>
       </div>
     </section>
 
-    <section id="summary" class="wrap summary-section" aria-labelledby="summary-title">
+    <section id="summary" class="wrap summary-section" aria-labelledby="summary-title" hidden>
+      <div class="summary-top-actions">
+        <button id="closeSummaryBtn" class="button secondary" type="button">↑ Zurück zur Arbeitsfläche</button>
+      </div>
       <div class="section-heading">
         <div>
-          <p class="eyebrow">Lernnachweis</p>
+          <p class="eyebrow">Bearbeitungsübersicht</p>
           <h2 id="summary-title">Deine Zusammenfassung</h2>
         </div>
         <p class="section-intro">Ergänze bei Bedarf Name und Kurs. Die Druckansicht fasst Lernstand, Ergebnisse und Beurteilung übersichtlich zusammen.</p>
@@ -273,7 +347,7 @@
         <header class="summary-header">
           <div>
             <span id="summarySubtitle" class="summary-subtitle">GeoGebra-Begleitkurs · Potenzregression</span>
-            <h3>Lernnachweis</h3>
+            <h3>Bearbeitungsübersicht</h3>
           </div>
           <span id="summaryStatus" class="summary-status"></span>
         </header>
@@ -310,7 +384,7 @@
           <p id="summaryConclusion"></p>
         </section>
 
-        <p class="print-footnote">Dieser Lernnachweis wurde lokal im Browser erstellt. Es wurden keine Daten übertragen.</p>
+        <p class="print-footnote">Diese Bearbeitungsübersicht dokumentiert den Bearbeitungsstand im geführten Lernweg. Antworten zum bekannten Beispiel sind kein alleiniger Nachweis selbstständiger Kompetenz. Lokal im Browser erstellt.</p>
       </div>
 
       <div class="summary-actions">

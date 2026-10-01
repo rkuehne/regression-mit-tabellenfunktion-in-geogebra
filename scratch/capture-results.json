@@ -1,0 +1,80 @@
+[
+  {
+    "name": "01-index-picker-1280.png",
+    "size": "1280,900",
+    "bytes": 80496,
+    "ok": true
+  },
+  {
+    "name": "02-coulomb-step1-1280.png",
+    "size": "1280,900",
+    "bytes": 16449,
+    "ok": true
+  },
+  {
+    "name": "03-coulomb-parameters-1280.png",
+    "size": "1280,900",
+    "bytes": 16385,
+    "ok": true
+  },
+  {
+    "name": "04-charging-deviations-1280.png",
+    "size": "1280,900",
+    "bytes": 23265,
+    "ok": true
+  },
+  {
+    "name": "05-selbst-auswerten-1280.png",
+    "size": "1280,900",
+    "bytes": 78218,
+    "ok": true
+  },
+  {
+    "name": "06-dokumentation-model-1280.png",
+    "size": "1280,900",
+    "bytes": 5293,
+    "ok": true
+  },
+  {
+    "name": "07-dokumentation-practice-1280.png",
+    "size": "1280,900",
+    "bytes": 47939,
+    "ok": true
+  },
+  {
+    "name": "08-groesster-einzelfehler-1280.png",
+    "size": "1280,900",
+    "bytes": 374828,
+    "ok": true
+  },
+  {
+    "name": "09-mobile-375.png",
+    "size": "375,812",
+    "bytes": 2541,
+    "ok": true
+  },
+  {
+    "name": "10-tablet-split-512.png",
+    "size": "512,768",
+    "bytes": 47142,
+    "ok": true
+  },
+  {
+    "name": "11-tablet-portrait-768.png",
+    "size": "768,1024",
+    "bytes": 22731,
+    "ok": true
+  },
+  {
+    "name": "12-medium-width-980.png",
+    "size": "980,900",
+    "bytes": 24039,
+    "ok": true
+  },
+  {
+    "name": "13-rail-stack-1080.png",
+    "size": "1080,900",
+    "bytes": 22099,
+    "ok": true
+  }
+]

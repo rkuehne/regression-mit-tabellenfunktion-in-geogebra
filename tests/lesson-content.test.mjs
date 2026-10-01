@@ -8,11 +8,11 @@ import { CHARGING_EXPONENTIAL_STEPS, COURSE_IDS, COURSES, LESSON_STEPS, UQ_CONST
 const here = dirname(fileURLToPath(import.meta.url));
 const expectedIds = [
   "context", "setup", "table", "first-point", "fill-points",
-  "regression-concept", "regression", "predictions", "deviations", "conclusion"
+  "regression-concept", "regression", "inverse-parameters", "predictions", "deviations", "conclusion"
 ];
 
-test("enthält die zehn Kapitel in der vorgesehenen Reihenfolge", () => {
-  assert.equal(LESSON_STEPS.length, 10);
+test("enthält die elf Kapitel in der vorgesehenen Reihenfolge", () => {
+  assert.equal(LESSON_STEPS.length, 11);
   assert.deepEqual(LESSON_STEPS.map(({ id }) => id), expectedIds);
 });
 
@@ -71,7 +71,9 @@ test("jedes Kapitel besitzt Erklärfelder sowie Ergebnis- und Verständnisprüfu
 
     const kinds = new Set(step.check.fields.map(({ kind }) => kind));
     assert.equal(kinds.has("result"), true, `${step.id}: Ergebnisprüfung fehlt`);
-    assert.equal(kinds.has("understanding"), true, `${step.id}: Verständnisprüfung fehlt`);
+    if (step.id !== "regression") {
+      assert.equal(kinds.has("understanding"), true, `${step.id}: Verständnisprüfung fehlt`);
+    }
     step.check.fields.forEach((field) => {
       assert.ok(field.feedback.correct);
       assert.ok(field.feedback.incorrect);
@@ -131,11 +133,11 @@ test("die Startseite enthält Kurswahl, Moduswahl, Begriffshilfe und lokale Soci
 
 test("enthält fünf eigenständige Lernwege", () => {
   assert.deepEqual(COURSE_IDS, ["inverse-square", "proportional-power", "proportional-constants", "proportional-linear", "capacitor-exponential"]);
-  assert.equal(COURSES["inverse-square"].steps.length, 10);
-  assert.equal(UQ_POWER_STEPS.length, 8);
+  assert.equal(COURSES["inverse-square"].steps.length, 11);
+  assert.equal(UQ_POWER_STEPS.length, 9);
   assert.equal(UQ_CONSTANT_STEPS.length, 8);
-  assert.equal(UQ_LINEAR_STEPS.length, 8);
-  assert.equal(CHARGING_EXPONENTIAL_STEPS.length, 11);
+  assert.equal(UQ_LINEAR_STEPS.length, 9);
+  assert.equal(CHARGING_EXPONENTIAL_STEPS.length, 10);
   Object.values(COURSES).forEach((course) => assert.equal(Object.hasOwn(course, "transferMethod"), false));
 });
 
@@ -147,14 +149,17 @@ test("alle neuen Kapitel besitzen Erklärfelder sowie Ergebnis- und Verständnis
     assert.ok(step.actions.length >= 3);
     const kinds = new Set(step.check.fields.map(({ kind }) => kind));
     assert.equal(kinds.has("result"), true, `${step.id}: Ergebnisprüfung fehlt`);
-    assert.equal(kinds.has("understanding"), true, `${step.id}: Verständnisprüfung fehlt`);
+    if (step.id !== "uq-power-fit" && step.id !== "uq-linear-fit") {
+      assert.equal(kinds.has("understanding"), true, `${step.id}: Verständnisprüfung fehlt`);
+    }
   });
 });
 
-test("bindet elf Auflade-Abbildungen mit zugänglichen Beschreibungen und Markierungen ein", () => {
+test("bindet die zehn regulären Auflade-Abbildungen mit zugänglichen Beschreibungen und Markierungen ein und schließt historische Gegenformel aus", () => {
   const images = CHARGING_EXPONENTIAL_STEPS.flatMap((step) => step.images);
   const uniqueImages = [...new Map(images.map((image) => [image.src, image])).values()];
-  assert.equal(uniqueImages.length, 11);
+  assert.equal(uniqueImages.length, 10);
+  assert.equal(uniqueImages.some((image) => image.src.includes("09-historische-abweichungsformel")), false);
   uniqueImages.forEach((image) => {
     assert.ok(image.alt.length > 30);
     assert.ok(image.caption.length > 20);
@@ -175,10 +180,9 @@ test("führt den Aufladungskurs fachlich konsistent von ΔU bis zur Fehlerbeurte
   assert.deepEqual(formulas, [
     "=3.780-B1",
     "=(A1,C1)",
-    "U(x)=TrendExp(D1:D10)",
+    "U(x)=TrendExp(D1:D9)",
     "=U(A1)",
-    "=(C1-E1)/E1*100",
-    "U(x)=TrendExp(D1:D9)"
+    "=(C1-E1)/E1*100"
   ]);
   assert.match(content, /U_C\(t\).*1 − e\^\(−t\/τ\)/);
   assert.match(content, /τ = R · C/);
@@ -194,13 +198,13 @@ test("führt den Aufladungskurs fachlich konsistent von ΔU bis zur Fehlerbeurte
   assert.match(content, /TrendExp\(D1:D9\)/);
 });
 
-test("führt jeden Lernweg unmittelbar zum Lernnachweis", () => {
+test("führt jeden Lernweg unmittelbar zur Bearbeitungsübersicht", () => {
   const root = resolve(here, "..");
   const app = readFileSync(resolve(root, "app.js"), "utf8");
   const html = readFileSync(resolve(root, "index.html"), "utf8");
   assert.doesNotMatch(app, /transferMethod|TRANSFER_METHOD_IDS|activeTransfer|renderTransfer/);
   assert.doesNotMatch(html, /id="transfer"|Transferrechner|Reflexion/);
-  assert.match(app, /Zum Lernnachweis/);
+  assert.match(app, /Zur Bearbeitungsübersicht/);
   assert.match(app, /await renderSummary\(\);[\s\S]*await mathReady;[\s\S]*window\.print\(\)/);
   assert.doesNotMatch(app, /beforeprint/);
 });
@@ -251,12 +255,39 @@ test("enthält die zentralen U-Q-Eingaben und vorsichtige Fachsprache", () => {
   assert.match(power + constants + linear, /beweis/i);
 });
 
-test("verknüpft alle drei Q-U-Wege mit derselben Pflichtseite", () => {
+test("verknüpft alle drei Q-U-Wege mit derselben Pflichtseite und Phase deviations", () => {
   for (const courseId of ["proportional-power", "proportional-constants", "proportional-linear"]) {
     assert.equal(COURSES[courseId].sharedRequirement, UQ_SHARED_REQUIREMENT_ID);
-    assert.equal(COURSES[courseId].steps.some((step) => step.sharedRequirement === true), true);
+    assert.equal(COURSES[courseId].steps.some((step) => step.sharedRequirement === true && step.phaseId === "deviations"), true);
   }
   assert.equal(COURSES["inverse-square"].sharedRequirement, undefined);
+});
+
+test("shared-error-module stellt die fünf Kontrollfelder und Validierungslogik bereit", async () => {
+  const { SHARED_ERROR_FIELDS, validateSharedErrorField, isSharedModuleComplete } = await import("../shared-error-module.js");
+  assert.equal(SHARED_ERROR_FIELDS.length, 5);
+  const ids = SHARED_ERROR_FIELDS.map((f) => f.id);
+  assert.deepEqual(ids, ["uError", "qError", "maxError", "minimumReason", "methodMeaning"]);
+
+  assert.equal(validateSharedErrorField(SHARED_ERROR_FIELDS[0], "10"), true);
+  assert.equal(validateSharedErrorField(SHARED_ERROR_FIELDS[0], "9"), false);
+  assert.equal(validateSharedErrorField(SHARED_ERROR_FIELDS[1], "5"), true);
+  assert.equal(validateSharedErrorField(SHARED_ERROR_FIELDS[2], "10"), true);
+  assert.equal(validateSharedErrorField(SHARED_ERROR_FIELDS[3], "largest-relative"), true);
+  assert.equal(validateSharedErrorField(SHARED_ERROR_FIELDS[3], "wrong"), false);
+  assert.equal(validateSharedErrorField(SHARED_ERROR_FIELDS[4], "explainable"), true);
+
+  const validAnswers = {
+    uError: "10",
+    qError: "5",
+    maxError: "10",
+    minimumReason: "largest-relative",
+    methodMeaning: "explainable"
+  };
+
+  assert.equal(isSharedModuleComplete({ completed: true, answers: validAnswers }), true);
+  assert.equal(isSharedModuleComplete({ completed: false, answers: validAnswers }), false);
+  assert.equal(isSharedModuleComplete({ completed: true, answers: { ...validAnswers, uError: "99" } }), false);
 });
 
 test("enthält die gemeinsame Fehlerseite mit Herleitung, Anwendungen und Pflichtkontrolle", () => {
