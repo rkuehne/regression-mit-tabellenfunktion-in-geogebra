@@ -42,7 +42,7 @@ export const DOCUMENTATION_EXAMPLES = Object.freeze({
         checklist: [raw`Befehl notiert`, raw`Zellbereich C1:C6 genannt`, raw`Exponent angegeben`],
         starter: raw`Mit dem Befehl … werte ich die Punkte … aus. GeoGebra ergibt … .`
       }),
-      section("physical", "3. Physikalische Formel", html`
+      section("physical", "3. Physikalische Formel und Parameter", html`
         <p>Damit Einheiten eindeutig bleiben, schreibe ich die Regression mit einem normierten Abstand:</p>
         <p class="display-equation">\[F(r)\approx28{,}9022\,\mathrm{mN}\left(\frac{r}{1\,\mathrm{cm}}\right)^{-2{,}0750}.\]</p>
         <p>Der Klammerausdruck ist einheitenfrei. Der Faktor trägt deshalb die Einheit \(\mathrm{mN}\).</p>`, {
@@ -50,19 +50,19 @@ export const DOCUMENTATION_EXAMPLES = Object.freeze({
         checklist: [raw`\(F(r)\) statt \(F(x)\) verwendet`, raw`Einheit des Faktors angegeben`, raw`Exponent übernommen`],
         starter: raw`Da \(x\) den Abstand \(r\) in Zentimetern darstellt, lautet die physikalische Formel … .`
       }),
-      section("deviations", "4. Abweichungen und Vergleich", html`
+      section("deviations", "4. Abweichungen und Vergleichsregel", html`
         <ul>
           <li><strong>D1:</strong> <code>=F(A1)</code>, bis D6 ausgefüllt → Modellwerte.</li>
           <li><strong>E1:</strong> <code>=(B1-D1)/D1*100</code>, bis E6 ausgefüllt → relative Modellabweichungen.</li>
         </ul>
         <p>Die größte Modellabweichung liegt bei \(r=12{,}4\,\mathrm{cm}\):</p>
         <p class="display-equation">\[\frac{0{,}18-0{,}15562}{0{,}15562}\cdot100\,\%\approx15{,}7\,\%.\]</p>
-        <p>Der Messwert liegt dort um etwa \(15{,}7\,\%\) über dem Modellwert. Die schulische Vergleichsgrenze beträgt aus der größten angenommenen relativen Messunsicherheit \(0{,}01/0{,}06\cdot100\,\%\approx16{,}7\,\%\).</p>\n        <p>Zusätzlich wird der Regressionswert des Exponenten quantitativ mit dem theoretischen Exponenten verglichen:</p>\n        <p class="display-equation">\[\frac{|-2{,}075-(-2)|}{2}\cdot100\,\%\approx3{,}75\,\%.\]</p>\n        <p>Die relative Exponentabweichung beträgt damit etwa \(3{,}75\,\%\).</p>`, {
+        <p>Der Messwert liegt dort um etwa \(15{,}7\,\%\) über dem Modellwert. Die schulische Vergleichsgrenze beträgt aus der größten angenommenen relativen Messunsicherheit \(0{,}01/0{,}06\cdot100\,\%\approx16{,}7\,\%\).</p>\n        <p>Zusätzlich wird der Regressionswert des Exponenten quantitativ mit dem theoretischen Exponenten verglichen:</p>\n        <p class="display-equation">\[\frac{|-2{,}0750-(-2)|}{2}\cdot100\,\%\approx3{,}75\,\%.\]</p>\n        <p>Die relative Exponentabweichung beträgt damit etwa \(3{,}75\,\%\).</p>`, {
         task: raw`Dokumentiere die zwei Formeln für Modellwerte und Abweichungen sowie einen aussagekräftigen Vergleich.`,
-        checklist: [raw`D- und E-Spalte beschrieben`, raw`ein Zahlenbeispiel eingesetzt`, raw`15,7 % mit 16,7 % verglichen`],
+        checklist: [raw`D- und E-Spalte beschrieben`, raw`ein Zahlenbeispiel eingesetzt`, raw`3,75 % und 15,7 % mit 16,7 % verglichen`],
         starter: raw`Die größte Modellabweichung tritt bei … auf. Der Messwert liegt dort … dem Modellwert.`
       }),
-      section("conclusion", "5. Schlussfolgerung", html`
+      section("conclusion", "5. Begründete Schlussfolgerung", html`
         <p>Die relative Exponentabweichung von etwa \(3{,}75\,\%\) und die größte Modellabweichung von etwa \(15{,}7\,\%\) liegen unter der schulischen Vergleichsgrenze von \(16{,}7\,\%\). Nach der hier verwendeten schulischen Vergleichsregel sind die Abweichungen mit den angenommenen Messunsicherheiten vereinbar. Die Messwerte sind damit mit einem umgekehrten Quadratgesetz vereinbar; sie beweisen den Zusammenhang nicht.</p>`, {
         task: raw`Formuliere eine vorsichtige Aussage zum Modell und nenne zugleich seine Grenze.`,
         checklist: [raw`Exponent erwähnt`, raw`Vergleichsgrenze erwähnt`, raw`nicht als Beweis formuliert`],
@@ -99,7 +99,7 @@ export const DOCUMENTATION_EXAMPLES = Object.freeze({
         checklist: [raw`TrendPot genannt`, raw`C1:C5 genannt`, raw`Exponent 1,011566 notiert`],
         starter: raw`GeoGebra passt mit … an die Punkte … die Funktion … an.`
       }),
-      section("physical", "3. Physikalische Formel", html`
+      section("physical", "3. Physikalische Formel und Parameter", html`
         <p>Mit Größen und Einheiten lautet die Regressionsfunktion:</p>
         <p class="display-equation">\[Q(U)\approx0{,}0393011\cdot10^{-8}\,\mathrm C\left(\frac{U}{1\,\mathrm V}\right)^{1{,}011566}.\]</p>
         <p>Der freie Faktor ist hier noch nicht automatisch eine Kapazität: Der Exponent wurde frei bestimmt und ist nicht exakt \(1\).</p>`, {
@@ -107,7 +107,7 @@ export const DOCUMENTATION_EXAMPLES = Object.freeze({
         checklist: [raw`\(Q(U)\) geschrieben`, raw`Ladungseinheit angegeben`, raw`freien Faktor nicht Kapazität genannt`],
         starter: raw`Da \(x\) die Spannung \(U\) in Volt bezeichnet, schreibe ich … .`
       }),
-      section("deviations", "4. Abweichungen und Vergleich", html`
+      section("deviations", "4. Abweichungen und Vergleichsregel", html`
         <ul>
           <li><strong>D1:</strong> <code>=Q(A1)</code>, bis D5 ausgefüllt → Modellwerte.</li>
           <li><strong>E1:</strong> <code>=(B1-D1)/D1*100</code>, bis E5 ausgefüllt → Modellabweichungen.</li>
@@ -119,7 +119,7 @@ export const DOCUMENTATION_EXAMPLES = Object.freeze({
         checklist: [raw`D und E beschrieben`, raw`1,16 % erwähnt`, raw`3,74 % mit 10 % verglichen`],
         starter: raw`Die größte Modellabweichung beträgt … . Die Abweichung des Exponenten von \(1\) beträgt … .`
       }),
-      section("conclusion", "5. Schlussfolgerung", html`
+      section("conclusion", "5. Begründete Schlussfolgerung", html`
         <p>Die Abweichung des Exponenten von \(1\) und die größte Modellabweichung liegen unter der schulischen Vergleichsgrenze von \(10\,\%\). Nach der hier verwendeten schulischen Vergleichsregel sind beide mit den angenommenen Messunsicherheiten vereinbar. Die Daten sind mit \(Q\propto U\) vereinbar, beweisen die Proportionalität aber nicht.</p>`, {
         task: raw`Schließe vorsichtig auf Vereinbarkeit mit direkter Proportionalität.`,
         checklist: [raw`beide Abweichungen genannt`, raw`10-%-Vergleich genannt`, raw`kein Beweis behauptet`],
@@ -154,7 +154,7 @@ export const DOCUMENTATION_EXAMPLES = Object.freeze({
         checklist: [raw`Mittelwertbefehl notiert`, raw`C1:C5 genannt`, raw`Skalierung erwähnt`],
         starter: raw`Den Mittelwert der fünf Werte bestimme ich mit … . Es ergibt sich … .`
       }),
-      section("physical", "3. Physikalische Formel", html`
+      section("physical", "3. Physikalische Formel und Parameter", html`
         <p>Die mittlere Kapazität beträgt:</p>
         <p class="display-equation">\[C\approx0{,}0415933\cdot10^{-8}\,\mathrm F\approx416\,\mathrm{pF}.\]</p>
         <p>Damit lautet das vereinfachte Modell:</p>
@@ -163,7 +163,7 @@ export const DOCUMENTATION_EXAMPLES = Object.freeze({
         checklist: [raw`Farad angegeben`, raw`Pikofarad angegeben`, raw`Kapazität als Faktor von \(U\) verwendet`],
         starter: raw`Die Zahl in C entspricht … . Daher ist die mittlere Kapazität … .`
       }),
-      section("deviations", "4. Abweichungen und Vergleich", html`
+      section("deviations", "4. Abweichungen und Vergleichsregel", html`
         <ul>
           <li><strong>D1:</strong> <code>=a</code>, bis D5 ausgefüllt → mittlerer Kapazitätswert.</li>
           <li><strong>E1:</strong> <code>=(C1-D1)/D1*100</code>, bis E5 ausgefüllt → Abweichungen der Einzelkapazitäten.</li>
@@ -175,7 +175,7 @@ export const DOCUMENTATION_EXAMPLES = Object.freeze({
         checklist: [raw`D und E beschrieben`, raw`3,83 % mit Richtung genannt`, raw`10-%-Grenze genannt`],
         starter: raw`Die größte Abweichung einer Einzelkapazität beträgt … und liegt … dem Mittelwert.`
       }),
-      section("conclusion", "5. Schlussfolgerung", html`
+      section("conclusion", "5. Begründete Schlussfolgerung", html`
         <p>Die größte Streuung der Einzelkapazitäten liegt unter der schulischen Vergleichsgrenze von \(10\,\%\). Nach der hier verwendeten schulischen Vergleichsregel ist sie mit den angenommenen Messunsicherheiten vereinbar. Die Kapazität darf in diesem Rahmen als näherungsweise konstant angesehen werden. Die Messwerte sind mit \(Q\propto U\) vereinbar, beweisen die Proportionalität aber nicht.</p>`, {
         task: raw`Begründe, warum die Kapazität näherungsweise konstant sein darf.`,
         checklist: [raw`3,83 % und 10 % verglichen`, raw`Konstanz vorsichtig formuliert`, raw`kein Beweis behauptet`],
@@ -212,7 +212,7 @@ export const DOCUMENTATION_EXAMPLES = Object.freeze({
         checklist: [raw`Trendlinie genannt`, raw`C1:C5 genannt`, raw`Steigung und Achsenabschnitt notiert`],
         starter: raw`Mit … erhalte ich für die Punkte … die Gerade … .`
       }),
-      section("physical", "3. Physikalische Formel", html`
+      section("physical", "3. Physikalische Formel und Parameter", html`
         <p>Die Steigung entspricht in der verwendeten Skalierung einer Kapazität von:</p>
         <p class="display-equation">\[m=0{,}0408\cdot10^{-8}\,\mathrm F=408\,\mathrm{pF}.\]</p>
         <p>Die Gerade mit Einheiten lautet:</p>
@@ -221,7 +221,7 @@ export const DOCUMENTATION_EXAMPLES = Object.freeze({
         checklist: [raw`Steigung in pF umgerechnet`, raw`Achsenabschnitt mit Coulomb angegeben`, raw`\(Q(U)\) geschrieben`],
         starter: raw`Die Steigung \(0{,}0408\) entspricht … . Der Achsenabschnitt entspricht … .`
       }),
-      section("deviations", "4. Abweichungen und Vergleich", html`
+      section("deviations", "4. Abweichungen und Vergleichsregel", html`
         <ul>
           <li><strong>D1:</strong> <code>=Q(A1)</code>, bis D5 ausgefüllt → Modellwerte.</li>
           <li><strong>E1:</strong> <code>=(B1-D1)/D1*100</code>, bis E5 ausgefüllt → Modellabweichungen.</li>
@@ -233,7 +233,7 @@ export const DOCUMENTATION_EXAMPLES = Object.freeze({
         checklist: [raw`D und E beschrieben`, raw`7,41 % genannt`, raw`6 % mit 10 % verglichen`],
         starter: raw`Die größte Modellabweichung beträgt … . Der y-Achsenabschnitt macht am kleinsten Messwert … aus.`
       }),
-      section("conclusion", "5. Schlussfolgerung", html`
+      section("conclusion", "5. Begründete Schlussfolgerung", html`
         <p>Die größte Modellabweichung und der Anteil des y-Achsenabschnitts liegen unter der schulischen Vergleichsgrenze von \(10\,\%\). Nach der hier verwendeten schulischen Vergleichsregel sind sie mit den angenommenen Messunsicherheiten vereinbar. Der y-Achsenabschnitt darf näherungsweise vernachlässigt werden, sodass \(Q(U)\approx(408\,\mathrm{pF})\cdot U\) gilt. Die Messwerte sind damit mit \(Q\propto U\) vereinbar. Das ist keine statistische Bestätigung eines exakt verschwindenden y-Achsenabschnitts.</p>`, {
         task: raw`Erkläre, warum der y-Achsenabschnitt im Rahmen dieser Methode vernachlässigt wird.`,
         checklist: [raw`beide Vergleiche genannt`, raw`Näherung formuliert`, raw`keine exakte Bestätigung behauptet`],
@@ -247,7 +247,7 @@ export const DOCUMENTATION_EXAMPLES = Object.freeze({
     shortTitle: "Kondensator-Aufladung · Exponentialregression",
     eyebrow: "Kondensator-Aufladung · Exponentialregression",
     equation: raw`\[\Delta U(t)=U_0e^{-t/\tau}\]`,
-    introduction: raw`Das Originalprotokoll enthält zehn Messwerte bis \(100\,\mathrm s\). Für diese Aufgabe ist die Auswertung der neun regulären Messpaare von \(0\) bis \(80\,\mathrm s\), also D1:D9, vorgegeben. Der Messwert bei \(100\,\mathrm s\) bleibt dokumentiert und wird nicht stillschweigend entfernt.`,
+    introduction: raw`Diese Dokumentation zeigt beispielhaft den Standardfall. Deshalb werden nur die neun regulären Messpaare von \(0\) bis \(80\,\mathrm s\), also D1:D9, ausgewertet. Das Originalprotokoll enthält zusätzlich einen Messwert bei \(100\,\mathrm s\); er bleibt dokumentiert und wird nicht stillschweigend entfernt.`,
     sections: Object.freeze([
       section("data", "1. Daten und Einheiten", html`
         <p>Ausgewertet werden die durch die Aufgabe vorgegebenen neun Messpaare von \(0\) bis \(80\,\mathrm s\), also D1:D9. Der vorhandene zehnte Messwert bei \(100\,\mathrm s\) gehört nicht zu diesem Datenbereich und bleibt als nicht ausgewerteter Originalwert benannt. Untersucht wird die Spannungsdifferenz \(\Delta U=U_0-U_C\) mit \(U_0=3{,}780\,\mathrm V\).</p>
@@ -271,7 +271,7 @@ export const DOCUMENTATION_EXAMPLES = Object.freeze({
         checklist: [raw`TrendExp genannt`, raw`D1:D9 genannt`, raw`Funktionswert als Spannungsdifferenz gedeutet`],
         starter: raw`Für die Punkte … verwende ich … . GeoGebra liefert … .`
       }),
-      section("physical", "3. Physikalische Formel", html`
+      section("physical", "3. Physikalische Formel und Parameter", html`
         <p>Die Theorie enthält den Exponenten \(-t/\tau\). Ich vergleiche ihn mit \(kx\) aus der Regression:</p>
         <p class="display-equation">\[k=-0{,}0304341\,\mathrm{s^{-1}},\qquad \tau=-\frac{1}{k}\approx32{,}86\,\mathrm s.\]</p>
         <p>Mit physikalischen Größen und Einheiten lautet die Modellfunktion:</p>
@@ -282,7 +282,7 @@ export const DOCUMENTATION_EXAMPLES = Object.freeze({
         checklist: [raw`negatives Vorzeichen berücksichtigt`, raw`\(\tau\) in Sekunden berechnet`, raw`\(\Delta U(t)\), nicht \(U_C(t)\), modelliert`],
         starter: raw`Aus \(k=-1/\tau\) folgt … . Damit lautet die physikalische Modellfunktion … .`
       }),
-      section("deviations", "4. Abweichungen und Vergleich", html`
+      section("deviations", "4. Abweichungen und Vergleichsregel", html`
         <ul>
           <li><strong>E1:</strong> <code>=U(A1)</code>, bis E9 ausgefüllt → Modellwerte.</li>
           <li><strong>F1:</strong> <code>=(C1-E1)/E1*100</code>, bis F9 ausgefüllt → relative Modellabweichungen.</li>
@@ -290,13 +290,13 @@ export const DOCUMENTATION_EXAMPLES = Object.freeze({
         <p>Die größte Modellabweichung tritt bei \(80\,\mathrm s\) auf:</p>
         <p class="display-equation">\[\frac{0{,}332-0{,}32355}{0{,}32355}\cdot100\,\%\approx2{,}61\,\%.\]</p>
         <p>Die gemessene Spannungsdifferenz liegt dort um etwa \(2{,}61\,\%\) über dem Modellwert.</p>
-        <p>Für die ausgewerteten Daten gilt \(0{,}001/0{,}332\cdot100\,\%\approx0{,}30\,\%\) als relative Spannungsunsicherheit. Bei \(t=0\) kann keine relative Zeitunsicherheit \(\Delta t/t\) angegeben werden. Nach unserer schulischen Vergleichsregel wird für die Zeitunsicherheit der kleinste positive Messwert \(t=10\,\mathrm s\) verwendet: \(1/10\cdot100\,\%=10\,\%\). Die schulische Vergleichsgrenze beträgt somit \(10\,\%\).</p>
+        <p>Für die ausgewerteten Daten gilt \(0{,}001/0{,}332\cdot100\,\%\approx0{,}30\,\%\) als relative Spannungsunsicherheit. Bei \(t=0\) kann keine relative Zeitunsicherheit \(\Delta t/t\) angegeben werden. Nach unserer schulischen Vergleichsregel wird für die Zeitunsicherheit deshalb als festgelegter Vergleichswert der kleinste positive Messwert \(t=10\,\mathrm s\) verwendet: \(1/10\cdot100\,\%=10\,\%\). Die schulische Vergleichsgrenze beträgt somit \(10\,\%\).</p>
         <p>Der Regressionsanfangswert liegt um \((3{,}780-3{,}69258)/3{,}780\cdot100\,\%\approx2{,}31\,\%\) unter \(U_0\).</p>`, {
         task: raw`Dokumentiere die zwei Vergleichsspalten, ein eingesetztes Beispiel und die schulische Vergleichsgrenze.`,
         checklist: [raw`E und F beschrieben`, raw`2,61 % mit Richtung genannt`, raw`2,31 % und 10 % genannt`],
         starter: raw`Die größte Modellabweichung tritt bei … auf. Dort liegt der Messwert … dem Modellwert.`
       }),
-      section("conclusion", "5. Schlussfolgerung", html`
+      section("conclusion", "5. Begründete Schlussfolgerung", html`
         <p>Die Anfangswertabweichung von etwa \(2{,}31\,\%\) und die größte Modellabweichung von etwa \(2{,}61\,\%\) liegen unter der schulischen Vergleichsgrenze von \(10\,\%\). Nach der hier verwendeten schulischen Vergleichsregel sind sie mit den angenommenen Messunsicherheiten vereinbar. Die Messwerte von \(0\) bis \(80\,\mathrm s\) sind mit einem exponentiellen Aufladevorgang und \(\tau\approx32{,}86\,\mathrm s\) vereinbar. Ein Beweis des Modells oder die Bestätigung eines bestimmten Sollwerts für \(\tau\) folgt daraus nicht.</p>`, {
         task: raw`Formuliere ein begründetes, aber vorsichtiges Urteil für den Zeitraum von 0 bis 80 s.`,
         checklist: [raw`beide Abweichungen mit 10 % verglichen`, raw`\(\tau\) genannt`, raw`kein Beweis behauptet`],
@@ -309,9 +309,9 @@ export const DOCUMENTATION_EXAMPLES = Object.freeze({
 export const DOCUMENTATION_EXAMPLE_IDS = Object.freeze(Object.keys(DOCUMENTATION_EXAMPLES));
 
 export const DOCUMENTATION_GENERAL_GUIDE = Object.freeze([
-  "Daten und Einheiten: Nenne die ausgewerteten Größen, Einheiten sowie zusätzliche Spalten oder Umrechnungen. Werden vorhandene Messwerte nicht ausgewertet, nenne den verwendeten Datenbereich und die ausgelassenen Werte; ist die Auswahl nicht vorgegeben, begründe sie kurz.",
+  "Daten und Einheiten: Nenne die ausgewerteten Größen, Einheiten sowie zusätzliche Spalten oder Umrechnungen. Werden vorhandene Messwerte nicht ausgewertet, müssen die ausgelassenen Werte beziehungsweise der verwendete Datenbereich angegeben werden. Ist die Auswahl nicht bereits durch die Aufgabe vorgegeben, muss sie kurz begründet werden.",
   "GeoGebra-Auswertung: Notiere Tabellenformeln oder Regressionsbefehl, den Zellbereich und das numerische Ergebnis.",
-  "Physikalische Formel: Übertrage das numerische GeoGebra-Ergebnis in eine Beziehung mit Größen und Einheiten.",
-  "Abweichungen und Vergleich: Zeige Modellabweichungen und vergleiche sie mit den angenommenen Messunsicherheiten beziehungsweise der schulischen Vergleichsgrenze.",
-  "Schlussfolgerung: Formuliere, ob das Modell nach der verwendeten schulischen Vergleichsregel mit den Messdaten vereinbar ist; Messdaten beweisen ein Modell nicht."
+  "Physikalische Formel und Parameter: Übertrage das numerische GeoGebra-Ergebnis in eine Beziehung mit Größen, Einheiten und den relevanten Parametern.",
+  "Abweichungen und Vergleichsregel: Zeige Modellabweichungen und vergleiche sie mit den angenommenen Messunsicherheiten beziehungsweise der schulischen Vergleichsgrenze. Die schulische Vergleichsregel dient hier zur vereinfachten Beurteilung der Messdaten. Sie ersetzt keine vollständige Unsicherheitsfortpflanzung oder statistische Modellprüfung.",
+  "Begründete Schlussfolgerung: Formuliere, ob das Modell nach der verwendeten schulischen Vergleichsregel mit den Messdaten vereinbar ist; Messdaten beweisen ein Modell nicht."
 ]);
