@@ -155,11 +155,15 @@ test("alle neuen Kapitel besitzen Erklärfelder sowie Ergebnis- und Verständnis
   });
 });
 
-test("bindet die zehn regulären Auflade-Abbildungen mit zugänglichen Beschreibungen und Markierungen ein und schließt historische Gegenformel aus", () => {
+test("bindet die regulären Auflade-Abbildungen ein und hält den Prüfwert als freiwillige Vertiefung getrennt", () => {
   const images = CHARGING_EXPONENTIAL_STEPS.flatMap((step) => step.images);
   const uniqueImages = [...new Map(images.map((image) => [image.src, image])).values()];
-  assert.equal(uniqueImages.length, 10);
+  assert.equal(uniqueImages.length, 7);
   assert.equal(uniqueImages.some((image) => image.src.includes("09-historische-abweichungsformel")), false);
+  const conclusion = CHARGING_EXPONENTIAL_STEPS.find((step) => step.id === "charging-conclusion");
+  assert.deepEqual(conclusion.images, []);
+  assert.equal(conclusion.optionalExtension.images.length, 1);
+  assert.match(conclusion.optionalExtension.title, /Freiwillige Vertiefung/);
   uniqueImages.forEach((image) => {
     assert.ok(image.alt.length > 30);
     assert.ok(image.caption.length > 20);
@@ -350,4 +354,9 @@ test("weist Suchmaschinen auf die gewünschte Nicht-Indexierung hin", () => {
   assert.match(html, /<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">/);
   assert.match(robots, /User-agent: \*/);
   assert.match(robots, /Disallow:\s*$/m);
+});
+test("kennzeichnet die U-Q-Grafiken als Programmschemata und nicht als GeoGebra-Screenshots", () => {
+  const images = [...UQ_POWER_STEPS, ...UQ_CONSTANT_STEPS, ...UQ_LINEAR_STEPS].flatMap((step) => step.images);
+  assert.ok(images.every((image) => image.alt.startsWith("Schematische Darstellung (kein GeoGebra-Screenshot):")));
+  assert.ok(images.every((image) => image.caption.startsWith("Schema zur Bedienorientierung:")));
 });

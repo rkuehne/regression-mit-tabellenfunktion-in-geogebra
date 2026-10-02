@@ -1,7 +1,4 @@
 import {
-  CHARGING_ALL_ANALYSIS_DATA,
-  CHARGING_ANALYSIS_DATA,
-  CHARGING_FIT_DATA,
   CHARGING_RAW_DATA,
   EXAMPLE_DATA,
   UQ_EXAMPLE_DATA
@@ -21,6 +18,7 @@ export const inlineMath = (tex) => `\\(${tex}\\)`;
 export const displayMath = (tex) => `\\[${tex}\\]`;
 
 const m = inlineMath;
+const CHARGING_GROUND_DATA = Object.freeze(CHARGING_RAW_DATA.slice(0, 9));
 
 const COURSE_MATH_REPLACEMENTS = [
   ["Messwert ΔU (V)", "\\text{Messwert }\\Delta U\\;(\\mathrm V)"],
@@ -217,7 +215,12 @@ export function typesetCourseText(value) {
   return result.replace(/\uE000(\d+)\uE001/g, (_, index) => protectedMath[Number(index)]);
 }
 
-const IMAGES = Object.freeze({
+const ownGeoGebraScreenshot = (image) => Object.freeze({
+  ...image,
+  alt: `Echter, vom Projektinhaber selbst aufgenommener GeoGebra-Screenshot: ${image.alt.replace(/^Tabellenschema/, "Tabellenansicht")}`,
+  caption: `${image.caption} Herkunft: selbst aufgenommener GeoGebra-Screenshot.`
+});
+const IMAGES = Object.freeze(Object.fromEntries(Object.entries({
   table: Object.freeze({
     src: "./assets/steps/01-messwerte.png",
     width: 469,
@@ -234,13 +237,13 @@ const IMAGES = Object.freeze({
   }),
   filledPoints: Object.freeze({
     src: "./assets/steps/03-punkte-ausfuellen.png", width: 632, height: 545,
-    alt: "GeoGebra-Tabelle mit sechs erzeugten Punkten in der Spalte C.",
+    alt: "Tabellenschema mit sechs erzeugten Punkten in der Spalte C.",
     caption: "Beim Ausfüllen werden die Zellbezüge zeilenweise angepasst: aus A1/B1 wird A2/B2 und so weiter.",
     highlights: [{ x: 70, y: 36, width: 25, height: 51, label: "C1:C6" }]
   }),
   fillHandle: Object.freeze({
     src: "./assets/steps/03-ausfuellgriff.png", width: 1100, height: 620,
-    alt: "GeoGebra-Tabellenkalkulation mit ausgewählter Zelle C1. Der kleine violette Ausfüllgriff am unteren rechten Zellenrand ist durch eine seitliche Vergrößerung erklärt.",
+    alt: "Tabellenschema mit ausgewählter Zelle C1. Der kleine violette Ausfüllgriff am unteren rechten Zellenrand ist durch eine seitliche Vergrößerung erklärt.",
     caption: "Setze den Finger auf das kleine violette Quadrat an C1, halte kurz und ziehe anschließend bis C6.",
     highlights: []
   }),
@@ -252,25 +255,25 @@ const IMAGES = Object.freeze({
   }),
   regression: Object.freeze({
     src: "./assets/steps/05-potenzregression.png", width: 954, height: 525,
-    alt: "GeoGebra-Algebraansicht mit TrendPot von C1 bis C6 und der berechneten Potenzfunktion.",
+    alt: "Algebraansicht im Schema mit TrendPot von C1 bis C6 und der berechneten Potenzfunktion.",
     caption: "GeoGebra berechnet eine Potenzfunktion, die sich den sechs Punkten möglichst gut annähert.",
     highlights: [{ x: 15, y: 13, width: 78, height: 21, label: "Regression F" }]
   }),
   predictions: Object.freeze({
     src: "./assets/steps/06-regressionswerte.png", width: 987, height: 623,
-    alt: "GeoGebra-Tabelle mit der Formel gleich F von A1 in Zelle D1.",
+    alt: "Tabellenschema mit der Formel gleich F von A1 in Zelle D1.",
     caption: "Spalte B enthält Messwerte; Spalte D enthält die zugehörigen Werte des Modells.",
     highlights: [{ x: 61, y: 20, width: 17, height: 9, label: "D1" }]
   }),
   deviationFormula: Object.freeze({
     src: "./assets/steps/07-abweichungsformel.png", width: 1077, height: 460,
-    alt: "GeoGebra-Tabelle mit der Formel für die prozentuale Modellabweichung in Zelle E1.",
+    alt: "Tabellenschema mit der Formel für die prozentuale Modellabweichung in Zelle E1.",
     caption: "In E1 wird die relative Modellabweichung in Prozent berechnet.",
     highlights: [{ x: 73, y: 22, width: 21, height: 15, label: "Formel in E1" }]
   }),
   deviations: Object.freeze({
     src: "./assets/steps/08-abweichungen.png", width: 1080, height: 505,
-    alt: "GeoGebra-Tabelle mit sechs berechneten prozentualen Modellabweichungen in Spalte E.",
+    alt: "Tabellenschema mit sechs berechneten prozentualen Modellabweichungen in Spalte E.",
     caption: "Der größte Betrag der Modellabweichung liegt in Zeile 4 bei rund 15,7 Prozent.",
     highlights: [{ x: 73, y: 22, width: 21, height: 56, label: "E1:E6" }]
   }),
@@ -280,36 +283,36 @@ const IMAGES = Object.freeze({
     caption: "Die Messpunkte liegen nicht exakt auf der Kurve, folgen aber demselben fallenden Verlauf.",
     highlights: [{ x: 32, y: 3, width: 55, height: 79, label: "Punkte und Kurve" }]
   })
-});
+}).map(([id, image]) => [id, ownGeoGebraScreenshot(image)])));
 
-const CHARGING_IMAGES = Object.freeze({
+const CHARGING_IMAGES = Object.freeze(Object.fromEntries(Object.entries({
   deltaFormula: Object.freeze({
     src: "./assets/steps/charging/01-spannungsdifferenz-formel-bis-80s.png", width: 640, height: 579,
-    alt: "GeoGebra-Tabellenkalkulation mit Zeitwerten, Kondensatorspannungen und der Eingabe gleich 3.78 minus B1 in Zelle C1.",
+    alt: "Tabellenschema mit Zeitwerten, Kondensatorspannungen und der Eingabe gleich 3.78 minus B1 in Zelle C1.",
     caption: "In C1 wird aus der Gesamtspannung 3,780 V und der gemessenen Kondensatorspannung die Spannungsdifferenz berechnet.",
     highlights: [{ x: 69, y: 29, width: 24, height: 10, label: "C1: 3.780 − B1" }]
   }),
   deltaValues: Object.freeze({
     src: "./assets/steps/charging/02-spannungsdifferenzen-bis-80s.png", width: 631, height: 584,
-    alt: "GeoGebra-Tabelle mit neun berechneten Spannungsdifferenzen von 3,780 Volt bis 0,332 Volt in Spalte C.",
+    alt: "Tabellenschema mit neun berechneten Spannungsdifferenzen von 3,780 Volt bis 0,332 Volt in Spalte C.",
     caption: "Nach dem Ausfüllen enthält Spalte C die abnehmenden Werte von ΔU = U₀ − U_C für 0 bis 80 s.",
     highlights: [{ x: 72, y: 29, width: 24, height: 70, label: "ΔU in C1:C9" }]
   }),
   firstPoint: Object.freeze({
     src: "./assets/steps/charging/03-erster-zeit-punkt.png", width: 819, height: 537,
-    alt: "GeoGebra-Tabelle mit der Eingabe gleich Klammer auf A1 Komma C1 Klammer zu in Zelle D1.",
+    alt: "Tabellenschema mit der Eingabe gleich Klammer auf A1 Komma C1 Klammer zu in Zelle D1.",
     caption: "D1 verbindet den Zeitpunkt aus A1 mit der Spannungsdifferenz aus C1 zum Punkt (0, 3.78).",
     highlights: [{ x: 69, y: 30, width: 23, height: 12, label: "Punkt in D1" }]
   }),
   points: Object.freeze({
     src: "./assets/steps/charging/04-zeit-punkte-bis-80s.png", width: 808, height: 572,
-    alt: "GeoGebra-Tabelle mit den Zeit-Spannungs-Punkten in Spalte D.",
+    alt: "Tabellenschema mit den Zeit-Spannungs-Punkten in Spalte D.",
     caption: "Spalte D verbindet die Zeitwerte aus Spalte A mit den Spannungsdifferenzen aus Spalte C.",
     highlights: [{ x: 75, y: 29, width: 18, height: 71, label: "Punkte in Spalte D" }]
   }),
   regression: Object.freeze({
     src: "./assets/steps/charging/05-exponentialregression.png", width: 756, height: 264,
-    alt: "GeoGebra-Algebraansicht mit U von x gleich TrendExp von D1 bis D9 und der berechneten Exponentialfunktion.",
+    alt: "Algebraansicht im Schema mit U von x gleich TrendExp von D1 bis D9 und der berechneten Exponentialfunktion.",
     caption: "TrendExp wertet bewusst D1:D9 aus; das ungeklärte zehnte Wertepaar gehört nicht zur Regression.",
     highlights: [{ x: 21, y: 29, width: 76, height: 35, label: "U(x) = TrendExp(D1:D9)" }]
   }),
@@ -321,35 +324,17 @@ const CHARGING_IMAGES = Object.freeze({
   }),
   modelFormula: Object.freeze({
     src: "./assets/steps/charging/07-modellwert-formel-bis-80s.png", width: 920, height: 591,
-    alt: "GeoGebra-Tabelle mit der Eingabe gleich U von A1 in Zelle E1.",
+    alt: "Tabellenschema mit der Eingabe gleich U von A1 in Zelle E1.",
     caption: "U(A1) setzt den Zeitpunkt aus Spalte A in die Regressionsfunktion ein.",
     highlights: [{ x: 78, y: 30, width: 17, height: 10, label: "E1: U(A1)" }]
   }),
   modelValues: Object.freeze({
     src: "./assets/steps/charging/08-modellwerte-bis-80s.png", width: 984, height: 588,
-    alt: "GeoGebra-Tabelle mit den neun berechneten Werten der Exponentialfunktion in Spalte E.",
+    alt: "Tabellenschema mit den neun berechneten Werten der Exponentialfunktion in Spalte E.",
     caption: "Die Modellwerte für die akzeptierten Messpunkte stehen in E1:E9.",
     highlights: [{ x: 77, y: 23, width: 18, height: 76, label: "Modellwerte E1:E9" }]
-  }),
-  historicalDeviationFormula: Object.freeze({
-    src: "./assets/steps/charging/09-historische-abweichungsformel.png", width: 1302, height: 647,
-    alt: "Historische GeoGebra-Aufnahme mit einer prozentualen Abweichungsformel in Spalte F, deren Vorzeichen gegenüber dem Kurs vertauscht ist.",
-    caption: "Achtung: Diese historische Aufnahme verwendet Modellwert minus Messwert. Im Kurs gilt einheitlich Messwert minus Modellwert; kopiere deshalb die Kursformel.",
-    highlights: [{ x: 72, y: 27, width: 16, height: 10, label: "Historische Vorzeichenfolge" }]
-  }),
-  anomaly: Object.freeze({
-    src: "./assets/steps/charging/10-auffaellige-modellabweichung.png", width: 1221, height: 696,
-    alt: "GeoGebra-Tabelle mit einer sehr großen Abweichung von rund minus 42,6 Prozent für den protokollierten Wert bei 100 Sekunden.",
-    caption: "Die Abweichung von etwa 42,6 % macht den letzten Zeitwert prüfbedürftig; sie ist kein automatischer Löschgrund.",
-    highlights: [{ x: 76, y: 81, width: 18, height: 9, label: "auffällige Zeile" }]
-  }),
-  plausibleNinety: Object.freeze({
-    src: "./assets/steps/charging/11-plausibilitaetsvergleich-90s.png", width: 1238, height: 640,
-    alt: "GeoGebra-Tabelle, in der der letzte Zeitpunkt versuchsweise mit 90 statt 100 Sekunden bezeichnet ist.",
-    caption: "90 s wäre rechnerisch plausibler, darf ohne Originalprotokoll aber nicht als nachträgliche Korrektur übernommen werden.",
-    highlights: [{ x: 12, y: 91, width: 13, height: 8, label: "nur Plausibilitätsvergleich" }]
   })
-});
+}).map(([id, image]) => [id, ownGeoGebraScreenshot(image)])));
 
 const option = (value, label) => ({ value, label });
 
@@ -532,7 +517,7 @@ export const LESSON_STEPS = Object.freeze([
     troubleshooting: "Lies den Exponenten einschließlich des Minuszeichens ab. 1/r² entspricht der Potenz r⁻².",
     mistake: "Reale Messreihen liefern selten exakt eine ganze Zahl wie −2. Entscheidend ist, ob der ermittelte Exponent nahe am theoretischen Wert liegt.",
     check: { prompt: "Prüfe den Exponenten und seine physikalische Bedeutung.", fields: [
-      { id: "ideal", kind: "result", type: "number", label: "Theoretisch erwarteter Exponent für 1/r²", placeholder: "Ergebnis eingeben", expected: -2, tolerance: 0.05, required: true, feedback: { correct: "Der ideale Exponent ist −2.", incorrect: "Schreibe 1/r² als r⁻²." } },
+      { id: "ideal", kind: "result", type: "number", label: "Theoretisch erwarteter Exponent für 1/r²", placeholder: "Ergebnis eingeben", expected: -2, tolerance: 0.05, required: false, feedback: { correct: "Der ideale Exponent ist −2.", incorrect: "Schreibe 1/r² als r⁻²." } },
       { id: "interpretation", kind: "understanding", type: "choice", label: "Was zeigt n ≈ −2,075?", expected: "near", required: true, options: [option("", "Bitte auswählen …"), option("near", "Der Verlauf liegt nahe bei 1/r²."), option("exact", "Das Modell ist exakt 1/r²."), option("linear", "F nimmt linear zu.")], feedback: { correct: "Richtig: nahe bei −2, aber nicht exakt.", incorrect: "Vergleiche −2,075 vorsichtig mit −2." } }
     ], success: "Du hast den Exponenten physikalisch eingeordnet.", retry: "Vergleiche −2,075 mit dem theoretischen Wert −2." }
   },
@@ -594,17 +579,17 @@ export const LESSON_STEPS = Object.freeze([
       { term: "Bewiesen", text: "Eine viel stärkere Aussage, die aus dieser Messreihe nicht folgt." },
       { term: "Grenze der Aussage", text: "Die Auswertung prüft die Vereinbarkeit der Messdaten mit dem Modell, liefert aber keinen mathematischen Beweis des Naturgesetzes." }
     ],
-    workedExample: { title: "Eine angemessene Schlussfolgerung", lines: ["b = −2,075 liegt nahe beim theoretisch erwarteten Wert −2.", "Die größte Modellabweichung beträgt etwa 15,7 %. Für den kleinsten Kraftwert ergibt 0,01/0,06 · 100 eine grobe relative Unsicherheit von 16,7 %.", "In dieser vereinfachten Betrachtung liefern die Daten keinen erkennbaren Widerspruch zum 1/r²-Modell. Sie beweisen das Modell jedoch nicht und bestimmen auch nicht direkt die Unsicherheit von b."] },
+    workedExample: { title: "Eine angemessene Schlussfolgerung", lines: ["b = −2,075 liegt nahe beim theoretisch erwarteten Wert −2.", "Die größte Modellabweichung beträgt etwa 15,7 %. Für den kleinsten Kraftwert ergibt 0,01/0,06 · 100 eine grobe relative Unsicherheit von 16,7 %.", "In dieser vereinfachten Betrachtung liefern die Daten keinen erkennbaren Widerspruch zum 1/r²-Modell. Sie beweisen das Modell jedoch nicht und bestimmen auch nicht direkt die Unsicherheit von n."] },
     remember: "Formuliere: mit 1/r² vereinbar – nicht: exakt bewiesen.",
     actionHeading: "Jetzt auswerten",
-    actions: ["Betrachte Messpunkte und Regressionskurve.", "Vergleiche den Regressionswert b = −2,075 mit der theoretischen Erwartung b = −2.", "Vergleiche 15,7 % Modellabweichung mit der grob abgeschätzten relativen Unsicherheit von 16,7 %.", "Formuliere eine vorsichtige Schlussfolgerung."],
+    actions: ["Betrachte Messpunkte und Regressionskurve.", "Vergleiche den Regressionswert n = −2,075 mit der theoretischen Erwartung n = −2.", "Vergleiche 15,7 % Modellabweichung mit der grob abgeschätzten relativen Unsicherheit von 16,7 %.", "Formuliere eine vorsichtige Schlussfolgerung."],
     resultRecognition: "Die Messpunkte streuen um die fallende Modellkurve, ohne einen systematischen Widerspruch zu zeigen.",
     formula: null, images: [IMAGES.curve],
     troubleshooting: "1/r² kann als r⁻² geschrieben werden. Betrachte Exponent, Streuung und Genauigkeit gemeinsam.",
-    mistake: "Die relative Unsicherheit eines Kraftwertes ist nicht die statistische Unsicherheit des Exponenten b.",
+    mistake: "Die relative Unsicherheit eines Kraftwertes ist nicht die statistische Unsicherheit des Exponenten n.",
     check: { prompt: "Prüfe Unsicherheit und Schlussfolgerung.", fields: [
       { id: "uncertainty", kind: "result", type: "number", label: "Grobe relative Unsicherheit in %", placeholder: "Ergebnis eingeben", expected: 16.7, tolerance: 0.7, required: true, feedback: { correct: "Rund 16,7 % stimmt.", incorrect: "Berechne 0,01/0,06 · 100." } },
-      { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist angemessen?", expected: "compatible", required: true, options: [option("", "Bitte auswählen …"), option("compatible", "Die Daten sind mit 1/r² vereinbar, beweisen es aber nicht."), option("proven", "Die Messreihe beweist 1/r² exakt."), option("uncertainty", "16,7 % ist die exakte Unsicherheit von b.")], feedback: { correct: "Genau: vereinbar, aber nicht bewiesen.", incorrect: "Die Daten erlauben eine vorsichtige Vereinbarkeitsaussage." } },
+      { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist angemessen?", expected: "compatible", required: true, options: [option("", "Bitte auswählen …"), option("compatible", "Die Daten sind mit 1/r² vereinbar, beweisen es aber nicht."), option("proven", "Die Messreihe beweist 1/r² exakt."), option("uncertainty", "16,7 % ist die exakte Unsicherheit von n.")], feedback: { correct: "Genau: vereinbar, aber nicht bewiesen.", incorrect: "Die Daten erlauben eine vorsichtige Vereinbarkeitsaussage." } },
       { id: "difference", kind: "result", type: "number", label: "Abstand von −2,075 zu −2", placeholder: "Ergebnis eingeben", expected: 0.075, tolerance: 0.01, required: false, feedback: { correct: "Der Abstand ist 0,075.", incorrect: "Berechne |−2,075 − (−2)|." } }
     ], success: "Du kannst die Messreihe fachlich vorsichtig beurteilen.", retry: "Unterscheide Vereinbarkeit, Beweis und Exponentenunsicherheit." }
   }
@@ -614,38 +599,38 @@ const uqImage = (file, width, height, alt, caption, highlights = []) => Object.f
   src: `./assets/steps/uq/${file}`,
   width,
   height,
-  alt,
-  caption,
+  alt: `Schematische Darstellung (kein GeoGebra-Screenshot): ${alt}`,
+  caption: `Schema zur Bedienorientierung: ${caption}`,
   highlights
 });
 
 const UQ_IMAGES = Object.freeze({
   table: uqImage("01-messwerte-u-q.png", 900, 500,
-    "GeoGebra-Tabellenkalkulation mit fünf Spannungswerten in Spalte A und fünf Ladungswerten in Spalte B.",
+    "Tabellenschema mit fünf Spannungswerten in Spalte A und fünf Ladungswerten in Spalte B.",
     "A enthält U in Volt. B enthält den Zahlenwert Q/(10⁻⁸ C).",
     [{ x: 16.5, y: 35, width: 55.5, height: 45, label: "A1:B5" }]),
   points: uqImage("02-punkte-u-q.png", 900, 500,
-    "GeoGebra-Tabelle mit fünf Punkten aus den Spannungs- und Ladungswerten in Spalte C.",
+    "Tabellenschema mit fünf Punkten aus den Spannungs- und Ladungswerten in Spalte C.",
     "C1:C5 enthält die Punkte (U, Q), die anschließend ausgewertet werden.",
     [{ x: 72, y: 35, width: 27.5, height: 45, label: "C1:C5" }]),
   ratioFormula: uqImage("03-konstante-formel.png", 900, 500,
-    "In GeoGebra wird in Zelle C1 der Quotient B1 durch A1 eingegeben.",
+    "Im Tabellenschema wird in Zelle C1 der Quotient B1 durch A1 eingegeben.",
     "Mit =B1/A1 berechnet GeoGebra aus dem ersten Messpaar die erste Kapazität.",
     [{ x: 72, y: 35, width: 27.5, height: 9, label: "C1" }]),
   ratios: uqImage("04-konstanten-ausgefuellt.png", 900, 500,
-    "GeoGebra-Tabelle mit fünf berechneten Quotienten Q durch U in Spalte C.",
+    "Tabellenschema mit fünf berechneten Quotienten Q durch U in Spalte C.",
     "Die fünf Zahlen in C1:C5 liegen nahe beieinander – das spricht für eine konstante Kapazität.",
     [{ x: 72, y: 35, width: 27.5, height: 45, label: "C1:C5" }]),
   mean: uqImage("05-mittelwert.png", 900, 500,
-    "GeoGebra-Algebraansicht mit dem Mittelwert der fünf Kapazitätswerte.",
+    "Algebraansicht im Schema mit dem Mittelwert der fünf Kapazitätswerte.",
     "Mittel(C1:C5) liefert etwa 0,0415933 in der verwendeten Skalierung.",
     [{ x: 16, y: 15, width: 39, height: 20, label: "Mittelwert a" }]),
   meanFormula: uqImage("06-mittelwert-in-d1.png", 900, 500,
-    "In der GeoGebra-Tabelle wird der gespeicherte Mittelwert a in Zelle D1 eingesetzt.",
+    "In der Tabellenschema wird der gespeicherte Mittelwert a in Zelle D1 eingesetzt.",
     "Mit =a wird der Mittelwert neben den ersten Einzelwert geschrieben.",
     [{ x: 79, y: 35, width: 20.5, height: 9, label: "D1" }]),
   meanFilled: uqImage("07-mittelwert-ausgefuellt.png", 900, 500,
-    "GeoGebra-Tabelle mit dem Kapazitätsmittelwert in den Zellen D1 bis D5.",
+    "Tabellenschema mit dem Kapazitätsmittelwert in den Zellen D1 bis D5.",
     "D1:D5 enthält denselben Bezugswert für den Vergleich mit allen Einzelkapazitäten.",
     [{ x: 79, y: 35, width: 20.5, height: 45, label: "D1:D5" }]),
   constantDeviationFormula: uqImage("08-konstantenabweichung-formel.png", 1040, 500,
@@ -653,23 +638,23 @@ const UQ_IMAGES = Object.freeze({
     "E1 vergleicht C1 mit dem Mittelwert in D1 und gibt die Abweichung in Prozent aus.",
     [{ x: 82.7, y: 35, width: 17, height: 9, label: "Formel in E1" }]),
   constantDeviations: uqImage("09-konstantenabweichungen.png", 1040, 500,
-    "GeoGebra-Tabelle mit fünf relativen Abweichungen der Kapazitätswerte in Spalte E.",
+    "Tabellenschema mit fünf relativen Abweichungen der Kapazitätswerte in Spalte E.",
     "Der größte Betrag liegt bei etwa 3,83 Prozent in der ersten Zeile.",
     [{ x: 82.7, y: 35, width: 17, height: 45, label: "E1:E5" }]),
   regression: uqImage("10-potenzregression-u-q.png", 900, 500,
-    "GeoGebra-Algebraansicht mit der Potenzregression Q von x für die fünf U-Q-Punkte.",
-    "TrendPot liefert den Exponenten b ≈ 1,0116 – also einen Verlauf nahe bei b = 1.",
+    "Algebraansicht im Schema mit der Potenzregression Q von x für die fünf U-Q-Punkte.",
+    "TrendPot liefert den Exponenten n ≈ 1,0116 – also einen Verlauf nahe bei n = 1.",
     [{ x: 18, y: 16, width: 77, height: 18, label: "Q(x)" }]),
   modelTable: uqImage("11-modellwerte-u-q.png", 1040, 500,
-    "GeoGebra-Tabelle mit U-Q-Punkten, Modellwerten der Potenzregression und prozentualen Modellabweichungen.",
+    "Tabellenschema mit U-Q-Punkten, Modellwerten der Potenzregression und prozentualen Modellabweichungen.",
     "D enthält die Modellwerte, E die Abweichungen der Messwerte vom Regressionsmodell.",
     [{ x: 65.6, y: 35, width: 34, height: 45, label: "D und E" }]),
   linearRegression: uqImage("12-lineare-regression-u-q.png", 900, 500,
-    "GeoGebra-Algebraansicht mit dem Befehl Q gleich Trendlinie für die fünf U-Q-Punkte.",
+    "Algebraansicht im Schema mit dem Befehl Q gleich Trendlinie für die fünf U-Q-Punkte.",
     "Trendlinie liefert die Regressionsgerade Q: y = 0,0408 · x + 0,12.",
     [{ x: 18, y: 16, width: 77, height: 18, label: "Q" }]),
   linearModelTable: uqImage("13-lineare-modellwerte-u-q.png", 1040, 500,
-    "GeoGebra-Tabelle mit U-Q-Punkten, Modellwerten der linearen Regression und prozentualen Modellabweichungen.",
+    "Tabellenschema mit U-Q-Punkten, Modellwerten der linearen Regression und prozentualen Modellabweichungen.",
     "D enthält die Werte der Regressionsgeraden, E die relativen Modellabweichungen.",
     [{ x: 65.6, y: 35, width: 34, height: 45, label: "D und E" }])
 });
@@ -688,7 +673,7 @@ export const UQ_POWER_STEPS = Object.freeze([
     why: "Für einen festen Kondensator sagt das Modell Q = C · U eine direkte Proportionalität zwischen Ladung und Spannung voraus. Reale Messergebnisse sind mit Unsicherheiten behaftet. Deshalb prüfen wir nicht auf exakte Übereinstimmung, sondern darauf, ob Verlauf und Abweichungen im Rahmen der vereinfachten Unsicherheitsbetrachtung mit der theoretischen Erwartung vereinbar sind.",
     concepts: uqContextConcepts,
     workedExample: { title: "Eine Verdopplung prüfen", lines: ["Bei 50 V wurden 2,0 · 10⁻⁸ C gemessen.", "Bei 100 V wären bei exakter Proportionalität 4,0 · 10⁻⁸ C zu erwarten; gemessen wurden 4,3 · 10⁻⁸ C.", "Diese Abweichung ist zunächst weder ein Beweis noch ein Widerspruch. Sie muss mit der Messunsicherheit und der gesamten Messreihe verglichen werden."] },
-    remember: "Direkte Proportionalität bedeutet Q = C · U; im Potenzmodell entspricht das dem Exponenten b = 1.",
+    remember: "Direkte Proportionalität bedeutet Q = C · U; im Potenzmodell entspricht das dem Exponenten n = 1.",
     actionHeading: "Zuerst vorhersagen", actions: ["Lies die beiden Spalten der Messreihe.", "Beachte die Einheit 10⁻⁸ C in Spalte B.", "Überlege, wie Q bei wachsendem U verlaufen sollte."],
     resultRecognition: "Die Tabelle zeigt fünf zusammengehörige Messpaare von Spannung U und Ladung Q.",
     dataTable: UQ_EXAMPLE_DATA, formula: null, images: [UQ_IMAGES.table],
@@ -736,18 +721,18 @@ export const UQ_POWER_STEPS = Object.freeze([
   },
   {
     id: "uq-power-concept", phaseId: "model", phase: "model", shortTitle: "Modell", title: "Warum eine Potenzregression Proportionalität erkennen kann",
-    goal: "Du verstehst Q(U) = a · Uᵇ und erkennst b = 1 als proportionalen Sonderfall.",
+    goal: "Du verstehst Q(U) = a · Uⁿ und erkennst n = 1 als proportionalen Sonderfall.",
     why: "Eine Potenzregression passt einen einzigen Potenzfunktionsgraphen so an, dass er insgesamt möglichst nahe an den Messpunkten verläuft. Der frei bestimmte Exponent zeigt, welcher Potenzzusammenhang zu den Daten passt.",
-    concepts: [{ term: "Potenzmodell", text: "Eine Funktion der Form Q(U) = a · Uᵇ." }, { term: "Exponent b", text: "Er beschreibt, wie Q auf eine Änderung von U reagiert." }, { term: "Sonderfall b = 1", text: "Dann gilt Q(U) = a · U und der Verlauf ist direkt proportional." }],
-    workedExample: { title: "Den Exponenten vergleichen", lines: ["Bei b = 1 führt eine Verdopplung von U zu einer Verdopplung von Q.", "Bei b = 2 führt eine Verdopplung von U zu einer Vervierfachung von Q.", "Ein Regressionsergebnis nahe 1 stützt deshalb die Vermutung eines proportionalen Zusammenhangs."] },
+    concepts: [{ term: "Potenzmodell", text: "Eine Funktion der Form Q(U) = a · Uⁿ." }, { term: "Exponent n", text: "Er beschreibt, wie Q auf eine Änderung von U reagiert." }, { term: "Sonderfall n = 1", text: "Dann gilt Q(U) = a · U und der Verlauf ist direkt proportional." }],
+    workedExample: { title: "Den Exponenten vergleichen", lines: ["Bei n = 1 führt eine Verdopplung von U zu einer Verdopplung von Q.", "Bei n = 2 führt eine Verdopplung von U zu einer Vervierfachung von Q.", "Ein Regressionsergebnis nahe 1 stützt deshalb die Vermutung eines proportionalen Zusammenhangs."] },
     remember: "Die Regression verbindet die Punkte nicht; sie sucht einen gemeinsamen, möglichst gut passenden Graphen.",
-    actionHeading: "Vor der Eingabe", actions: ["Betrachte den ansteigenden Punktverlauf.", "Vergleiche die Bedeutung von b = 1 und b = 2.", "Formuliere deine Erwartung: b sollte nahe bei 1 liegen."],
-    resultRecognition: "Das Potenzmodell mit Exponent b = 1 beschreibt genau den direkt proportionalen Zusammenhang.",
+    actionHeading: "Vor der Eingabe", actions: ["Betrachte den ansteigenden Punktverlauf.", "Vergleiche die Bedeutung von n = 1 und n = 2.", "Formuliere deine Erwartung: n sollte nahe bei 1 liegen."],
+    resultRecognition: "Das Potenzmodell mit Exponent n = 1 beschreibt genau den direkt proportionalen Zusammenhang.",
     formula: null, images: [],
     troubleshooting: "Lies Uⁿ als U hoch n. Bei n = 1 bleibt einfach U übrig.",
     mistake: "Ein gut passender Graph bedeutet nicht, dass alle Punkte exakt auf ihm liegen. Die Parameter werden nach dem verwendeten Regressionsverfahren an die gesamte Messreihe angepasst; einzelne Messpunkte dürfen oberhalb oder unterhalb des Graphen liegen.",
     check: { prompt: "Deute das Potenzmodell.", fields: [
-      { id: "ideal", kind: "result", type: "number", label: "Exponent bei direkter Proportionalität", placeholder: "Ergebnis eingeben", expected: 1, tolerance: 0.001, required: true, feedback: { correct: "Der ideale Exponent ist 1.", incorrect: "Setze n = 1 in a · Uⁿ ein." } },
+      { id: "ideal", kind: "result", type: "number", label: "Exponent nei direkter Proportionalität", placeholder: "Ergebnis eingeben", expected: 1, tolerance: 0.001, required: true, feedback: { correct: "Der ideale Exponent ist 1.", incorrect: "Setze n = 1 in a · Uⁿ ein." } },
       { id: "regression", kind: "understanding", type: "choice", label: "Was macht eine Regression?", expected: "near", required: true, options: [option("", "Bitte auswählen …"), option("near", "Sie passt einen Graphen möglichst gut an alle Punkte an."), option("connect", "Sie verbindet benachbarte Punkte mit Geraden."), option("prove", "Sie beweist die Theorie.")], feedback: { correct: "Genau: Sie liefert eine bestmögliche Modellannäherung.", incorrect: "Die Regression sucht einen gemeinsamen Modellgraphen." } }
     ], success: "Du kannst n = 1 als proportionalen Sonderfall erklären.", retry: "Vergleiche a · Uⁿ mit a · U." }
   },
@@ -830,7 +815,7 @@ export const UQ_POWER_STEPS = Object.freeze([
   {
     id: "uq-power-conclusion", phaseId: "conclusion", phase: "conclusion", shortTitle: "Urteil", title: "Die Proportionalitätsvermutung beurteilen",
     goal: "Du wendest die Methode des größten Einzelfehlers auf Exponent und Modellabweichungen an und formulierst ein vorsichtiges Urteil.",
-    why: "Eine fachlich tragfähige Aussage stützt sich nicht nur darauf, dass der Exponent nahe bei 1 liegt. Auch die Modellabweichungen werden mit dem größten relativen Einzelfehler verglichen. Die gemeinsame Pflichtseite leitet diese schulische Methode einmal ausführlich her.",
+    why: "Eine fachlich tragfähige Aussage stützt sich nicht nur darauf, dass der Exponent nahe bei 1 liegt. Auch die Modellabweichungen werden mit dem größten relativen Einzelfehler verglichen. Die gemeinsame Fehlerseite leitet diese schulische Methode einmal ausführlich her.",
     concepts: [{ term: "Exponent n", text: "Im Vergleich nennen wir den Potenzexponenten n, damit er nicht mit dem y-Achsenabschnitt b einer Geraden verwechselt wird." }, { term: "Exponentabweichung", text: "|1,011566 − 1|/1 · 100 ≈ 1,16 %." }, { term: "Größter Einzelfehler", text: "Aus ΔU und ΔQ ergibt sich auf der gemeinsamen Fehlerseite fmax = 10 %." }],
     workedExample: { title: "Beide Abweichungen vergleichen", lines: ["Die relative Exponentabweichung beträgt etwa 1,16 %.", "Die größte Modellabweichung beträgt etwa 3,74 %.", "Beide Werte liegen unter fmax = 10 % und können nach dieser Methode durch die Messfehler erklärt werden."] },
     remember: "n ≈ 1 und die Modellabweichungen sind im Rahmen der Methode des größten Einzelfehlers durch Messfehler erklärbar; bewiesen ist Q ∝ U damit nicht.",
@@ -1164,7 +1149,7 @@ export const UQ_LINEAR_STEPS = Object.freeze([
     sharedRequirement: true,
     check: { prompt: "Prüfe Vergleichswerte und Schlussfolgerung.", fields: [
       { id: "limit", kind: "result", type: "number", label: "Größter relativer Einzelfehler in %", placeholder: "Ergebnis eingeben", expected: 10, tolerance: 0.05, required: true, feedback: { correct: "fmax beträgt 10 %.", incorrect: "Bearbeite die gemeinsame Fehlerseite." } },
-      { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist fachlich angemessen?", expected: "compatible", required: true, options: [option("", "Bitte auswählen …"), option("compatible", "Die Abweichungen sind durch Messfehler erklärbar; b kann näherungsweise vernachlässigt werden."), option("proven", "Die direkte Proportionalität ist exakt bewiesen."), option("uncertainty", "10 % ist die statistische Unsicherheit von b.")], feedback: { correct: "Genau: schulisch erklärbar und näherungsweise vernachlässigbar, aber nicht statistisch bestätigt.", incorrect: "Unterscheide die Unterrichtsmethode von einer statistischen Parameterschätzung." } },
+      { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist fachlich angemessen?", expected: "compatible", required: true, options: [option("", "Bitte auswählen …"), option("compatible", "Die Abweichungen sind durch Messfehler erklärbar; b kann näherungsweise vernachlässigt werden."), option("proven", "Die direkte Proportionalität ist exakt bewiesen."), option("uncertainty", "10 % ist die statistische Unsicherheit von n.")], feedback: { correct: "Genau: schulisch erklärbar und näherungsweise vernachlässigbar, aber nicht statistisch bestätigt.", incorrect: "Unterscheide die Unterrichtsmethode von einer statistischen Parameterschätzung." } },
       { id: "intercept", kind: "result", type: "number", label: "Anteil |b|/Qmin in %", placeholder: "Ergebnis eingeben", expected: 6, tolerance: 0.05, required: false, feedback: { correct: "Der Anteil des y-Achsenabschnitts beträgt 6 %.", incorrect: "Berechne 0,12/2,0 · 100." } }
     ], success: "Du hast die lineare Regression mit der Methode des größten Einzelfehlers beurteilt.", retry: "Verbinde 408 pF, b = 0,12, 7,41 %, 6 % und fmax = 10 %." }
   }
@@ -1206,9 +1191,9 @@ export const CHARGING_EXPONENTIAL_STEPS = Object.freeze([
     workedExample: { title: "Eine Tabellenzeile lesen", lines: ["In A3 steht t = 20 s.", "In B3 steht U_C = 1,796 V.", "Damit gehört zum Zeitpunkt 20 s die gemessene Spannung 1,796 V."] },
     remember: "A enthält t in s; B enthält U_C in V; die neun regulären Messungen reichen von 0 s bis 80 s.",
     actionHeading: "Jetzt in GeoGebra",
-    actions: ["Öffne Grafikrechner und Tabellenkalkulation.", "Trage die Zeitwerte in A1:A9 (bzw. bis A10) ein.", "Trage die zugehörigen Spannungen in B1:B9 (bzw. bis B10) ein."],
+    actions: ["Öffne Grafikrechner und Tabellenkalkulation.", "Trage die neun Zeitwerte in A1:A9 ein.", "Trage die zugehörigen Spannungen in B1:B9 ein."],
     resultRecognition: "Messwerte in A1:B9 übertragen: Zeit t in s (Spalte A) und U_C in V (Spalte B).",
-    dataTable: CHARGING_RAW_DATA, dataHeaders: ["A: t (s)", "B: U_C (V)"], dataKeys: ["t", "uc"], formula: null, images: [],
+    dataTable: CHARGING_GROUND_DATA, dataHeaders: ["A: t (s)", "B: U_C (V)"], dataKeys: ["t", "uc"], formula: null, images: [],
     troubleshooting: "Siehst du die Tabellenkalkulation nicht, arbeitet GeoGebra möglicherweise noch im CAS-Modus. Öffne das Menü ☰, wähle Grafikrechner und anschließend links das Tabellenkalkulations-Symbol. Dezimalpunkt und Dezimalkomma bezeichnen denselben Zahlenwert.",
     mistake: "Ein Zeitwert darf nicht versehentlich zur Spannung der nächsten Zeile gehören.",
     check: { prompt: "Kontrolliere die verwendete Messreihe.", fields: [
@@ -1231,7 +1216,7 @@ export const CHARGING_EXPONENTIAL_STEPS = Object.freeze([
     actionHeading: "Jetzt in GeoGebra",
     actions: ["Tippe C1 an und gib die Formel ein.", "Bestätige: C1 muss 3,780 anzeigen.", "Fülle C1 bis C9 aus.", "Kontrolliere C9 = 0,332."],
     resultRecognition: "Spalte C1:C9 enthält ΔU: C1 = 3,780 V bis C9 = 0,332 V.",
-    dataTable: CHARGING_RAW_DATA, dataHeaders: ["A: t (s)", "B: U_C (V)", "C: ΔU (V)"], dataKeys: ["t", "uc", "deltaU"], formula: "=3.780-B1", images: [CHARGING_IMAGES.deltaFormula, CHARGING_IMAGES.deltaValues],
+    dataTable: CHARGING_GROUND_DATA, dataHeaders: ["A: t (s)", "B: U_C (V)", "C: ΔU (V)"], dataKeys: ["t", "uc", "deltaU"], formula: "=3.780-B1", images: [CHARGING_IMAGES.deltaFormula, CHARGING_IMAGES.deltaValues],
     troubleshooting: "Beginne mit dem Gleichheitszeichen. Verwende 3.780 ohne Einheit; GeoGebra rechnet dann mit dem Zahlenwert in Volt.",
     mistake: "Bei B1 − 3.780 würden negative Werte entstehen. Benötigt wird U₀ − U_C.",
     check: { prompt: "Prüfe Rechnung und Verlauf.", fields: [
@@ -1254,7 +1239,7 @@ export const CHARGING_EXPONENTIAL_STEPS = Object.freeze([
     actionHeading: "Jetzt in GeoGebra",
     actions: ["Tippe D1 an und gib die Punktformel ein.", "Bestätige den Punkt (0, 3.78).", "Fülle D1 bis D9 aus.", "Passe das Grafikfenster so an, dass t von 0 bis 90 s und ΔU von 0 bis 4 V gut sichtbar sind."],
     resultRecognition: "Punkte D1:D9 im Grafikfenster sichtbar, von D1=(0, 3.78) bis D9=(80, 0.332).",
-    dataTable: CHARGING_RAW_DATA, dataHeaders: ["t (s)", "ΔU (V)"], dataKeys: ["t", "deltaU"], formula: "=(A1,C1)", images: [CHARGING_IMAGES.firstPoint, CHARGING_IMAGES.points],
+    dataTable: CHARGING_GROUND_DATA, dataHeaders: ["t (s)", "ΔU (V)"], dataKeys: ["t", "deltaU"], formula: "=(A1,C1)", images: [CHARGING_IMAGES.firstPoint, CHARGING_IMAGES.points],
     troubleshooting: "Beginne mit dem Gleichheitszeichen und verwende A1 sowie C1 in runden Klammern. Ziehe den Ausfüllgriff bis D9.",
     mistake: "Bei =(C1,A1) würden Zeit und Spannung auf den falschen Achsen liegen.",
     check: { prompt: "Prüfe Punktbereich und Koordinaten.", fields: [
@@ -1368,7 +1353,7 @@ export const CHARGING_EXPONENTIAL_STEPS = Object.freeze([
     actionHeading: "Jetzt in GeoGebra",
     actions: ["Gib die Kursformel in F1 ein.", "Fülle F1 bis F9 aus.", "Vergleiche die Beträge der neun Werte.", "Notiere Betrag, Zeitpunkt und Vorzeichen des größten Werts."],
     resultRecognition: "Spalte F1:F9 enthält Abweichungen; größte Abweichung bei t = 80 s mit Betrag ≈ 2,61 %.",
-    dataTable: CHARGING_RAW_DATA, dataHeaders: ["t (s)", "Messwert ΔU (V)", "Modellwert (V)", "Abweichung (%)"], dataKeys: ["t", "deltaU", "predicted", "deviation"], dataFormatDigits: 5,
+    dataTable: CHARGING_GROUND_DATA, dataHeaders: ["t (s)", "Messwert ΔU (V)"], dataKeys: ["t", "deltaU"], dataFormatDigits: 3,
     formula: "=(C1-E1)/E1*100", images: [],
     troubleshooting: "Gib =(C1-E1)/E1*100 in F1 ein und ziehe die Formel bis F9 nach unten. Verwende einheitlich (Messwert − Modellwert)/Modellwert · 100, damit das Vorzeichen zu allen anderen Lernwegen passt.",
     mistake: "Eine Modellabweichung ist keine Messunsicherheit. Sie beschreibt den Abstand eines Messwerts vom gewählten Modell.",
@@ -1379,9 +1364,9 @@ export const CHARGING_EXPONENTIAL_STEPS = Object.freeze([
     ], success: "Du kannst Modellabweichungen berechnen und ihr Vorzeichen deuten.", retry: "Nutze Kursformel, Betrag und Vorzeichen getrennt." }
   },
   {
-    id: "charging-conclusion", phaseId: "conclusion", phase: "conclusion", shortTitle: "Urteil", title: "Messfehler abschätzen, Modell beurteilen und Prüfwert vertiefen",
-    goal: "Du wendest die Methode des größten Einzelfehlers auf die neun regulären Messwerte an, formulierst ein vorsichtiges Urteil und vergleichst den 10. Messwert als Vertiefung.",
-    why: "Messpunkte liegen wegen begrenzter Zeit- und Spannungsauflösung nicht exakt auf einer Modellkurve. In der schulischen Methode wird der größte relative Einzelfehler als Grenze auf die untersuchten Abweichungen übertragen. Für die neun regulären Messwerte (D1:D9) zeigt sich eine hervorragende Übereinstimmung. Der 10. Messwert bei 100 s wird im Anschluss als Vertiefung kritisch beleuchtet.",
+    id: "charging-conclusion", phaseId: "conclusion", phase: "conclusion", shortTitle: "Urteil", title: "Messunsicherheit abschätzen und das Modell beurteilen",
+    goal: "Du wendest die schulische Vergleichsregel auf die neun Messwerte an und formulierst ein vorsichtiges Urteil.",
+    why: "Für den vorgegebenen Grundweg von 0 bis 80 s vergleichst du Modellabweichung und Messunsicherheit mit derselben schulischen Vergleichsregel.",
     concepts: [
       { term: "Zeitfehler", text: "Aus Δt = 1 s und dem kleinsten von null verschiedenen Zeitpunkt 10 s ergeben sich Δt/t_min = 1/10 · 100 % = 10 %. Bei t = 0 wäre ein relativer Fehler nicht definiert." },
       { term: "Spannungsfehler", text: "Aus ΔU_Gerät = 0,001 V und der kleinsten regulären Spannungsdifferenz 0,332 V ergeben sich 0,001/0,332 · 100 % ≈ 0,30 % (bzw. mit dem Prüfwert 0,251 V rund 0,40 %)." },
@@ -1392,13 +1377,18 @@ export const CHARGING_EXPONENTIAL_STEPS = Object.freeze([
       "Zeit: 1/10 · 100 = 10 %; Spannung: 0,001/0,332 · 100 ≈ 0,30 %; damit fmax = 10 %.",
       "Der Regressionsanfangswert A aus D1:D9 weicht relativ um etwa 2,31 % von U₀ ab; die größte Modellabweichung der neun Punkte beträgt etwa 2,61 % bei 80 s.",
       "Beide Abweichungen liegen deutlich unter 10 % und können nach der schulischen Methode durch die Messfehler erklärt werden.",
-      "Vertiefung: Berechnet man U(x) = TrendExp(D1:D10), weicht der 10. Punkt um 23,0 % ab (A ≈ 3,478 V, k ≈ −0,0284 s⁻¹). Gegenüber der 9-Punkte-Kurve beträgt die Abweichung sogar 42,6 %. Der Grundweg beschränkt sich daher auf D1:D9."
+      "Die schulische Vergleichsregel ordnet die Abweichungen der vorgegebenen Teilreihe von 0 bis 80 s ein; sie beweist das Modell nicht."
     ] },
     remember: "Die Daten sind mit einem exponentiellen Aufladevorgang vereinbar; sie beweisen das Modell nicht.",
     actionHeading: "Jetzt ein fachliches Urteil formulieren",
-    actions: ["Berechne die relativen Einzelfehler von Spannung und Zeit.", "Bestimme fmax = 10 %.", "Vergleiche 2,31 % und 2,61 % jeweils mit fmax = 10 %.", "Betrachte den 10. Messwert als Vertiefung: 42,6 % Abweichung von TrendExp(D1:D9) bzw. 23,0 % bei TrendExp(D1:D10)."],
-    resultRecognition: "Schlussfolgerung: Neun reguläre Messwerte sind mit Exponentialmodell vereinbar; fmax = 10 % erklärt 2,31 % und 2,61 %; 10. Messwert als Vertiefung gewürdigt.",
-    formula: null, images: [CHARGING_IMAGES.curveWithCheckValue, CHARGING_IMAGES.anomaly, CHARGING_IMAGES.plausibleNinety],
+    actions: ["Berechne die relativen Einzelfehler von Spannung und Zeit.", "Bestimme fmax = 10 %.", "Vergleiche 2,31 % und 2,61 % jeweils mit fmax = 10 %.", "Formuliere eine vorsichtige Vereinbarkeitsaussage."],
+    resultRecognition: "Deine Beurteilung nennt die Messreihe, die schulische Vergleichsregel und ihre begrenzte Aussagekraft.",
+    formula: null, images: [],
+    optionalExtension: {
+      title: "Freiwillige Vertiefung: das vollständige Originalprotokoll",
+      lines: ["Das Originalprotokoll enthält zusätzlich t = 100 s und ΔU = 0,251 V. Rechne beide Modelle getrennt: TrendExp(D1:D9) und TrendExp(D1:D10).", "Der Messwert bei 100 s liegt gegenüber der Neun-Punkte-Kurve bei rund +42,59 %; gegenüber der Zehn-Punkte-Kurve bei rund +23,04 %. Die Bezugsmodelle sind verschieden.", "Ungleiche Zeitabstände sind zulässig. Der Wert bleibt erhalten; aus der Abweichung allein folgt keine Datenkorrektur oder Löschung."],
+      images: [CHARGING_IMAGES.curveWithCheckValue]
+    },
     troubleshooting: "Der Zeitwert 100 s darf nicht einfach eigenmächtig in 90 s umgeschrieben werden, solange kein Originalprotokoll dies belegt. Ein abweichender Punkt darf auch nicht nur deshalb verworfen werden, weil er dem Modell widerspricht.",
     mistake: "Die 10-%-Grenze ist eine vereinfachte schulische Beurteilung, keine vollständige Fehlerfortpflanzung und kein mathematischer Beweis des Modells.",
     check: { prompt: "Prüfe Fehlerwerte und Schlussfolgerung.", fields: [
@@ -1452,7 +1442,7 @@ export const COURSES = Object.freeze({
     id: "proportional-power",
     eyebrow: "Direkte Proportionalität · Methode 1",
     title: "Kondensator: Potenzregression",
-    subtitle: `${m(String.raw`Q \propto U`)} anhand des Exponenten ${m("b")} prüfen`,
+    subtitle: `${m(String.raw`Q \propto U`)} anhand des Exponenten ${m("n")} prüfen`,
     duration: "etwa 20–30 Minuten",
     dataHeaders: ["A: U (V)", "B: Q/(10⁻⁸ C)"],
     dataKeys: ["u", "q"],
@@ -1462,7 +1452,7 @@ export const COURSES = Object.freeze({
     competencies: [
       { label: "Ich kann U-Q-Messwerte in GeoGebra als Punkte darstellen.", steps: ["uq-power-context", "uq-power-table", "uq-power-points"] },
       { label: "Ich kann die Potenzregression in GeoGebra durchführen.", steps: ["uq-power-concept", "uq-power-fit"] },
-      { label: "Ich kann den Exponenten deuten und b = 1 als proportionalen Sonderfall erklären.", steps: ["uq-power-parameters"] },
+      { label: "Ich kann den Exponenten deuten und n = 1 als proportionalen Sonderfall erklären.", steps: ["uq-power-parameters"] },
       { label: "Ich kann Modellwerte und Modellabweichungen berechnen.", steps: ["uq-power-model", "uq-power-deviation"] },
       { label: "Ich kann die Proportionalitätsvermutung vorsichtig beurteilen.", steps: ["uq-power-conclusion"] }
     ],

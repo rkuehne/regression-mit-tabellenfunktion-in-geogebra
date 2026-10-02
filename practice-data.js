@@ -106,8 +106,8 @@ export const PRACTICE_TASKS = Object.freeze({
     description: "Untersuche die Beziehung zwischen Ladung Q und Spannung U an einem Plattenkondensator. Die Ladung ist in 10⁻⁸ C angegeben.",
     tableHeaders: ["U in V (Spalte A)", "Q/(10⁻⁸ C) (Spalte B)"],
     tableRows: PRACTICE_LINEAR_DATA.map((d) => [d.u, d.q]),
-    assignment: "Erstelle in Spalte C die Punktliste mit =(A1,B1), berechne in der Eingabezeile eine freie lineare Regression mit Q=Trendlinie(C1:C7), deute die Steigung als Kapazität, bestimme in Spalte D die Modellwerte mit =Q(A1) und in Spalte E die relativen Modellabweichungen mit =(B1-D1)/D1*100. Vergleiche den größten Betrag der Modellabweichung sowie den Achsenabschnitt mit der schulischen Vergleichsgrenze und dokumentiere dein Ergebnis.",
-    assumptionsText: "Vorgegebene Annahmen für die schulische Regel: \\(\\Delta U = 2\\,\\mathrm{V}\\) und \\(\\Delta Q = 0{,}1\\cdot10^{-8}\\,\\mathrm{C}\\). Grenze: \\(f_{\\max} = \\max\\left(\\frac{2}{40},\\frac{0{,}1}{1{,}6}\\right)\\cdot100\\,\\% = 6{,}25\\,\\%\\).",
+    assignment: "Übertrage die sieben Messpaare, wähle eine passende lineare Regression und bestimme Steigung sowie y-Achsenabschnitt. Berechne Modellwerte und relative Modellabweichungen. Vergleiche beide Beurteilungswerte mit der schulischen Vergleichsregel und schreibe eine physikalische Formel mit Einheiten auf.",
+    assumptionsText: "Vorgegebene Annahmen für die schulische Vergleichsregel: \\(\\Delta U = 2\\,\\mathrm{V}\\) und \\(\\Delta Q = 0{,}1\\cdot10^{-8}\\,\\mathrm{C}\\). Bestimme daraus selbst die größte relative Eingangsunsicherheit.",
     fields: Object.freeze([
       Object.freeze({
         id: "slope",
@@ -117,7 +117,7 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.0005,
         unit: "",
         correct: "m = 0,0400 stimmt (entspricht 400 pF).",
-        incorrect: "Prüfe die Steigung der Geraden Q aus Q=Trendlinie(C1:C7)."
+        incorrect: "Lies den Faktor vor x in der Regressionsgeraden ab."
       }),
       Object.freeze({
         id: "intercept",
@@ -127,7 +127,7 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.005,
         unit: "",
         correct: "b ≈ 0,0429 stimmt.",
-        incorrect: "Prüfe den y-Achsenabschnitt aus der Geradengleichung (ca. 0,0429)."
+        incorrect: "Lies den konstanten Summanden der Regressionsgeraden ab."
       }),
       Object.freeze({
         id: "maxDeviation",
@@ -137,7 +137,7 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.08,
         unit: "%",
         correct: "|Abweichung| ≈ 2,61 % stimmt.",
-        incorrect: "Berechne |(B1-D1)/D1*100| für alle Zeilen (Maximum liegt bei 40 V)."
+        incorrect: "Berechne die Beträge der relativen Abweichungen für alle Zeilen und vergleiche sie."
       }),
       Object.freeze({
         id: "atVoltage",
@@ -147,7 +147,7 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.01,
         unit: "V",
         correct: "U = 40 V stimmt.",
-        incorrect: "Bei welcher Spannung tritt der größte Betrag der Abweichung auf? (40 V)"
+        incorrect: "Lies die Spannung aus der Zeile mit dem größten Abweichungsbetrag ab."
       }),
       Object.freeze({
         id: "limit",
@@ -157,19 +157,18 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.03,
         unit: "%",
         correct: "f_max = 6,25 % stimmt.",
-        incorrect: "Berechne max(2/40, 0,1/1,6) · 100 = 6,25 %."
+        incorrect: "Bilde die beiden relativen Eingangsunsicherheiten und verwende ihren größeren Wert."
       })
     ]),
     hints: Object.freeze([
       Object.freeze({
         title: "1. Vorgehen",
         items: [
-          "Trage die Werte in die Spalten A (U in V) und B (Q in 10⁻⁸ C) von Zeile 1 bis 7 ein.",
-          "Erzeuge in Spalte C die Punkte mit =(A1,B1) und ziehe die Formel bis C7 nach unten.",
-          "Berechne in der Eingabezeile die Regressionsgerade: Q=Trendlinie(C1:C7).",
-          "Berechne in Spalte D die Modellwerte: =Q(A1) von D1 bis D7.",
-          "Berechne in Spalte E die relativen Modellabweichungen: =(B1-D1)/D1*100 von E1 bis E7.",
-          "Bestimme den größten Betrag in Spalte E und notiere Betrag, Spannung und Vorzeichen."
+          "Übertrage die sieben Spannungs- und Ladungswerte in die Tabelle.",
+          "Erzeuge daraus Messpunkte und passe eine Gerade an.",
+          "Bestimme Steigung und y-Achsenabschnitt.",
+          "Berechne Modellwerte, Modellabweichungen und die Vergleichsgrenze.",
+          "Formuliere das Ergebnis mit der Kapazität und den Einheiten."
         ]
       }),
       Object.freeze({
@@ -203,8 +202,8 @@ export const PRACTICE_TASKS = Object.freeze({
     description: "Prüfe das Abstandsgesetz einer elektrostatischen Kraft F in Abhängigkeit vom Abstand r.",
     tableHeaders: ["r in cm (Spalte A)", "F in mN (Spalte B)"],
     tableRows: PRACTICE_POWER_DATA.map((d) => [d.r, d.f]),
-    assignment: "Erstelle in Spalte C die Punktliste mit =(A1,B1), berechne eine Potenzregression mit F(x)=TrendPot(C1:C7), vergleiche den Exponenten n mit −2, bestimme in Spalte D die Modellwerte mit =F(A1) und in Spalte E die relativen Modellabweichungen mit =(B1-D1)/D1*100. Vergleiche die größte Modellabweichung mit der schulischen Vergleichsgrenze und dokumentiere die physikalische Formel mit Einheiten.",
-    assumptionsText: "Vorgegebene Annahmen für die schulische Regel: \\(\\Delta r = 0{,}1\\,\\mathrm{cm}\\) und \\(\\Delta F = 0{,}01\\,\\mathrm{mN}\\). Größte relative Eingangsunsicherheit: \\(f_{\\max} = \\max\\left(\\frac{0{,}1}{6},\\frac{0{,}01}{0{,}06}\\right)\\cdot100\\,\\% = 16{,}67\\,\\%\\).",
+    assignment: "Übertrage die sieben Messpaare, wähle eine Potenzregression und vergleiche ihren Exponenten mit −2. Berechne Modellwerte und relative Modellabweichungen. Vergleiche die größte Abweichung mit der schulischen Vergleichsregel und schreibe die physikalische Formel mit Einheiten auf.",
+    assumptionsText: "Vorgegebene Annahmen für die schulische Vergleichsregel: \\(\\Delta r = 0{,}1\\,\\mathrm{cm}\\) und \\(\\Delta F = 0{,}01\\,\\mathrm{mN}\\). Bestimme daraus selbst die größte relative Eingangsunsicherheit.",
     fields: Object.freeze([
       Object.freeze({
         id: "factorA",
@@ -214,7 +213,7 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.03,
         unit: "",
         correct: "a ≈ 32,42 stimmt.",
-        incorrect: "Prüfe den Vorfaktor aus F(x)=TrendPot(C1:C7) (ca. 32,42)."
+        incorrect: "Lies den Vorfaktor der Potenzfunktion ab."
       }),
       Object.freeze({
         id: "exponentN",
@@ -224,7 +223,7 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.005,
         unit: "",
         correct: "n ≈ −2,028 stimmt.",
-        incorrect: "Prüfe den Exponenten von x aus der Regressionsfunktion (ca. −2,028)."
+        incorrect: "Lies die Hochzahl von x in der Regressionsfunktion ab."
       }),
       Object.freeze({
         id: "maxDeviation",
@@ -234,7 +233,7 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.08,
         unit: "%",
         correct: "|Abweichung| ≈ 4,69 % stimmt.",
-        incorrect: "Berechne |(B1-D1)/D1*100| für alle Zeilen (Maximum liegt bei 15 cm)."
+        incorrect: "Berechne die Beträge der relativen Abweichungen für alle Zeilen und vergleiche sie."
       }),
       Object.freeze({
         id: "atR",
@@ -244,7 +243,7 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.01,
         unit: "cm",
         correct: "r = 15 cm stimmt.",
-        incorrect: "Bei welchem Abstand tritt der größte Betrag der Abweichung auf? (15 cm)"
+        incorrect: "Lies den Abstand aus der Zeile mit dem größten Abweichungsbetrag ab."
       }),
       Object.freeze({
         id: "limit",
@@ -254,19 +253,18 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.08,
         unit: "%",
         correct: "f_max ≈ 16,67 % stimmt.",
-        incorrect: "Berechne max(0,1/6, 0,01/0,06) · 100 ≈ 16,67 %."
+        incorrect: "Bilde die beiden relativen Eingangsunsicherheiten und verwende ihren größeren Wert."
       })
     ]),
     hints: Object.freeze([
       Object.freeze({
         title: "1. Vorgehen",
         items: [
-          "Trage die Werte in die Spalten A (r in cm) und B (F in mN) von Zeile 1 bis 7 ein.",
-          "Erzeuge in Spalte C die Punkte mit =(A1,B1) und ziehe die Formel bis C7 nach unten.",
-          "Berechne in der Eingabezeile die Potenzregression: F(x)=TrendPot(C1:C7).",
-          "Berechne in Spalte D die Modellwerte: =F(A1) von D1 bis D7.",
-          "Berechne in Spalte E die relativen Modellabweichungen: =(B1-D1)/D1*100 von E1 bis E7.",
-          "Bestimme den größten Betrag in Spalte E und vergleiche Exponent und Abweichung mit der Grenze."
+          "Übertrage die sieben Abstand- und Kraftwerte in die Tabelle.",
+          "Erzeuge daraus Messpunkte und passe eine Potenzfunktion an.",
+          "Vergleiche den Potenzexponenten mit dem erwarteten Wert −2.",
+          "Berechne Modellwerte, Modellabweichungen und die Vergleichsgrenze.",
+          "Formuliere das Ergebnis als Abstandsgesetz mit Einheiten."
         ]
       }),
       Object.freeze({
@@ -298,10 +296,10 @@ export const PRACTICE_TASKS = Object.freeze({
     subtitle: "Kondensator-Aufladung · U₀ = 5,00 V",
     datasetType: "Didaktische Übungsdaten (7 Messpaare)",
     description: "Untersuche den zeitlichen Aufladevorgang eines Kondensators bei U₀ = 5,00 V über die Spannungsdifferenz ΔU = U₀ − U_C.",
-    tableHeaders: ["t in s (Spalte A)", "U_C in V (Spalte B)", "ΔU in V (Spalte C)"],
-    tableRows: PRACTICE_EXPONENTIAL_RAW.map((d) => [d.t, d.uc, d.deltaU]),
-    assignment: "Berechne in Spalte C die Spannungsdifferenzen mit =5.00-B1, erstelle in Spalte D die Punkte mit =(A1,C1), berechne eine Exponentialregression mit U(x)=TrendExp(D1:D7), bestimme die Zeitkonstante τ = −1/k, berechne in Spalte E die Modellwerte mit =U(A1) und in Spalte F die relativen Modellabweichungen mit =(C1-E1)/E1*100. Vergleiche die größte Modellabweichung mit der Vergleichsgrenze und dokumentiere dein Ergebnis.",
-    assumptionsText: "Vorgegebene Annahmen für die schulische Regel: absolute Unsicherheit der Spannungsdifferenz \\(0{,}01\\,\\mathrm{V}\\); Zeitunsicherheit \\(0{,}2\\,\\mathrm{s}\\). Grenze: \\(f_{\\max} = \\max\\left(\\frac{0{,}2}{8},\\frac{0{,}01}{0{,}45}\\right)\\cdot100\\,\\% = 2{,}5\\,\\%\\). (Keine Division durch \\(t=0\\)).",
+    tableHeaders: ["t in s (Spalte A)", "U_C in V (Spalte B)"],
+    tableRows: PRACTICE_EXPONENTIAL_RAW.map((d) => [d.t, d.uc]),
+    assignment: "Berechne zunächst ΔU = U₀ − U_C für alle sieben Messpaare. Wähle eine passende Exponentialregression, bestimme A, k und die Zeitkonstante τ. Berechne Modellwerte und relative Modellabweichungen. Vergleiche die größte Abweichung mit der schulischen Vergleichsregel und schreibe die physikalische Formel mit Einheiten auf.",
+    assumptionsText: "Vorgegebene Annahmen für die schulische Vergleichsregel: absolute Unsicherheit der Spannungsdifferenz \\(0{,}01\\,\\mathrm{V}\\) und Zeitunsicherheit \\(0{,}2\\,\\mathrm{s}\\). Bestimme die Vergleichsgrenze selbst; für t = 0 wird kein relativer Zeitanteil gebildet.",
     fields: Object.freeze([
       Object.freeze({
         id: "startA",
@@ -311,7 +309,7 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.005,
         unit: "V",
         correct: "A ≈ 5,021 V stimmt.",
-        incorrect: "Prüfe den Vorfaktor A aus U(x)=TrendExp(D1:D7) (ca. 5,021 V)."
+        incorrect: "Lies den Vorfaktor der Exponentialfunktion ab."
       }),
       Object.freeze({
         id: "paramK",
@@ -321,7 +319,7 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.00002,
         unit: "s⁻¹",
         correct: "k ≈ −0,049928 s⁻¹ stimmt.",
-        incorrect: "Prüfe den Parameter k im Exponenten von e (ca. −0,04993 s⁻¹)."
+        incorrect: "Lies den Faktor von t im Exponenten ab und beachte sein Vorzeichen."
       }),
       Object.freeze({
         id: "tau",
@@ -331,7 +329,7 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.08,
         unit: "s",
         correct: "τ ≈ 20,03 s stimmt.",
-        incorrect: "Berechne τ = −1/k (ca. 20,03 s)."
+        incorrect: "Berechne die Zeitkonstante mit τ = −1/k aus deinem Regressionsparameter."
       }),
       Object.freeze({
         id: "maxDeviation",
@@ -341,7 +339,7 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.08,
         unit: "%",
         correct: "|Abweichung| ≈ 1,54 % stimmt.",
-        incorrect: "Berechne |(C1-E1)/E1*100| für alle Zeilen (Maximum liegt bei 48 s)."
+        incorrect: "Berechne die Beträge der relativen Abweichungen für alle Zeilen und vergleiche sie."
       }),
       Object.freeze({
         id: "atT",
@@ -351,7 +349,7 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.01,
         unit: "s",
         correct: "t = 48 s stimmt.",
-        incorrect: "Zu welchem Zeitpunkt tritt der größte Betrag auf? (48 s)"
+        incorrect: "Lies den Zeitpunkt aus der Zeile mit dem größten Abweichungsbetrag ab."
       }),
       Object.freeze({
         id: "limit",
@@ -361,21 +359,18 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.03,
         unit: "%",
         correct: "f_max = 2,5 % stimmt.",
-        incorrect: "Berechne max(0,2/8, 0,01/0,45) · 100 = 2,5 %."
+        incorrect: "Bilde die relativen Eingangsunsicherheiten; bei t = 0 zählt kein relativer Zeitanteil."
       })
     ]),
     hints: Object.freeze([
       Object.freeze({
         title: "1. Vorgehen",
         items: [
-          "Trage Zeit t (0 bis 48 s) in Spalte A und U_C (0,00 bis 4,55 V) in Spalte B ein.",
-          "Berechne in Spalte C die Spannungsdifferenzen: =5.00-B1 von C1 bis C7.",
-          "Erzeuge in Spalte D die Punkte: =(A1,C1) von D1 bis D7.",
-          "Berechne in der Eingabezeile: U(x)=TrendExp(D1:D7).",
-          "Berechne die Zeitkonstante τ = −1/k in der Eingabezeile.",
-          "Berechne in Spalte E die Modellwerte: =U(A1) von E1 bis E7.",
-          "Berechne in Spalte F die Modellabweichungen: =(C1-E1)/E1*100 von F1 bis F7.",
-          "Bestimme den größten Betrag in Spalte F und prüfe die Anfangswertabweichung |A − 5,00|/5,00 · 100 %."
+          "Übertrage Zeit und Kondensatorspannung in die Tabelle.",
+          "Berechne daraus die Spannungsdifferenz ΔU und erzeuge Messpunkte.",
+          "Passe eine Exponentialfunktion an und bestimme A, k sowie τ.",
+          "Berechne Modellwerte, Modellabweichungen und die Vergleichsgrenze.",
+          "Formuliere das Auflademodell mit Einheiten."
         ]
       }),
       Object.freeze({
@@ -411,5 +406,5 @@ export function validatePracticeField(field, value) {
 
 export function isTaskNumericallyComplete(taskConfig, taskState) {
   if (!taskState || !taskState.answers) return false;
-  return taskConfig.fields.every((field) => validatePracticeField(field, taskState.answers[field.id]));
+  return taskConfig.fields.every((field) => taskState.completedChecks?.includes(field.id) && validatePracticeField(field, taskState.answers[field.id]));
 }

@@ -3,7 +3,7 @@ import {
   DOCUMENTATION_EXAMPLES,
   DOCUMENTATION_GENERAL_GUIDE
 } from "./documentation-data.js";
-import { loadState, persistState } from "./state.js";
+import { loadState, persistState, PRACTICE_TASK_IDS } from "./state.js";
 import { mathReady, typesetDocument } from "./math-typeset.js?v=20260920-1";
 import { renderSiteNavigation, buildNavUrl, taskForCourse } from "./navigation.js";
 
@@ -26,10 +26,16 @@ const state = loadState(localStorage);
 const params = new URLSearchParams(window.location.search);
 const requestedCourse = params.get("course");
 const requestedStep = params.get("step");
-const requestedSection = params.get("section");
+const DOCUMENTATION_SECTION_IDS = Object.freeze(["data", "geogebra", "physical", "deviations", "conclusion"]);
+const requestedSection = DOCUMENTATION_SECTION_IDS.includes(params.get("section")) ? params.get("section") : null;
+const requestedTask = PRACTICE_TASK_IDS.includes(params.get("task")) ? params.get("task") : null;
+const returnToPractice = params.get("return") === "practice" && Boolean(requestedTask);
 
 if (DOCUMENTATION_EXAMPLE_IDS.includes(requestedCourse)) {
   state.documentation.selectedExampleId = requestedCourse;
+}
+if (requestedSection) {
+  state.documentation.view = "model";
 }
 const returnCourseId = DOCUMENTATION_EXAMPLE_IDS.includes(requestedCourse)
   ? requestedCourse
@@ -40,13 +46,16 @@ function updateNavigationLinks() {
   renderSiteNavigation("documentation", {
     courseId: exId,
     stepId: requestedStep,
-    taskId: taskForCourse(exId)
+    taskId: returnToPractice ? requestedTask : taskForCourse(exId)
   });
   if (els.back) {
-    els.back.href = buildNavUrl("learn", {
-      courseId: returnCourseId,
-      stepId: requestedStep
-    });
+    if (returnToPractice) {
+      els.back.href = `./selbst-auswerten.html?task=${encodeURIComponent(requestedTask)}`;
+      els.back.textContent = "← Zurück zur Übungsaufgabe";
+    } else {
+      els.back.href = buildNavUrl("learn", { courseId: returnCourseId, stepId: requestedStep });
+      els.back.textContent = "← Zurück zum Lernweg";
+    }
   }
 }
 updateNavigationLinks();
@@ -298,11 +307,9 @@ Promise.all([mathReady, documentTypeset]).then(([available]) => {
   document.body.dataset.mathState = available ? "ready" : "fallback";
   els.mathLoading.hidden = true;
   if (requestedSection) {
-    const activePanel = document.querySelector(".documentation-paper:not([hidden]), .documentation-practice-paper:not([hidden])");
-    const secEl = activePanel?.querySelector(`[data-section-id="${requestedSection}"]`)
-      || document.querySelector(`[data-section-id="${requestedSection}"]`);
-    if (secEl) {
-      secEl.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    const visibleRoot = state.documentation.view === "practice" ? els.practice : els.model;
+    const activePanel = visibleRoot.querySelector(`article[data-example-id="${state.documentation.selectedExampleId}"]:not([hidden])`);
+    const section = activePanel?.querySelector(`[data-section-id="${requestedSection}"]`);
+    section?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 });

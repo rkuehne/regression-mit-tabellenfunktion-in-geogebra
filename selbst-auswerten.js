@@ -166,7 +166,7 @@ function renderTask(taskId) {
   assignmentSection.className = "practice-assignment-section";
 
   const assignHeading = document.createElement("h3");
-  assignHeading.textContent = "Arbeitsauftrag";
+  assignHeading.textContent = "Deine Aufgabe";
 
   const assignText = document.createElement("p");
   assignText.className = "practice-assignment-text";
@@ -255,13 +255,14 @@ function renderTask(taskId) {
     feedback.className = "field-feedback";
     feedback.setAttribute("aria-live", "polite");
 
-    if (validatePracticeField(field, input.value)) {
+    if (taskState.completedChecks.includes(field.id) && validatePracticeField(field, input.value)) {
       feedback.textContent = field.correct;
       feedback.className = "field-feedback good";
     }
 
     const onInput = () => {
       taskState.answers[field.id] = input.value;
+      taskState.completedChecks = [];
       input.removeAttribute("aria-invalid");
       feedback.textContent = "";
       feedback.className = "field-feedback";
@@ -377,7 +378,7 @@ function renderTask(taskId) {
   const docLink = document.createElement("a");
   docLink.className = "button secondary";
   const mappedCourseId = courseForTask(taskId);
-  docLink.href = `./dokumentation.html?course=${encodeURIComponent(mappedCourseId)}`;
+  docLink.href = `./dokumentation.html?course=${encodeURIComponent(mappedCourseId)}&return=practice&task=${encodeURIComponent(taskId)}`;
   docLink.textContent = "Klausurmuster und Formulierungshilfen für diese Regressionsart ansehen ↗";
 
   docLinkSection.append(docLink);

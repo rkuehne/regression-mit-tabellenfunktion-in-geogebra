@@ -24,7 +24,7 @@ export function courseForTask(taskId) {
     case "linear-7":
       return "proportional-linear";
     case "power-7":
-      return "proportional-power";
+      return "inverse-square";
     case "exponential-7":
       return "capacitor-exponential";
     default:

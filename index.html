@@ -39,12 +39,9 @@
     <div class="wrap hero-grid">
       <div class="hero-copy">
         <p class="brand-line"><span class="brand-mark" aria-hidden="true">∑</span> GeoGebra-Trainer</p>
-        <p class="eyebrow">Oberstufe Physik · selbstständig auf dem iPad</p>
+        <p class="eyebrow">Oberstufe Physik</p>
         <h1>Messdaten auswerten – Schritt für Schritt</h1>
-        <p class="hero-lead">
-          Arbeite in der GeoGebra Rechner Suite und nutze diese Seite als digitale Arbeitsanleitung.
-          Wähle eine mathematische Methode, führe die Auswertung durch und begründe dein Ergebnis fachlich.
-        </p>
+        <p class="hero-lead">Mit Anleitung üben, neue Daten selbst auswerten und den Rechenweg für die Klausur aufschreiben.</p>
         <div class="hero-actions">
           <button id="startCourseBtn" class="button primary" type="button">Lernweg starten</button>
           <a class="button secondary" href="./selbst-auswerten.html">Selbst auswerten</a>
@@ -55,18 +52,15 @@
           <li>5 einheitliche Phasen</li>
           <li>Fortschritt bleibt lokal gespeichert</li>
         </ul>
-      </div>
-
-      <aside class="setup-card" aria-labelledby="setup-title">
-        <p class="setup-kicker">Vor dem Start</p>
-        <h2 id="setup-title">Zwei Apps nebeneinander</h2>
+      </div>      <details class="setup-card">
+        <summary><span class="setup-kicker">Vor dem Start</span> Zwei Apps nebeneinander</summary>
         <ol class="setup-list">
-          <li><span>1</span><div><strong>GeoGebra öffnen</strong><small>Rechner Suite auf dem iPad starten.</small></div></li>
-          <li><span>2</span><div><strong>Split View nutzen</strong><small>Trainer daneben anordnen.</small></div></li>
-          <li><span>3</span><div><strong>Schritte ausführen</strong><small>Anleitung umsetzen und Verständnis prüfen.</small></div></li>
+          <li><div><strong>GeoGebra öffnen</strong><small>Rechner Suite auf dem iPad starten.</small></div></li>
+          <li><div><strong>Split View nutzen</strong><small>Trainer daneben anordnen.</small></div></li>
+          <li><div><strong>Schritte ausführen</strong><small>Anleitung umsetzen und Verständnis prüfen.</small></div></li>
         </ol>
         <p class="privacy-note">Keine Anmeldung: Antworten und Name verlassen dein iPad nicht.</p>
-      </aside>
+      </details>
     </div>
   </header>
 
@@ -96,7 +90,7 @@
       <div class="course-choice-grid course-methods-grid">
         <!-- 1. Lineare Regression -->
         <article class="course-choice-group proportional linear-group">
-          <div class="method-badge">1. Lineare Regression</div>
+          <div class="method-badge">Lineare Regression · guter Einstieg</div>
           <p class="mini-label">Kondensator-Versuch · \(U\) und \(Q\)</p>
           <h3>Direkte Proportionalität</h3>
           <p class="choice-equation">\[Q(U) = m \cdot U + b\]</p>
@@ -108,7 +102,7 @@
 
         <!-- 2. Potenzregression -->
         <article class="course-choice-group inverse power-group">
-          <div class="method-badge">2. Potenzregression</div>
+          <div class="method-badge">Potenzregression</div>
           <p class="mini-label">Zwei physikalische Zusammenhänge</p>
           <h3>Potenzfunktionen anpassen</h3>
           <p class="choice-equation">\[y = a \cdot x^n\]</p>
@@ -125,7 +119,7 @@
 
         <!-- 3. Exponentialregression -->
         <article class="course-choice-group charging exp-group">
-          <div class="method-badge">3. Exponentialregression</div>
+          <div class="method-badge">Exponentialregression</div>
           <div>
             <p class="mini-label">Kondensator-Aufladung · \(t\) und \(U_C\)</p>
             <h3>Exponentieller Aufladevorgang</h3>
@@ -139,7 +133,7 @@
 
         <!-- 4. Ergänzend: Konstantenverfahren -->
         <article class="course-choice-group proportional constants-group">
-          <div class="method-badge">4. Ergänzend: Konstantenverfahren</div>
+          <div class="method-badge">Ergänzend: Konstantenverfahren</div>
           <p class="mini-label">Kondensator-Versuch · \(U\) und \(Q\)</p>
           <h3>Quotientengleichheit prüfen</h3>
           <p class="choice-equation">\[\frac{Q}{U} = C \approx \text{konstant}\]</p>
@@ -166,11 +160,12 @@
           <p id="courseEyebrow" class="eyebrow">Geführter Lernweg</p>
           <h2 id="course-title">Vom Messwert zum begründeten Urteil</h2>
         </div>
-        <p id="courseIntro" class="section-intro">Alle Kapitel bleiben offen. Wähle zwischen ausführlicher Erklärung und kompakter Wiederholung.</p>
+        <p id="courseIntro" class="section-intro">Alle Schritte bleiben frei erreichbar. Wähle bei Bedarf die ausführliche Erklärung.</p>
       </div>
 
       <ol id="learningMap" class="learning-map" aria-label="Etappen des gewählten Lernwegs"></ol>
 
+      <aside id="migrationNotice" class="migration-notice" hidden><p></p><button id="dismissMigrationNoticeBtn" class="text-button" type="button">Hinweis schließen</button></aside>
       <div class="course-tools" aria-label="Kursansicht und Begriffshilfe">
         <div class="mode-control">
           <span class="mode-label">Ansicht</span>
@@ -245,14 +240,14 @@
               <p id="resultRecognitionText" class="result-recognition-text"></p>
             </section>
 
-            <!-- Ggf. gemeinsame Pflichtseite vor Checkpoint -->
+            <!-- Gemeinsame Fehlerkontrolle vor dem Kontrollpunkt -->
             <aside id="sharedRequirementCard" class="shared-requirement-card" aria-labelledby="sharedRequirementTitle" hidden>
               <div>
-                <p class="mini-label">Gemeinsame Pflichtseite</p>
+                <p class="mini-label">Gemeinsame Fehlerkontrolle</p>
                 <h3 id="sharedRequirementTitle">Methode des größten Einzelfehlers</h3>
                 <p id="sharedRequirementText"></p>
               </div>
-              <a id="sharedRequirementLink" class="button secondary" href="./groesster-einzelfehler.html">Fehlerseite öffnen</a>
+              <a id="sharedRequirementLink" class="button secondary" href="./groesster-einzelfehler.html">Fehlerkontrolle öffnen</a>
             </aside>
 
             <!-- 6. Checkpoint -->
@@ -397,7 +392,7 @@
   <footer class="site-footer">
     <div class="wrap footer-inner">
       <p><strong>GeoGebra-Begleitkurs</strong><br>Messdaten auswerten und Modelle beurteilen · ohne Anmeldung</p>
-      <p>Dieser Kurs ist unabhängig von GeoGebra entstanden und steht in keiner offiziellen Verbindung zum Anbieter der GeoGebra-Software.</p>
+      <p><a href="https://www.geogebra.org/">GeoGebra®</a> ist eine Marke der GeoGebra GmbH. Dieses Unterrichtsmaterial ist ein unabhängiges Angebot. <a href="./THIRD_PARTY_NOTICES.md">Quellen und Lizenzen</a></p>
     </div>
   </footer>
 
@@ -412,7 +407,7 @@
       <div><dt>Messergebnis</dt><dd>Die vollständige Angabe eines Messwertes einschließlich seiner Messunsicherheit.</dd></div>
       <div><dt>Messpaar</dt><dd>Die zusammengehörigen Werte zweier Messgrößen aus derselben Einzelmessung.</dd></div>
       <div><dt>Punkt</dt><dd>Die Darstellung eines Messpaares im Koordinatensystem, zum Beispiel \((x,y)=(r,F)\) oder \((U,Q)\).</dd></div>
-      <div><dt>Potenzfunktion</dt><dd>Eine Funktion der Form \(y=a\cdot x^b\). Der Exponent \(b\) bestimmt die Art des Zusammenhangs.</dd></div>
+      <div><dt>Potenzfunktion</dt><dd>Eine Funktion der Form \(y=a\cdot x^n\). Der Exponent \(n\) bestimmt die Art des Zusammenhangs.</dd></div>
       <div><dt>Regression</dt><dd>Ein mathematisches Verfahren, das die Parameter einer gewählten Modellfunktion an mehrere Messpunkte anpasst.</dd></div>
       <div><dt>Modellwert</dt><dd>Ein von der Regressionsfunktion berechneter Wert, nicht ein neuer Messwert.</dd></div>
       <div><dt>Modellabweichung</dt><dd>Die prozentuale Differenz zwischen Messwert und Modellwert, bezogen auf den Modellwert.</dd></div>

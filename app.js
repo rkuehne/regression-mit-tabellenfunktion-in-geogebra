@@ -2,7 +2,7 @@ import { COURSE_IDS, COURSES, PHASES, typesetCourseText } from "./lesson-data.js
 import { formatNumber, isWithin } from "./regression.js";
 import { loadState, persistState } from "./state.js";
 import { mathReady, replaceMath, typesetDocument, typesetMath } from "./math-typeset.js?v=20260920-1";
-import { renderSiteNavigation } from "./navigation.js";
+import { renderSiteNavigation, taskForCourse } from "./navigation.js";
 import { renderSharedErrorModule, isSharedModuleComplete } from "./shared-error-module.js";
 
 const PHASE_TO_DOC_SECTION = Object.freeze({
@@ -76,6 +76,8 @@ const els = {
   sharedRequirementCard: document.getElementById("sharedRequirementCard"),
   sharedRequirementText: document.getElementById("sharedRequirementText"),
   sharedRequirementLink: document.getElementById("sharedRequirementLink"),
+  migrationNotice: document.getElementById("migrationNotice"),
+  dismissMigrationNoticeBtn: document.getElementById("dismissMigrationNoticeBtn"),
   summary: document.getElementById("summary"),
   closeSummaryBtn: document.getElementById("closeSummaryBtn"),
   studentNameInput: document.getElementById("studentNameInput"),
@@ -270,15 +272,15 @@ function renderProgress() {
   els.courseComplete.hidden = !allStepsComplete;
   els.courseComplete.classList.toggle("pending", allStepsComplete && !sharedComplete);
   if (allStepsComplete && !sharedComplete) {
-    els.completionTitle.textContent = "Noch ein gemeinsamer Pflichtschritt";
+    els.completionTitle.textContent = "Noch ein gemeinsamer Schritt";
     els.completionText.textContent = "Schließe die Methode des größten Einzelfehlers einmal ab. Danach gilt sie für alle drei Q–U-Lernwege.";
     els.completionActionLink.href = `./groesster-einzelfehler.html?course=${encodeURIComponent(course.id)}`;
     els.completionActionLink.textContent = "Fehlerseite abschließen";
   } else if (allStepsComplete) {
     setMathText(els.completionTitle, `${course.title} abgeschlossen`);
-    els.completionText.textContent = "Du kannst den Auswertungsweg fachlich begründen und im Lernnachweis dokumentieren.";
-    els.completionActionLink.href = "#summary";
-    els.completionActionLink.textContent = "Zum Lernnachweis";
+    els.completionText.textContent = "Übertrage den Rechenweg als Nächstes auf neue Daten oder öffne bei Bedarf die Bearbeitungsübersicht.";
+    els.completionActionLink.href = `./selbst-auswerten.html?task=${encodeURIComponent(taskForCourse(course.id))}`;
+    els.completionActionLink.textContent = "Mit neuen Daten selbst auswerten";
   }
 }
 
@@ -289,46 +291,37 @@ function renderStepNav() {
   const progress = activeProgress();
   const course = activeCourse();
   const currentStep = course.steps[progress.currentStep];
+  const phaseSteps = course.steps.filter((step) => step.phaseId === currentStep?.phaseId);
 
-  PHASES.forEach((phase, phaseIndex) => {
-    const phaseSteps = course.steps.filter((s) => s.phaseId === phase.id);
-    if (phaseSteps.length === 0) return;
+  phaseSteps.forEach((step, phaseStepIndex) => {
+    const index = course.steps.findIndex((candidate) => candidate.id === step.id);
+    const item = document.createElement("li");
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.stepIndex = String(index);
+    button.setAttribute("aria-label", `Schritt ${phaseStepIndex + 1} in dieser Phase: ${step.title}${isComplete(step.id) ? ", abgeschlossen" : ""}`);
+    if (index === progress.currentStep) button.setAttribute("aria-current", "step");
+    if (index === recommended && !isComplete(step.id)) button.classList.add("is-next");
 
-    const isPhaseActive = phase.id === currentStep?.phaseId;
-    const headerLi = document.createElement("li");
-    headerLi.className = `step-nav-group-header${isPhaseActive ? " is-active" : ""}`;
-    headerLi.textContent = `Phase ${phaseIndex + 1}: ${phase.title}`;
-    els.stepNav.append(headerLi);
+    const number = document.createElement("span");
+    number.className = "step-number";
+    number.textContent = String(phaseStepIndex + 1);
+    const label = document.createElement("span");
+    label.className = "step-nav-label";
+    label.textContent = step.shortTitle;
+    button.append(number, label);
 
-    phaseSteps.forEach((step) => {
-      const index = course.steps.findIndex((s) => s.id === step.id);
-      const item = document.createElement("li");
-      const button = document.createElement("button");
-      button.type = "button";
-      button.dataset.stepIndex = String(index);
-      button.setAttribute("aria-label", `Schritt ${index + 1}: ${step.title}${isComplete(step.id) ? ", abgeschlossen" : ""}`);
-      if (index === progress.currentStep) button.setAttribute("aria-current", "step");
-      if (index === recommended && !isComplete(step.id)) button.classList.add("is-next");
+    if (isComplete(step.id)) {
+      const check = document.createElement("span");
+      check.className = "step-check";
+      check.textContent = "✓";
+      check.setAttribute("aria-hidden", "true");
+      button.append(check);
+    }
 
-      const number = document.createElement("span");
-      number.className = "step-number";
-      number.textContent = String(index + 1);
-      const label = document.createElement("span");
-      label.className = "step-nav-label";
-      label.textContent = step.shortTitle;
-      button.append(number, label);
-
-      if (isComplete(step.id)) {
-        const check = document.createElement("span");
-        check.className = "step-check";
-        check.textContent = "✓";
-        check.setAttribute("aria-hidden", "true");
-        button.append(check);
-      }
-
-      button.addEventListener("click", () => setCurrentStep(index));
-      item.append(button);
-    });
+    button.addEventListener("click", () => setCurrentStep(index));
+    item.append(button);
+    els.stepNav.append(item);
   });
 }
 
@@ -398,7 +391,20 @@ function renderExplanation(step) {
     els.stepWorkedExample.append(paragraph);
   });
 
-  setMathText(els.ipadHeading, step.actionHeading);
+  if (step.optionalExtension) {
+    const details = document.createElement("details");
+    details.className = "optional-extension";
+    const summary = document.createElement("summary");
+    summary.textContent = step.optionalExtension.title;
+    const content = document.createElement("div");
+    step.optionalExtension.lines.forEach((line) => {
+      const paragraph = document.createElement("p");
+      setMathText(paragraph, line);
+      content.append(paragraph);
+    });
+    details.append(summary, content);
+    els.stepWorkedExample.append(details);
+  }  setMathText(els.ipadHeading, step.actionHeading);
   setMathText(els.stepRemember, step.remember);
   renderLessonMode();
 }
@@ -459,10 +465,13 @@ function closeGlossary() {
   }
 }
 
-function renderStepImages(images) {
+function renderStepImages(images, optionalImages = []) {
   els.stepImages.replaceChildren();
-  els.stepImages.hidden = images.length === 0;
-  images.forEach((image, imageIndex) => {
+  els.stepImages.hidden = images.length + optionalImages.length === 0;
+  const [primaryImage, ...helpImages] = images;
+  if (!primaryImage) return;
+
+  const renderImage = (image, imageIndex) => {
     const figure = document.createElement("figure");
     figure.className = "step-figure";
     const button = document.createElement("button");
@@ -478,10 +487,7 @@ function renderStepImages(images) {
     img.loading = activeProgress().currentStep === 0 && imageIndex === 0 ? "eager" : "lazy";
     img.decoding = "async";
     button.append(img);
-
-    image.highlights?.forEach((highlight) => {
-      button.append(createImageHighlight(highlight));
-    });
+    image.highlights?.forEach((highlight) => button.append(createImageHighlight(highlight)));
 
     const zoom = document.createElement("span");
     zoom.className = "figure-zoom-label";
@@ -493,8 +499,22 @@ function renderStepImages(images) {
     const caption = document.createElement("figcaption");
     setMathText(caption, image.caption);
     figure.append(button, caption);
-    els.stepImages.append(figure);
-  });
+    return figure;
+  };
+
+  els.stepImages.append(renderImage(primaryImage, 0));
+  if (helpImages.length || optionalImages.length) {
+    const details = document.createElement("details");
+    details.className = "step-image-help";
+    const summary = document.createElement("summary");
+    const allHelpImages = [...helpImages, ...optionalImages];
+    summary.textContent = `${allHelpImages.length} weiteres Bild zur Hilfe`;
+    const list = document.createElement("div");
+    list.className = "step-images-help-list";
+    allHelpImages.forEach((image, index) => list.append(renderImage(image, index + 1)));
+    details.append(summary, list);
+    els.stepImages.append(details);
+  }
 }
 
 function fieldValue(stepId, fieldId) {
@@ -505,6 +525,7 @@ function markStepIncomplete(stepId) {
   if (!isComplete(stepId)) return;
   activeProgress().completedSteps = activeProgress().completedSteps.filter((id) => id !== stepId);
   updateCurrentStepState();
+  renderCourseIdentity();
   renderProgress();
   renderStepNav();
   renderSummary();
@@ -520,7 +541,7 @@ function storeCheckpointValue(stepId, field, control) {
     feedback.textContent = "";
     feedback.className = "field-feedback";
   }
-  markStepIncomplete(stepId);
+  if (field.required !== false) markStepIncomplete(stepId);
   setFeedback(els.checkpointFeedback);
   saveState();
 }
@@ -665,7 +686,7 @@ function renderCheckpoint(step) {
     step.check.fields.forEach((field) => {
       const val = fieldValue(step.id, field.id);
       if (field.required !== false || (val !== "" && val !== undefined)) {
-        setFieldFeedback(step, field, true);
+        setFieldFeedback(step, field, isFieldAnswerValid(field, val));
       }
     });
     setFeedback(els.checkpointFeedback, step.check.success, "good");
@@ -695,9 +716,9 @@ function renderSharedRequirement(step) {
     onStateChange: () => {
       saveState();
       renderProgress();
-      renderLearningMap();
+      renderCourseIdentity();
       renderStepNav();
-      updateCourseSummary();
+      renderSummary();
     }
   });
 }
@@ -738,7 +759,7 @@ function renderLesson() {
   const helpBox = document.querySelector(".help-box");
   if (helpBox) helpBox.open = false;
 
-  renderStepImages(step.images);
+  renderStepImages(step.images, step.optionalExtension?.images || []);
   els.lessonGrid.classList.toggle("no-images", step.images.length === 0);
   renderSharedRequirement(step);
   renderCheckpoint(step);
@@ -836,7 +857,7 @@ function renderCourseIdentity() {
   });
 
   setMathText(els.completionTitle, `${course.title} abgeschlossen`);
-  els.completionText.textContent = "Du kannst den Auswertungsweg fachlich begründen und im Lernnachweis dokumentieren.";
+  els.completionText.textContent = "Übertrage den Rechenweg als Nächstes auf neue Daten oder öffne bei Bedarf die Bearbeitungsübersicht.";
   els.courseChoiceButtons.forEach((button) => {
     const selected = button.dataset.courseId === state.activeCourseId;
     button.setAttribute("aria-pressed", String(selected));
@@ -862,7 +883,7 @@ async function setCurrentStep(index, shouldScroll = true) {
     stepId: activeCourse().steps[progress.currentStep]?.id
   });
   await renderCourse();
-  if (shouldScroll) scrollToElement(els.course);
+  if (shouldScroll) scrollToElement(els.lessonCard);
 }
 
 function validateCheckpoint(step) {
@@ -964,7 +985,7 @@ function renderSummary({ typeset = true } = {}) {
   if (course.sharedRequirement) {
     const item = document.createElement("li");
     if (sharedComplete) item.className = "complete";
-    item.textContent = `Gemeinsame Pflichtseite: Methode des größten Einzelfehlers – ${sharedComplete ? "vollständig" : "Kontrolle offen"}`;
+    item.textContent = `Gemeinsame Fehlerseite: Methode des größten Einzelfehlers – ${sharedComplete ? "vollständig" : "Kontrolle offen"}`;
     els.summaryChecklist.append(item);
   }
 
@@ -1012,6 +1033,7 @@ async function selectCourse(courseId, { scroll = true } = {}) {
   if (!COURSE_IDS.includes(courseId)) return;
   state.activeCourseId = courseId;
   saveState();
+  renderMigrationNotice();
   setView("course", { scroll: false });
   await replaceMath([els.course, document.getElementById("printSummary"), els.courseChoiceStatus], () => {
     renderCourse({ typeset: false });
@@ -1047,8 +1069,13 @@ els.closeSummaryBtn?.addEventListener("click", () => {
   scrollToElement(els.course);
 });
 
+els.dismissMigrationNoticeBtn?.addEventListener("click", () => {
+  delete state.migrationNotice;
+  saveState();
+  renderMigrationNotice();
+});
 els.completionActionLink?.addEventListener("click", () => {
-  els.summary.hidden = false;
+  if (els.completionActionLink.getAttribute("href") === "#summary") els.summary.hidden = false;
 });
 
 els.courseChoiceButtons.forEach((button) => {
@@ -1086,6 +1113,7 @@ els.checkpointForm.addEventListener("submit", (event) => {
     saveState();
     setFeedback(els.checkpointFeedback, step.check.success, "good");
     updateCurrentStepState();
+    renderCourseIdentity();
     renderProgress();
     renderStepNav();
     renderSummary();
@@ -1128,10 +1156,17 @@ els.printSummaryBtn.addEventListener("click", async () => {
   window.print();
 });
 
+function renderMigrationNotice() {
+  if (!els.migrationNotice) return;
+  const visible = state.activeCourseId === "capacitor-exponential" && Boolean(state.migrationNotice);
+  els.migrationNotice.hidden = !visible;
+  if (visible) els.migrationNotice.querySelector("p").textContent = state.migrationNotice;
+}
 function initialize() {
   els.studentNameInput.value = state.student.name;
   els.courseNameInput.value = state.student.course;
   renderResumeCard();
+  renderMigrationNotice();
   setView(initialView, { scroll: false });
   renderCourse({ typeset: false });
   renderSummary({ typeset: false });

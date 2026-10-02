@@ -1,4 +1,6 @@
 import { COURSE_IDS, COURSES, UQ_SHARED_REQUIREMENT_ID } from "./lesson-data.js";
+import { isWithin } from "./regression.js";
+import { isSharedModuleComplete } from "./shared-error-module.js";
 
 export const STORAGE_KEY = "geogebra-begleitkurs-state";
 export const SCHEMA_VERSION = 2;
@@ -135,11 +137,56 @@ function preservedStudent(candidate) {
   };
 }
 
+function isCurrentFieldValid(field, value) {
+  if (value === undefined || value === null || String(value).trim() === "") return false;
+  if (field.type === "number") return isWithin(value, field.expected, field.tolerance);
+  if (field.type === "checkbox") return Boolean(value) === field.expected;
+  return String(value).trim() === field.expected;
+}
+
+function hasValidRequiredAnswers(courseId, stepId, answers) {
+  const step = COURSES[courseId]?.steps.find((candidate) => candidate.id === stepId);
+  if (!step?.check?.fields) return false;
+  const stepAnswers = answers?.[stepId] || {};
+  return step.check.fields
+    .filter((field) => field.required !== false)
+    .every((field) => isCurrentFieldValid(field, stepAnswers[field.id]));
+}
+
+function repairCompletedSteps(courseId, progress) {
+  const protectedIds = new Set((COURSES[courseId]?.steps || [])
+    .filter((step) => step.id.includes("parameters") || step.id === "charging-model")
+    .map((step) => step.id));
+  return {
+    ...progress,
+    completedSteps: progress.completedSteps.filter((stepId) => !protectedIds.has(stepId) || hasValidRequiredAnswers(courseId, stepId, progress.answers))
+  };
+}
+
+function restoreChargingModel(progress, legacyProgress) {
+  const modelId = "charging-model";
+  if (progress.answers[modelId] || !legacyProgress?.answers?.[modelId]) return progress;
+  const answers = { ...progress.answers, [modelId]: { ...legacyProgress.answers[modelId] } };
+  const completedSteps = [...progress.completedSteps];
+  if (legacyProgress.completedSteps?.includes(modelId) && hasValidRequiredAnswers("capacitor-exponential", modelId, answers)) {
+    completedSteps.push(modelId);
+  }
+  return { ...progress, answers, completedSteps: [...new Set(completedSteps)] };
+}
+
+function legacyChoice(value, target) {
+  const normalized = String(value ?? "").trim().toLowerCase();
+  if (target === "near" && (normalized === "near" || normalized.includes("1/r") || normalized.includes("nahe"))) return "near";
+  if (target === "supports" && (normalized === "supports" || normalized.includes("vereinbar") || normalized.includes("stützt"))) return "supports";
+  if (target === "line" && (normalized === "line" || normalized === "1" || normalized.includes("linear"))) return "line";
+  if (target === "object" && (normalized === "object" || normalized === "yes" || normalized.includes("konstant"))) return "object";
+  return value;
+}
 function sanitizeSharedModule(candidate) {
   const answers = candidate?.answers && typeof candidate.answers === "object" && !Array.isArray(candidate.answers)
     ? candidate.answers
     : {};
-  return { completed: candidate?.completed === true, answers };
+  return { completed: candidate?.completed === true && isSharedModuleComplete({ completed: true, answers }), answers };
 }
 
 function sanitizeDocumentation(candidate) {
@@ -238,10 +285,10 @@ export function migrateState(candidate) {
       answers = { ...oldAnswers };
       completedSteps = oldCompleted.filter((id) => validSteps.includes(id));
       if (answers.regression && answers.regression.interpretation !== undefined) {
-        answers["inverse-parameters"] = { interpretation: answers.regression.interpretation };
+        answers["inverse-parameters"] = { interpretation: legacyChoice(answers.regression.interpretation, "near") };
         const { interpretation, ...rest } = answers.regression;
         answers.regression = rest;
-        if (oldCompleted.includes("regression") && !completedSteps.includes("inverse-parameters")) {
+        if (oldCompleted.includes("regression") && hasValidRequiredAnswers(courseId, "inverse-parameters", answers)) {
           completedSteps.push("inverse-parameters");
         }
       }
@@ -249,10 +296,10 @@ export function migrateState(candidate) {
       answers = { ...oldAnswers };
       completedSteps = oldCompleted.filter((id) => validSteps.includes(id));
       if (answers["uq-power-fit"] && answers["uq-power-fit"].meaning !== undefined) {
-        answers["uq-power-parameters"] = { meaning: answers["uq-power-fit"].meaning };
+        answers["uq-power-parameters"] = { meaning: legacyChoice(answers["uq-power-fit"].meaning, "supports") };
         const { meaning, ...rest } = answers["uq-power-fit"];
         answers["uq-power-fit"] = rest;
-        if (oldCompleted.includes("uq-power-fit") && !completedSteps.includes("uq-power-parameters")) {
+        if (oldCompleted.includes("uq-power-fit") && hasValidRequiredAnswers(courseId, "uq-power-parameters", answers)) {
           completedSteps.push("uq-power-parameters");
         }
       }
@@ -262,12 +309,12 @@ export function migrateState(candidate) {
       if (answers["uq-linear-fit"]) {
         const transferred = {};
         if (answers["uq-linear-fit"].capacity !== undefined) transferred.capacity = answers["uq-linear-fit"].capacity;
-        if (answers["uq-linear-fit"].degree !== undefined) transferred.degree = answers["uq-linear-fit"].degree;
+        if (answers["uq-linear-fit"].degree !== undefined) transferred.degree = legacyChoice(answers["uq-linear-fit"].degree, "line");
         if (Object.keys(transferred).length > 0) {
           answers["uq-linear-parameters"] = transferred;
           const { capacity, degree, ...rest } = answers["uq-linear-fit"];
           answers["uq-linear-fit"] = rest;
-          if (oldCompleted.includes("uq-linear-fit") && !completedSteps.includes("uq-linear-parameters")) {
+          if (oldCompleted.includes("uq-linear-fit") && hasValidRequiredAnswers(courseId, "uq-linear-parameters", answers)) {
             completedSteps.push("uq-linear-parameters");
           }
         }
@@ -277,10 +324,10 @@ export function migrateState(candidate) {
       delete answers["uq-constant-reference"];
       completedSteps = oldCompleted.filter((id) => id !== "uq-constant-reference" && validSteps.includes(id));
       if (answers["uq-constant-mean"] && answers["uq-constant-mean"].pf !== undefined) {
-        answers["uq-constant-parameters"] = { pf: answers["uq-constant-mean"].pf };
+        answers["uq-constant-parameters"] = { pf: answers["uq-constant-mean"].pf, constant: legacyChoice(oldAnswers["uq-constant-reference"]?.constant, "object") };
         const { pf, ...rest } = answers["uq-constant-mean"];
         answers["uq-constant-mean"] = rest;
-        if (oldCompleted.includes("uq-constant-mean") && !completedSteps.includes("uq-constant-parameters")) {
+        if (oldCompleted.includes("uq-constant-mean") && hasValidRequiredAnswers(courseId, "uq-constant-parameters", answers)) {
           completedSteps.push("uq-constant-parameters");
         }
       }
@@ -296,7 +343,7 @@ export function migrateState(candidate) {
         };
         migrationNotice = "Das Beispiel wurde auf neun Messpaare vereinheitlicht. Die betroffenen Kontrollen kannst du erneut bearbeiten.";
       }
-      const allowedSteps = new Set(["charging-context", "charging-table", "charging-delta"]);
+      const allowedSteps = new Set(["charging-context", "charging-table", "charging-delta", "charging-model"]);
       answers = {};
       for (const stepId of allowedSteps) {
         if (oldAnswers[stepId]) {
@@ -306,11 +353,11 @@ export function migrateState(candidate) {
       completedSteps = oldCompleted.filter((id) => allowedSteps.has(id));
     }
 
-    migratedCourses[courseId] = {
+    migratedCourses[courseId] = repairCompletedSteps(courseId, {
       currentStep,
       completedSteps: [...new Set(completedSteps)],
       answers
-    };
+    });
   }
 
   const result = {
@@ -350,7 +397,7 @@ export function sanitizeState(candidate) {
     schemaVersion: 2,
     activeCourseId,
     lessonMode,
-    courses: Object.fromEntries(COURSE_IDS.map((id) => [id, sanitizeProgress(candidate?.courses?.[id], id)])),
+    courses: Object.fromEntries(COURSE_IDS.map((id) => [id, repairCompletedSteps(id, sanitizeProgress(candidate?.courses?.[id], id))])),
     practice: sanitizePractice(candidate.practice),
     sharedModules: {
       [UQ_SHARED_REQUIREMENT_ID]: sanitizeSharedModule(candidate?.sharedModules?.[UQ_SHARED_REQUIREMENT_ID])
@@ -370,6 +417,12 @@ export function sanitizeState(candidate) {
     };
   }
 
+  if (result.legacyChargingProgress) {
+    result.courses["capacitor-exponential"] = repairCompletedSteps(
+      "capacitor-exponential",
+      restoreChargingModel(result.courses["capacitor-exponential"], result.legacyChargingProgress)
+    );
+  }
   if (typeof candidate.migrationNotice === "string" && candidate.migrationNotice) {
     result.migrationNotice = candidate.migrationNotice;
   }

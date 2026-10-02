@@ -1,70 +1,28 @@
-# Bildverzeichnis: GeoGebra-Trainer
+# Bildverzeichnis
 
-Stand: 1. Oktober 2026  
-Referenz: `ANTIGRAVITY_ARBEITSAUFTRAG.md` (AP 07)
+Stand: 1. Oktober 2026 · Herkunft und fachliche Prüfung
 
-Dieses Verzeichnis dokumentiert alle im Projekt vorhandenen und eingebundenen Bilddateien. Gemäß AP 07 werden alte Dateien mit unbekannter GeoGebra-Version ehrlich als solche gekennzeichnet. Schematische Nachbildungen (erzeugt durch `generate-uq-screenshots.ps1`) sind explizit als Programmschemata deklariert und noch durch echte Softwareaufnahmen zu ersetzen. Historische Aufnahmen mit fehlerhafter bzw. umgekehrter Abweichungsformel sind aus dem aktiven Arbeitsablauf ausgeschlossen.
+## Aktive Bilder
 
----
+| Bestand | Dateien | Herkunft / Kennzeichnung | Fachliche und didaktische Prüfung |
+| --- | --- | --- | --- |
+| Coulomb | `assets/steps/01-messwerte.png`, `02-punkt-c1.png`, `03-ausfuellgriff.png`, `03-punkte-ausfuellen.png`, `04-zwischenstand-sichern.png`, `05-potenzregression.png`, `06-regressionswerte.png`, `07-abweichungsformel.png`, `08-abweichungen.png`, `09-regressionskurve.png` | **Made with GeoGebra® – selbst aufgenommen** | Originalmesswerte: r = 8; 9,3; 10,7; 12,4; 15,1; 18,6 cm und F = 0,37; 0,27; 0,21; 0,18; 0,11; 0,06 mN. Lesbar; nur das erste Bild eines Schritts wird sofort gezeigt. |
+| U–Q | `assets/steps/uq/01-messwerte-u-q.png` bis `13-lineare-modellwerte-u-q.png` | **Programmgeneriertes GDI+-Schema, kein GeoGebra-Screenshot** | Daten: U = 50; 100; 150; 200; 250 V und Q/(10⁻⁸ C) = 2; 4,3; 6,4; 8,3; 10,2. Jede Einbindung trägt die sichtbare Schema-Kennzeichnung. |
+| Aufladung, Grundweg | `assets/steps/charging/01-spannungsdifferenz-formel-bis-80s.png`, `02-spannungsdifferenzen-bis-80s.png`, `03-erster-zeit-punkt.png`, `04-zeit-punkte-bis-80s.png`, `05-exponentialregression.png`, `07-modellwert-formel-bis-80s.png`, `08-modellwerte-bis-80s.png` | **Made with GeoGebra® – selbst aufgenommen** | Neun reguläre Punkte t = 0 bis 80 s; die Bilder zeigen D1:D9, TrendExp(D1:D9) und die richtige Richtung Messwert − Modellwert. Lesbar geprüft. |
+| Aufladung, freiwillige Vertiefung | `assets/steps/charging/06-regressionskurve-mit-pruefwert.png` | **Made with GeoGebra® – selbst aufgenommen** | Der Originalpunkt bei 100 s / 0,251 V bleibt sichtbar, aber nur in der eingeklappten Vertiefung. Er liegt über der Neun-Punkte-Kurve; die Abweichung nach Kurskonvention ist positiv. |
 
-## 1. Übersicht nach Verzeichnissen
+Die folgenden U–Q-Schemabilder gehören zur zweiten Tabellenzeile: `01-messwerte-u-q.png`, `02-punkte-u-q.png`, `03-konstante-formel.png`, `04-konstanten-ausgefuellt.png`, `05-mittelwert.png`, `06-mittelwert-in-d1.png`, `07-mittelwert-ausgefuellt.png`, `08-konstantenabweichung-formel.png`, `09-konstantenabweichungen.png`, `10-potenzregression-u-q.png`, `11-modellwerte-u-q.png`, `12-lineare-regression-u-q.png`, `13-lineare-modellwerte-u-q.png`.
 
-| Verzeichnis | Anzahl Dateien | Aktive Einbindung | Bildtyp | Status |
-| --- | :---: | :---: | --- | --- |
-| `assets/steps/` | 10 | 10 | Screenshots (Altbestand) | Vorhandener Altbestand (Version unbekannt) |
-| `assets/steps/uq/` | 13 | 13 | Programmatische Schemata (GDI+) | Noch durch echte GeoGebra-Aufnahmen zu ersetzen |
-| `assets/steps/charging/` | 11 | 10 | Echte Screenshots (Rechner Suite) | 10 aktiv (9 Punkte Grundweg / Vertiefung); 1 historisch ausgemustert |
+## Archivierte Originalbilder
 
----
+| Archivdatei | Grund der Archivierung |
+| --- | --- |
+| `assets/archiv/charging/09-historische-abweichungsformel.png` | Zeigt die umgekehrte Formel `(E1-C1)/E1·100`; fachlich nicht mehr verwendbar. |
+| `assets/archiv/charging/10-auffaellige-modellabweichung.png` | Zeigt die alte Vorzeichenkonvention mit negativen Werten; kein Lernbild. |
+| `assets/archiv/charging/11-plausibilitaetsvergleich-90s.png` | Verändert den Originalzeitpunkt 100 s hypothetisch zu 90 s; nur historische Dokumentation. |
 
-## 2. Detailliertes Bildverzeichnis
+Die Archivbilder wurden nicht verändert oder gelöscht. Sie sind nicht mehr aus JavaScript, HTML oder CSS referenziert.
 
-| Datei | Lernweg / Schritt | Gezeigter Befehl | Datenauswahl | Bildtyp | Herkunft | Geprüfte GeoGebra-Version | Status / Anmerkung |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| `assets/steps/01-messwerte.png` | Coulomb (`inverse-square`): `setup`, `table` | Messwerte in Spalte A & B | 6 Zeilen (r: 6–22 cm, F: 0,85–0,06 mN) | Software-Screenshot (Tabelle) | Altbestand | unbekannt (Altbestand) | Aktiv eingebunden; gut lesbar. |
-| `assets/steps/02-punkt-c1.png` | Coulomb (`inverse-square`): `first-point` | `=(A1,B1)` | Zeile 1: (6, 0.85) | Software-Screenshot (Zelleingabe) | Altbestand | unbekannt (Altbestand) | Aktiv eingebunden. |
-| `assets/steps/03-ausfuellgriff.png` | Coulomb (`inverse-square`): `fill-points` | Ausfüllgriff ziehen | Zelle C1 | Software-Screenshot (Detail) | Altbestand (11.09.2026) | unbekannt (Altbestand) | Aktiv eingebunden. |
-| `assets/steps/03-punkte-ausfuellen.png` | Coulomb (`inverse-square`): `fill-points` | C1:C6 ausgefüllt | 6 Punkte in Spalte C | Software-Screenshot (Tabelle) | Altbestand | unbekannt (Altbestand) | Aktiv eingebunden. |
-| `assets/steps/04-zwischenstand-sichern.png` | Coulomb (`inverse-square`): `fill-points` | Menü: Speichern | N/A (Bedienoberfläche) | Software-Screenshot (Menü) | Altbestand | unbekannt (Altbestand) | Aktiv als Hilfebild eingebunden. |
-| `assets/steps/05-potenzregression.png` | Coulomb (`inverse-square`): `regression`, `inverse-parameters` | `F(x)=TrendPot(C1:C6)` | 6 Punkte C1:C6 | Software-Screenshot (Algebrazeile) | Altbestand | unbekannt (Altbestand) | Aktiv eingebunden. |
-| `assets/steps/06-regressionswerte.png` | Coulomb (`inverse-square`): `predictions` | `=F(A1)` in D1:D6 | 6 Modellwerte in Spalte D | Software-Screenshot (Tabelle) | Altbestand | unbekannt (Altbestand) | Aktiv eingebunden. |
-| `assets/steps/07-abweichungsformel.png` | Coulomb (`inverse-square`): `deviations` | `=(B1-D1)/D1*100` in E1 | Zeile 1: (0,85−0,738)/0,738·100 | Software-Screenshot (Formel) | Altbestand | unbekannt (Altbestand) | Aktiv eingebunden. |
-| `assets/steps/08-abweichungen.png` | Coulomb (`inverse-square`): `deviations` | E1:E6 ausgefüllt | 6 Abweichungen in Spalte E | Software-Screenshot (Tabelle) | Altbestand | unbekannt (Altbestand) | Aktiv eingebunden. |
-| `assets/steps/09-regressionskurve.png` | Coulomb (`inverse-square`): `conclusion` | Grafikfenster mit Messpunkten und Kurve | 6 Punkte und Funktion F(x) | Software-Screenshot (Grafik) | Altbestand | unbekannt (Altbestand) | Aktiv eingebunden. |
-| `assets/steps/uq/01-messwerte-u-q.png` | Q-U (alle 3 Wege): `*-context`, `*-table` | Messwerte in A1:B5 | 5 Zeilen (50–250 V, 2,0–10,5 · 10⁻⁸ C) | Programmatisches Schema | `generate-uq-screenshots.ps1` | keine (GDI-Schema) | Vorläufiges Schema; noch durch echte GeoGebra-Aufnahme zu ersetzen. |
-| `assets/steps/uq/02-punkte-u-q.png` | Q-U Potenz / Linear: `*-points` | `=(A1,B1)` in C1:C5 | 5 Punkte in Spalte C | Programmatisches Schema | `generate-uq-screenshots.ps1` | keine (GDI-Schema) | Vorläufiges Schema; noch durch echte GeoGebra-Aufnahme zu ersetzen. |
-| `assets/steps/uq/03-konstante-formel.png` | Q-U Konstanten: `uq-constant-ratios` | `=B1/A1` in C1 | Zeile 1 | Programmatisches Schema | `generate-uq-screenshots.ps1` | keine (GDI-Schema) | Vorläufiges Schema; noch durch echte GeoGebra-Aufnahme zu ersetzen. |
-| `assets/steps/uq/04-konstanten-ausgefuellt.png` | Q-U Konstanten: `uq-constant-ratios` | C1:C5 ausgefüllt | 5 Verhältnisse in Spalte C | Programmatisches Schema | `generate-uq-screenshots.ps1` | keine (GDI-Schema) | Vorläufiges Schema; noch durch echte GeoGebra-Aufnahme zu ersetzen. |
-| `assets/steps/uq/05-mittelwert.png` | Q-U Konstanten: `uq-constant-mean`, `uq-constant-parameters`, `uq-constant-conclusion` | `a=Mittel(C1:C5)` | Wertebereich C1:C5 | Programmatisches Schema | `generate-uq-screenshots.ps1` | keine (GDI-Schema) | Vorläufiges Schema; noch durch echte GeoGebra-Aufnahme zu ersetzen. |
-| `assets/steps/uq/06-mittelwert-in-d1.png` | Q-U Konstanten: `uq-constant-mean` | `=a` in D1 | Zelle D1 | Programmatisches Schema | `generate-uq-screenshots.ps1` | keine (GDI-Schema) | Vorläufiges Schema; noch durch echte GeoGebra-Aufnahme zu ersetzen. |
-| `assets/steps/uq/07-mittelwert-ausgefuellt.png` | Q-U Konstanten: `uq-constant-mean` | D1:D5 ausgefüllt | 5 Zeilen mit Referenzwert in D | Programmatisches Schema | `generate-uq-screenshots.ps1` | keine (GDI-Schema) | Vorläufiges Schema; noch durch echte GeoGebra-Aufnahme zu ersetzen. |
-| `assets/steps/uq/08-konstantenabweichung-formel.png` | Q-U Konstanten: `uq-constant-deviation` | `=(C1-D1)/D1*100` in E1 | Zeile 1 | Programmatisches Schema | `generate-uq-screenshots.ps1` | keine (GDI-Schema) | Vorläufiges Schema; noch durch echte GeoGebra-Aufnahme zu ersetzen. |
-| `assets/steps/uq/09-konstantenabweichungen.png` | Q-U Konstanten: `uq-constant-deviation`, `uq-constant-uncertainty`, `uq-constant-conclusion` | E1:E5 ausgefüllt | 5 Abweichungen in Spalte E | Programmatisches Schema | `generate-uq-screenshots.ps1` | keine (GDI-Schema) | Vorläufiges Schema; noch durch echte GeoGebra-Aufnahme zu ersetzen. |
-| `assets/steps/uq/10-potenzregression-u-q.png` | Q-U Potenz: `uq-power-fit`, `uq-power-parameters`, `uq-power-conclusion` | `Q(x)=TrendPot(C1:C5)` | 5 Punkte C1:C5 | Programmatisches Schema | `generate-uq-screenshots.ps1` | keine (GDI-Schema) | Vorläufiges Schema; noch durch echte GeoGebra-Aufnahme zu ersetzen. |
-| `assets/steps/uq/11-modellwerte-u-q.png` | Q-U Potenz: `uq-power-model`, `uq-power-deviation`, `uq-power-conclusion` | `=Q(A1)` in D1, Abweichungen in E1 | 5 Zeilen in D und E | Programmatisches Schema | `generate-uq-screenshots.ps1` | keine (GDI-Schema) | Vorläufiges Schema; noch durch echte GeoGebra-Aufnahme zu ersetzen. |
-| `assets/steps/uq/12-lineare-regression-u-q.png` | Q-U Linear: `uq-linear-fit`, `uq-linear-parameters`, `uq-linear-conclusion` | `Q=Trendlinie(C1:C5)` | 5 Punkte C1:C5 | Programmatisches Schema | `generate-uq-screenshots.ps1` | keine (GDI-Schema) | Vorläufiges Schema; noch durch echte GeoGebra-Aufnahme zu ersetzen. |
-| `assets/steps/uq/13-lineare-modellwerte-u-q.png` | Q-U Linear: `uq-linear-model`, `uq-linear-deviation`, `uq-linear-conclusion` | `=Q(A1)` in D1, Abweichungen in E1 | 5 Zeilen in D und E | Programmatisches Schema | `generate-uq-screenshots.ps1` | keine (GDI-Schema) | Vorläufiges Schema; noch durch echte GeoGebra-Aufnahme zu ersetzen. |
-| `assets/steps/charging/01-spannungsdifferenz-formel-bis-80s.png` | Aufladung: `charging-delta` | `=3.780-B1` in C1 | 9 Messpaare (0–80 s) | Software-Screenshot (Tabelle) | Neuaufnahme (18.09.2026) | GeoGebra Rechner Suite | Aktiv eingebunden (Grundweg 9 Punkte). |
-| `assets/steps/charging/02-spannungsdifferenzen-bis-80s.png` | Aufladung: `charging-delta` | C1:C9 ausgefüllt | 9 Messpaare (0–80 s) | Software-Screenshot (Tabelle) | Neuaufnahme (18.09.2026) | GeoGebra Rechner Suite | Aktiv eingebunden. |
-| `assets/steps/charging/03-erster-zeit-punkt.png` | Aufladung: `charging-points` | `=(A1,C1)` in D1 | Zelle D1: (0, 3.78) | Software-Screenshot (Tabelle) | Neuaufnahme (18.09.2026) | GeoGebra Rechner Suite | Aktiv eingebunden. |
-| `assets/steps/charging/04-zeit-punkte-bis-80s.png` | Aufladung: `charging-points` | D1:D9 ausgefüllt | 9 Punkte D1:D9 | Software-Screenshot (Tabelle) | Neuaufnahme (18.09.2026) | GeoGebra Rechner Suite | Aktiv eingebunden. |
-| `assets/steps/charging/05-exponentialregression.png` | Aufladung: `charging-regression` | `U(x)=TrendExp(D1:D9)` | 9 Punkte D1:D9 | Software-Screenshot (Algebrazeile) | Neuaufnahme (18.09.2026) | GeoGebra Rechner Suite | Aktiv eingebunden; zeigt Referenzwerte A ≈ 3,6926 und k ≈ -0,03043. |
-| `assets/steps/charging/06-regressionskurve-mit-pruefwert.png` | Aufladung: `charging-conclusion` | Grafikfenster mit Kurve TrendExp(D1:D9) und Prüfpunkt D10 | 9 Punkte D1:D9 + Prüfwert D10 | Software-Screenshot (Grafikfenster) | Neuaufnahme (18.09.2026) | GeoGebra Rechner Suite | Aktiv in Vertiefung eingebunden; zeigt auffälligen Punkt bei 100 s unterhalb der Kurve. |
-| `assets/steps/charging/07-modellwert-formel-bis-80s.png` | Aufladung: `charging-predictions` | `=U(A1)` in E1 | 9 Zeilen (0–80 s) | Software-Screenshot (Tabelle) | Neuaufnahme (18.09.2026) | GeoGebra Rechner Suite | Aktiv eingebunden. |
-| `assets/steps/charging/08-modellwerte-bis-80s.png` | Aufladung: `charging-predictions` | E1:E9 ausgefüllt | 9 Modellwerte in Spalte E | Software-Screenshot (Tabelle) | Neuaufnahme (18.09.2026) | GeoGebra Rechner Suite | Aktiv eingebunden. |
-| `assets/steps/charging/09-historische-abweichungsformel.png` | *Nicht im Arbeitsablauf* (ausgemustert) | `=(E1-C1)/E1*100` in F1 | 10 Zeilen | Historischer Screenshot | Altbestand (18.09.2026) | GeoGebra Rechner Suite | **Ausgemustert**: Zeigt umgekehrte Gegenformel (Modellwert minus Messwert). Im Lernweg durch kopierbaren Befehl `=(C1-E1)/E1*100` ersetzt; noch durch echte Neuaufnahme von `=(C1-E1)/E1*100` zu ersetzen. |
-| `assets/steps/charging/10-auffaellige-modellabweichung.png` | Aufladung: `charging-conclusion` | Tabelle mit Spalte F inkl. 100 s (~ -42,6 %) | 10 Zeilen | Software-Screenshot (Tabelle) | Aufnahme (18.09.2026) | GeoGebra Rechner Suite | Aktiv in Vertiefung eingebunden. |
-| `assets/steps/charging/11-plausibilitaetsvergleich-90s.png` | Aufladung: `charging-conclusion` | Plausibilitätsvergleich mit 90 s | 10 Zeilen (hypothetisch 90 s) | Software-Screenshot (Tabelle) | Aufnahme (18.09.2026) | GeoGebra Rechner Suite | Aktiv in Vertiefung eingebunden. |
+## Herkunftshinweis
 
----
-
-## 3. Prüflücken und Restpunkte zu AP 07
-
-1. **U-Q-Abbildungen (`assets/steps/uq/`):**
-   - Aktueller Zustand: 13 programmatische Bildschemata, erzeugt durch `generate-uq-screenshots.ps1`.
-   - Bewertung nach AP 07: Ausdrücklich als Schemata deklariert. Vollwertige echte GeoGebra-Screenshots der Rechner Suite mit denselben Anzeigeeinstellungen müssen in einer späteren Foto-/Erfassungssitzung in echter GeoGebra-Software erzeugt und ausgetauscht werden.
-2. **Abweichungsformel Aufladung (`charging/09-historische-abweichungsformel.png`):**
-   - Aktueller Zustand: Aus dem aktiven Arbeitsablauf entfernt, um Verwirrung durch die umgekehrte Formel `=(E1-C1)/E1*100` zu verhindern. Als verlässliche Hilfe dient der kopierbare Befehl `=(C1-E1)/E1*100`.
-   - Bewertung nach AP 07: Eine echte Neuaufnahme der Tabelle mit `=(C1-E1)/E1*100` in F1 für D1:D9 steht noch aus.
-3. **Altbestand Coulomb (`assets/steps/`):**
-   - Aktueller Zustand: 10 Bilder vorhanden und funktional; die genaue historische GeoGebra-Build-Version ist nicht mehr dokumentiert.
+Die echte Aufnahmen wurden vom Projektinhaber selbst erstellt. Die Kennzeichnung „Made with GeoGebra®“ verweist auf [GeoGebra](https://www.geogebra.org/); weitere Hinweise stehen in [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).

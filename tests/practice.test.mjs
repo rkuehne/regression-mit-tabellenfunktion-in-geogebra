@@ -116,3 +116,23 @@ test("Befehlsübersicht und Selbstkontrolle entsprechen den Vorgaben", () => {
   const ids = SELF_CHECK_STATEMENTS.map((s) => s.id);
   assert.deepEqual(ids, ["cells", "formula", "conclusion"]);
 });
+test("Übungsabschluss verlangt geprüfte und gültige Werte in allen Feldern", () => {
+  const task = PRACTICE_TASKS["linear-7"];
+  const answers = Object.fromEntries(task.fields.map((field) => [field.id, String(field.expected)]));
+  assert.equal(isTaskNumericallyComplete(task, { answers, completedChecks: [] }), false);
+  assert.equal(isTaskNumericallyComplete(task, { answers, completedChecks: task.fields.map((field) => field.id) }), true);
+  assert.equal(isTaskNumericallyComplete(task, {
+    answers: { ...answers, slope: "0,2" },
+    completedChecks: task.fields.map((field) => field.id)
+  }), false);
+});
+
+test("erste Hilfestufe und Fehlerrückmeldungen verraten keine Referenzlösung", () => {
+  for (const task of Object.values(PRACTICE_TASKS)) {
+    assert.equal(task.hints[0].title, "1. Vorgehen");
+    assert.equal(task.hints[0].items.some((item) => /Trend(?:linie|Pot|Exp)|=\(|\*100|C1:/i.test(item)), false, task.id);
+    for (const field of task.fields) {
+      assert.doesNotMatch(field.incorrect, /\b(?:0[,.]\d|[1-9]\d*[,.]\d|\d+\s*(?:V|cm|s|%|pF))\b/, `${task.id}/${field.id}`);
+    }
+  }
+});

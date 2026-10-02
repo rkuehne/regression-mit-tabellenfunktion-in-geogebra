@@ -82,7 +82,7 @@ test("verwendet nur vorhandene lokale Seiten-, Stil- und Bildressourcen", () => 
 
   for (const course of Object.values(COURSES)) {
     for (const step of course.steps) {
-      for (const image of step.images) assertLocalFile(image.src, `${course.id}/${step.id}`);
+      for (const image of [...step.images, ...(step.optionalExtension?.images || [])]) assertLocalFile(image.src, `${course.id}/${step.id}`);
     }
   }
 

@@ -317,7 +317,7 @@ test("migriert Altstand ohne schemaVersion verbindlich auf Version 2", () => {
   // 3. Schritt-Umordnung & Kontroll-Übernahme
   // inverse-square: 'regression' war completed, interpretation wandert nach 'inverse-parameters'
   const invProg = migrated.courses["inverse-square"];
-  assert.equal(invProg.answers["inverse-parameters"]?.interpretation, "Kraft nimmt mit 1/r^2 ab");
+  assert.equal(invProg.answers["inverse-parameters"]?.interpretation, "near");
   assert.equal(invProg.answers.regression.interpretation, undefined);
   assert.equal(invProg.answers.regression.a, "28,9");
   assert.ok(invProg.completedSteps.includes("inverse-parameters"));
@@ -382,4 +382,61 @@ test("Übungszustand ist unabhängig von Lernwegen und Dokumentation", () => {
   // Lernwege und Dokumentation unberührt
   assert.deepEqual(sanitized.courses["inverse-square"].completedSteps, []);
   assert.deepEqual(sanitized.documentation.selfChecks["inverse-square"], {});
+});
+test("repariert falsch grün markierte Parameter- und gemeinsame Fehlerkontrollen", () => {
+  const invalid = sanitizeState({
+    schemaVersion: 2,
+    activeCourseId: "inverse-square",
+    courses: {
+      "inverse-square": {
+        currentStep: 7,
+        completedSteps: ["inverse-parameters"],
+        answers: { "inverse-parameters": { interpretation: "exact" } }
+      }
+    },
+    sharedModules: {
+      "uq-largest-single-error": { completed: true, answers: { uError: "99" } }
+    }
+  });
+  assert.deepEqual(invalid.courses["inverse-square"].completedSteps, []);
+  assert.equal(invalid.sharedModules["uq-largest-single-error"].completed, false);
+
+  const valid = sanitizeState({
+    schemaVersion: 2,
+    courses: {
+      "inverse-square": {
+        completedSteps: ["inverse-parameters"],
+        answers: { "inverse-parameters": { interpretation: "near" } }
+      }
+    }
+  });
+  assert.deepEqual(valid.courses["inverse-square"].completedSteps, ["inverse-parameters"]);
+});
+
+test("erhält beim Neun-Punkte-Migrationspfad den gültigen Modellschritt", () => {
+  const migrated = migrateState({
+    activeCourseId: "capacitor-exponential",
+    courses: {
+      "capacitor-exponential": {
+        currentStep: 4,
+        completedSteps: ["charging-context", "charging-model", "charging-regression"],
+        answers: {
+          "charging-context": { trend: "decreases", relation: "exponential" },
+          "charging-model": { sign: "negative", meaning: "best-fit" },
+          "charging-regression": { a: "3,69" }
+        }
+      }
+    }
+  });
+  const progress = migrated.courses["capacitor-exponential"];
+  assert.ok(progress.completedSteps.includes("charging-model"));
+  assert.deepEqual(progress.answers["charging-model"], { sign: "negative", meaning: "best-fit" });
+  assert.equal(progress.completedSteps.includes("charging-regression"), false);
+  assert.match(migrated.migrationNotice, /neun Messpaare/);
+
+  const invalid = migrateState({
+    courses: { "capacitor-exponential": { completedSteps: ["charging-model"], answers: { "charging-model": { sign: "positive", meaning: "best-fit" } } }
+  }
+  });
+  assert.equal(invalid.courses["capacitor-exponential"].completedSteps.includes("charging-model"), false);
 });

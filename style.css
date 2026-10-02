@@ -854,3 +854,28 @@ body.documentation-page[data-math-state="loading"] .documentation-view { visibil
 
 mjx-container { max-width: 100%; }
 mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; padding-block: 0.2em; }
+
+/* Abschluss der Terra-Überarbeitung: kompakter Einstieg, optionale Hilfen und Druck. */
+.site-header { padding: clamp(20px, 4vw, 44px) 0; }
+.hero-grid { align-items: start; gap: clamp(20px, 4vw, 42px); }
+.hero-copy h1 { margin-bottom: 12px; font-size: clamp(1.75rem, 3.2vw, 2.5rem); }
+.hero-lead { max-width: 58ch; }
+.hero-facts { margin-top: 14px; }
+.setup-card { align-self: start; }
+.lesson-card { scroll-margin-top: 6rem; }
+.migration-notice { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 16px; padding: 12px 16px; border: 1px solid var(--violet-200); border-radius: 12px; background: #fbf9ff; }
+.migration-notice p { margin: 0; }
+.step-image-help, .optional-extension { border: 1px solid var(--border); border-radius: var(--radius-md); background: #fbfaff; padding: 0 14px; }
+.step-image-help > summary, .optional-extension > summary { min-height: 44px; display: flex; align-items: center; font-weight: 750; cursor: pointer; }
+.step-images-help-list { display: grid; gap: 18px; padding: 0 0 14px; }
+.optional-extension > div { padding: 0 0 14px; }
+.optional-extension p { margin: 0 0 10px; }
+@media (max-width: 640px) {
+  .migration-notice { align-items: flex-start; flex-direction: column; }
+}
+@media print {
+  .site-nav, .summary-top-actions, .workspace-top-bar, .migration-notice, .course-tools, .summary-toggle-bar { display: none !important; }
+}
+.setup-card > summary { cursor: pointer; font-size: 1.1rem; font-weight: 800; }
+.setup-card > summary::marker { color: var(--violet-700); }
+.setup-card > summary .setup-kicker { display: block; margin-bottom: 3px; }
