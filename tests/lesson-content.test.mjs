@@ -196,6 +196,9 @@ test("führt den Aufladungskurs fachlich konsistent von ΔU bis zur Fehlerbeurte
   assert.match(content, /nicht.*allein.*Modell|nicht.*nur.*Modell/i);
   assert.match(content, /nicht.*90 s|90 s.*nicht/i);
   assert.match(content, /fmax = 10 %/);
+  assert.match(content, /Bei t = 0 kann keine relative Zeitunsicherheit Δt\/t angegeben werden/);
+  assert.match(content, /Nach unserer schulischen Vergleichsregel.*kleinste positive.*t = 10 s/);
+  assert.match(content, /nicht stillschweigend entfernt/);
   assert.match(content, /vereinbar/i);
   assert.match(content, /beweis/i);
   assert.match(content, /TrendExp\(D1:D10\)/);
@@ -237,14 +240,14 @@ test("enthält die zentralen U-Q-Eingaben und vorsichtige Fachsprache", () => {
   const courses = JSON.stringify(COURSES);
   assert.match(power, /Q\(x\)=TrendPot\(C1:C5\)/);
   assert.match(power, /=Q\(A1\)/);
-  assert.match(power, /Methode des größten Einzelfehlers/i);
+  assert.match(power, /schulische Vergleichsregel/i);
   assert.match(power, /1,16 %/);
   assert.match(power, /theoretischen Wert 1/i);
   assert.match(constants, /=B1\/A1/);
   assert.match(constants, /Mittel\(C1:C5\)/);
   assert.match(constants, /416 pF/);
   assert.match(constants, /10 %/);
-  assert.match(constants, /keine.*Unsicherheit von C|keine vollständige Fehlerfortpflanzung/i);
+  assert.match(constants, /keine.*Messunsicherheit von C|keine vollständige Unsicherheitsfortpflanzung/i);
   assert.doesNotMatch(constants, /wechsle freundlich/i);
   assert.match(linear, /Q=Trendlinie\(C1:C5\)/);
   assert.match(linear, /=Q\(A1\)/);
@@ -306,7 +309,8 @@ test("enthält die gemeinsame Fehlerseite mit Herleitung, Anwendungen und Pflich
   assert.match(html, /7\{,\}41\\,\\%/);
   assert.match(html, /\\frac\{0\{,\}12\}\{2\{,\}0\}\\cdot100=6\\,\\%/);
   assert.match(html, /Q=Trendlinie\(C1:C5\)/);
-  assert.match(html, /durch die Messfehler erklärt werden/);
+  assert.match(html, /mit den angenommenen Messunsicherheiten vereinbar/);
+  assert.match(html, /ersetzt keine vollständige Unsicherheitsfortpflanzung oder statistische Modellprüfung/);
   assert.match(html, /name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"/);
   assert.match(html, /src="\.\/groesster-einzelfehler\.js\?v=20260920-1"/);
 });

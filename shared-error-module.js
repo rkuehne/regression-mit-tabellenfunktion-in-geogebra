@@ -8,7 +8,7 @@ export const SHARED_ERROR_FIELDS = Object.freeze([
     id: "uError",
     kind: "result",
     type: "number",
-    label: "Größter relativer U-Einzelfehler in %",
+    label: "Angenommene relative Messunsicherheit von U in %",
     placeholder: "Ergebnis eingeben",
     expected: 10,
     tolerance: 0.05,
@@ -19,7 +19,7 @@ export const SHARED_ERROR_FIELDS = Object.freeze([
     id: "qError",
     kind: "result",
     type: "number",
-    label: "Größter relativer Q-Einzelfehler in %",
+    label: "Angenommene relative Messunsicherheit von Q in %",
     placeholder: "Ergebnis eingeben",
     expected: 5,
     tolerance: 0.05,
@@ -30,7 +30,7 @@ export const SHARED_ERROR_FIELDS = Object.freeze([
     id: "maxError",
     kind: "result",
     type: "number",
-    label: "f_max in %",
+    label: "Schulische Vergleichsgrenze f_max in %",
     placeholder: "Ergebnis eingeben",
     expected: 10,
     tolerance: 0.05,
@@ -45,27 +45,27 @@ export const SHARED_ERROR_FIELDS = Object.freeze([
     expected: "largest-relative",
     options: Object.freeze([
       Object.freeze({ value: "", label: "Bitte auswählen …" }),
-      Object.freeze({ value: "largest-relative", label: "Bei gleichem absoluten Fehler ist dort der relative Fehler am größten." }),
-      Object.freeze({ value: "smallest-error", label: "Dort ist auch der absolute Fehler am kleinsten." }),
+      Object.freeze({ value: "largest-relative", label: "Bei gleicher angenommener absoluter Messunsicherheit ist dort die relative Messunsicherheit am größten." }),
+      Object.freeze({ value: "smallest-error", label: "Dort ist auch die absolute Messunsicherheit am kleinsten." }),
       Object.freeze({ value: "geogebra", label: "GeoGebra verlangt immer den kleinsten Wert." })
     ]),
-    correct: "Richtig: Bei gleichem absoluten Fehler ist der relative Fehler am kleinsten Messwert am größten.",
+    correct: "Richtig: Bei gleicher angenommener absoluter Messunsicherheit ist die relative Messunsicherheit am kleinsten Messwert am größten.",
     incorrect: "Vergleiche denselben Zähler bei einem kleinen und einem großen Nenner."
   }),
   Object.freeze({
     id: "methodMeaning",
     kind: "understanding",
     type: "choice",
-    label: "Was bedeutet eine Abweichung unter f_max?",
+    label: "Was bedeutet eine Modellabweichung unter f_max?",
     expected: "explainable",
     options: Object.freeze([
       Object.freeze({ value: "", label: "Bitte auswählen …" }),
-      Object.freeze({ value: "explainable", label: "Sie kann nach dieser Methode durch Messfehler erklärt werden, beweist aber nichts." }),
+      Object.freeze({ value: "explainable", label: "Nach dieser schulischen Vergleichsregel ist sie mit den angenommenen Messunsicherheiten vereinbar; sie beweist nichts." }),
       Object.freeze({ value: "proven", label: "Die Theorie ist damit mathematisch bewiesen." }),
       Object.freeze({ value: "zero", label: "Die tatsächliche Abweichung ist null." })
     ]),
     correct: "Richtig: erklärbar, aber nicht bewiesen.",
-    incorrect: "Die Methode erlaubt eine Fehlererklärung, keinen mathematischen Beweis."
+    incorrect: "Die Regel erlaubt eine schulische Vereinbarkeitsaussage, keinen mathematischen Beweis."
   })
 ]);
 
@@ -103,40 +103,40 @@ export function renderSharedErrorModule(container, { state, course, step, onStat
 
   const title = document.createElement("h3");
   title.id = "sharedRequirementTitle";
-  title.textContent = "Methode des größten Einzelfehlers";
+  title.textContent = "Schulische Vergleichsregel: größter relativer Einzelfehler";
 
   headerDiv.append(miniLabel, title);
 
   const summaryBox = document.createElement("div");
   summaryBox.className = "shared-method-summary";
   const summaryText = document.createElement("p");
-  summaryText.textContent = "Wir verwenden hier die im Unterricht vereinbarte Methode des größten Einzelfehlers als vereinfachte Vergleichsregel. Der größte relative Einzelfehler beträgt in dieser Messreihe 10 %. Die untersuchte Abweichung wird mit dieser Grenze verglichen. Damit berechnen wir keine statistische Unsicherheit eines Regressionsparameters.";
+  summaryText.textContent = "Wir verwenden hier den größten relativen Einzelfehler als schulische Vergleichsregel. Er bezeichnet in diesem Kurs die größte angenommene relative Messunsicherheit; hier beträgt die Vergleichsgrenze 10 %. Eine Modellabweichung wird mit dieser Grenze verglichen. Diese Vergleichsregel dient der schulischen Beurteilung von Messdaten. Sie ersetzt keine vollständige Unsicherheitsfortpflanzung oder statistische Modellprüfung.";
   const assumptionsText = document.createElement("p");
   assumptionsText.className = "shared-method-assumptions";
-  assumptionsText.textContent = "Angenommene Gerätefehler: \\(\\Delta U = 5\\,\\mathrm{V}\\) und \\(\\Delta Q = 0{,}1\\cdot10^{-8}\\,\\mathrm{C}\\).";
+  assumptionsText.textContent = "Angenommene Messunsicherheiten: \\(\\Delta U = 5\\,\\mathrm{V}\\) und \\(\\Delta Q = 0{,}1\\cdot10^{-8}\\,\\mathrm{C}\\).";
   summaryBox.append(summaryText, assumptionsText);
 
   const details = document.createElement("details");
   details.className = "shared-method-details";
   const detailsSummary = document.createElement("summary");
-  detailsSummary.textContent = "Schrittweise Herleitung der Fehlergrenze aufklappen";
+  detailsSummary.textContent = "Schrittweise Herleitung der Vergleichsgrenze aufklappen";
   const detailsContent = document.createElement("div");
   detailsContent.className = "shared-method-details-content";
 
   const ol = document.createElement("ol");
   const li1 = document.createElement("li");
-  li1.innerHTML = "<strong>Absolute Einzelfehler:</strong> \\(\\Delta U=5\\,\\mathrm V,\\quad \\Delta Q=0{,}1\\cdot10^{-8}\\,\\mathrm C\\) (vorgegebene Annahmen).";
+  li1.innerHTML = "<strong>Angenommene absolute Messunsicherheiten:</strong> \\(\\Delta U=5\\,\\mathrm V,\\quad \\Delta Q=0{,}1\\cdot10^{-8}\\,\\mathrm C\\) (vorgegebene Annahmen).";
   const li2 = document.createElement("li");
-  li2.innerHTML = "<strong>Spannung relativ:</strong> \\(\\frac{5}{50}\\cdot100=10\\,\\%\\) am kleinsten Messwert (\\(50\\,\\mathrm V\\)).";
+  li2.innerHTML = "<strong>Relative Spannungsunsicherheit:</strong> \\(\\frac{5}{50}\\cdot100=10\\,\\%\\) am kleinsten Messwert (\\(50\\,\\mathrm V\\)).";
   const li3 = document.createElement("li");
-  li3.innerHTML = "<strong>Ladung relativ:</strong> \\(\\frac{0{,}1}{2{,}0}\\cdot100=5\\,\\%\\) am kleinsten Messwert (\\(2{,}0\\cdot10^{-8}\\,\\mathrm C\\)).";
+  li3.innerHTML = "<strong>Relative Ladungsunsicherheit:</strong> \\(\\frac{0{,}1}{2{,}0}\\cdot100=5\\,\\%\\) am kleinsten Messwert (\\(2{,}0\\cdot10^{-8}\\,\\mathrm C\\)).";
   const li4 = document.createElement("li");
-  li4.innerHTML = "<strong>Größten Wert wählen:</strong> \\(f_{\\max}=\\max(10\\,\\%,5\\,\\%)=10\\,\\%\\).";
+  li4.innerHTML = "<strong>Vergleichsgrenze bestimmen:</strong> \\(f_{\\max}=\\max(10\\,\\%,5\\,\\%)=10\\,\\%\\).";
   ol.append(li1, li2, li3, li4);
 
   const asideNote = document.createElement("aside");
   asideNote.className = "method-note";
-  asideNote.innerHTML = "<strong>Warum die kleinsten Messwerte?</strong> Bei gleichem absoluten Fehler ist der relative Fehler dort am größten, da derselbe Fehler durch den kleinsten Messwert geteilt wird.";
+  asideNote.innerHTML = "<strong>Warum die kleinsten Messwerte?</strong> Bei gleicher angenommener absoluter Messunsicherheit ist die relative Messunsicherheit dort am größten, da derselbe Wert durch den kleinsten Messwert geteilt wird.";
   detailsContent.append(ol, asideNote);
   details.append(detailsSummary, detailsContent);
 
@@ -246,7 +246,7 @@ export function renderSharedErrorModule(container, { state, course, step, onStat
   overallFeedback.setAttribute("role", "status");
   overallFeedback.setAttribute("aria-live", "polite");
   if (moduleState.completed) {
-    overallFeedback.textContent = "Abgeschlossen! Die gemeinsame Fehlerkontrolle gilt für alle drei Q–U-Lernwege.";
+    overallFeedback.textContent = "Abgeschlossen! Die gemeinsame Vergleichskontrolle gilt für alle drei Q–U-Lernwege.";
   }
 
   form.append(fieldsContainer, submitBtn, overallFeedback);
@@ -275,7 +275,7 @@ export function renderSharedErrorModule(container, { state, course, step, onStat
       : "Noch offen – dieser gemeinsame Abschluss wird für Phase 4 (Abweichungen) und den Abschluss der drei Q–U-Lernwege benötigt.";
 
     overallFeedback.textContent = allValid
-      ? "Abgeschlossen! Die gemeinsame Fehlerkontrolle gilt jetzt für alle drei Q–U-Lernwege."
+      ? "Abgeschlossen! Die gemeinsame Vergleichskontrolle gilt jetzt für alle drei Q–U-Lernwege."
       : "Noch nicht vollständig. Prüfe bitte die markierten Felder.";
     overallFeedback.className = `feedback ${allValid ? "good" : "bad"}`;
 

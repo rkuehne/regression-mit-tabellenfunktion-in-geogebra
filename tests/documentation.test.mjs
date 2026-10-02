@@ -35,14 +35,23 @@ test("enthält fünf vollständige Dokumentationsbeispiele mit denselben fünf A
     assert.match(devSection.model, /\\cdot100/, `${example.id} deviations enthält Prozentmultiplikation`);
   }
   assert.equal(DOCUMENTATION_GENERAL_GUIDE.length, 5);
+  assert.deepEqual(DOCUMENTATION_GENERAL_GUIDE.map((item) => item.slice(0, item.indexOf(":"))), [
+    "Daten und Einheiten",
+    "GeoGebra-Auswertung",
+    "Physikalische Formel",
+    "Abweichungen und Vergleich",
+    "Schlussfolgerung"
+  ]);
 });
 
-test("dokumentiert die Exponentialregression ausschließlich von 0 bis 80 Sekunden", () => {
+test("dokumentiert die Exponentialregression mit begründetem Datenbereich", () => {
   const exponential = DOCUMENTATION_EXAMPLES["capacitor-exponential"];
   const content = exponential.sections.map((item) => item.model).join("\n");
 
   assert.match(exponential.introduction, /0/);
   assert.match(exponential.introduction, /80/);
+  assert.match(exponential.introduction, /100/);
+  assert.match(exponential.introduction, /nicht stillschweigend entfernt/);
   assert.match(content, /A1:A9/);
   assert.match(content, /B1:B9/);
   assert.match(content, /C1:[\s\S]*=3\.780-B1/);
@@ -53,7 +62,10 @@ test("dokumentiert die Exponentialregression ausschließlich von 0 bis 80 Sekund
   assert.match(content, /0\{,\}30/);
   assert.match(content, /2\{,\}61/);
   assert.match(content, /2\{,\}31/);
-  assert.doesNotMatch(content, /D1:D10|0\{,\}251|100\\,\\mathrm s/);
+  assert.match(content, /t=10/);
+  assert.match(content, /schulischen Vergleichsregel/);
+  assert.match(content, /nicht stillschweigend entfernt/);
+  assert.doesNotMatch(content, /TrendExp\(D1:D10\)/);
   assert.doesNotMatch(content, /\\widehat|\|/);
 });
 
@@ -64,6 +76,8 @@ test("hält die physikalischen Umformungen und vorsichtigen Schlussfolgerungen f
   const linear = DOCUMENTATION_EXAMPLES["proportional-linear"].sections.map((item) => item.model).join("\n");
 
   assert.match(inverse, /28\{,\}9022\\,\\mathrm\{mN\}/);
+  assert.match(inverse, /3\{,\}75/);
+  assert.match(inverse, /\\frac\{\|-2\{,\}075-\(-2\)\|\}\{2\}/);
   assert.match(power, /0\{,\}0393011\\cdot10\^\{-8\}\\,\\mathrm C/);
   assert.match(constants, /416\\,\\mathrm\{pF\}/);
   assert.match(linear, /408\\,\\mathrm\{pF\}/);
@@ -83,6 +97,9 @@ test("bietet Muster, Papierübung, Selbstkontrolle und getrennte Druckansichten"
   assert.match(page, /Selbst üben/);
   assert.match(page, /Muster drucken/);
   assert.match(page, /Übungsblatt drucken/);
+  assert.match(page, /Die fünf Schritte deiner Klausurdokumentation/);
+  assert.match(page, /ersetzt keine vollständige Unsicherheitsfortpflanzung oder statistische Modellprüfung/);
+  assert.match(app, /item\.indexOf\(":"\)/);
   assert.match(app, /Was muss hinein\?/);
   assert.match(app, /Ich brauche eine Starthilfe/);
   assert.match(app, /Mit der Musterlösung vergleichen/);
@@ -128,9 +145,9 @@ test("erfüllt alle Vorgaben für Abschnittstitel, Phasenverknüpfung und Druckt
   const expectedTitles = [
     "1. Daten und Einheiten",
     "2. GeoGebra-Auswertung",
-    "3. Physikalische Formel und Parameter",
-    "4. Abweichungen und Vergleichsregel",
-    "5. Begründete Schlussfolgerung"
+    "3. Physikalische Formel",
+    "4. Abweichungen und Vergleich",
+    "5. Schlussfolgerung"
   ];
   for (const example of Object.values(DOCUMENTATION_EXAMPLES)) {
     assert.deepEqual(

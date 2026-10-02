@@ -313,7 +313,7 @@ const CHARGING_IMAGES = Object.freeze(Object.fromEntries(Object.entries({
   regression: Object.freeze({
     src: "./assets/steps/charging/05-exponentialregression.png", width: 756, height: 264,
     alt: "Algebraansicht im Schema mit U von x gleich TrendExp von D1 bis D9 und der berechneten Exponentialfunktion.",
-    caption: "TrendExp wertet bewusst D1:D9 aus; das ungeklärte zehnte Wertepaar gehört nicht zur Regression.",
+    caption: "TrendExp wertet den aufgabenbedingt vorgegebenen Bereich D1:D9 aus; der zehnte Originalwert bleibt dokumentiert und gehört nicht zu dieser Regression.",
     highlights: [{ x: 21, y: 29, width: 76, height: 35, label: "U(x) = TrendExp(D1:D9)" }]
   }),
   curveWithCheckValue: Object.freeze({
@@ -561,7 +561,7 @@ export const LESSON_STEPS = Object.freeze([
     resultRecognition: "In Spalte E stehen die prozentualen Modellabweichungen mit Vorzeichen.",
     formula: "=(B1-D1)/D1*100", images: [IMAGES.deviationFormula, IMAGES.deviations],
     troubleshooting: "Setze B1−D1 in Klammern, damit GeoGebra zuerst die Differenz berechnet.",
-    mistake: "Die Werte in E sind Modellabweichungen, nicht automatisch Messfehler.",
+    mistake: "Die Werte in E sind Modellabweichungen, nicht automatisch angenommene Messunsicherheiten.",
     check: { prompt: "Bestimme und erkläre die größte Modellabweichung.", fields: [
       { id: "max", kind: "result", type: "number", label: "Größter Betrag in %", placeholder: "Ergebnis eingeben", expected: 15.6637, tolerance: 0.3, required: true, feedback: { correct: "Der Betrag stimmt.", incorrect: "Vergleiche die Beträge in E1:E6." } },
       { id: "sign", kind: "understanding", type: "choice", label: "Was bedeutet das positive Vorzeichen?", expected: "above", required: true, options: [option("", "Bitte auswählen …"), option("above", "Der Messwert liegt über dem Modellwert."), option("below", "Der Messwert liegt darunter."), option("invalid", "Die Messung ist ungültig.")], feedback: { correct: "Richtig: B4 liegt über D4.", incorrect: "Positiv bedeutet B4 − D4 > 0." } },
@@ -571,7 +571,7 @@ export const LESSON_STEPS = Object.freeze([
   },
   {
     id: "conclusion", phaseId: "conclusion", phase: "conclusion", shortTitle: "Beurteilen", title: "Das Modell vorsichtig beurteilen",
-    goal: "Du verbindest Kurve, Exponent, Modellabweichungen und Messunsicherheit zu einer angemessenen Aussage.",
+    goal: "Du vergleichst Exponent und Modellabweichungen mit einer schulischen Vergleichsgrenze und formulierst eine angemessene Aussage.",
     why: "Ein passender Kurvenverlauf allein beweist kein Naturgesetz. Ein gutes Urteil nennt, was für das Modell spricht und welche Grenzen die Auswertung hat.",
     concepts: [
       { term: "Messunsicherheit", text: "Sie kennzeichnet, wie genau ein Messergebnis aufgrund des Messverfahrens und der Geräte sinnvoll angegeben werden kann." },
@@ -579,18 +579,18 @@ export const LESSON_STEPS = Object.freeze([
       { term: "Bewiesen", text: "Eine viel stärkere Aussage, die aus dieser Messreihe nicht folgt." },
       { term: "Grenze der Aussage", text: "Die Auswertung prüft die Vereinbarkeit der Messdaten mit dem Modell, liefert aber keinen mathematischen Beweis des Naturgesetzes." }
     ],
-    workedExample: { title: "Eine angemessene Schlussfolgerung", lines: ["b = −2,075 liegt nahe beim theoretisch erwarteten Wert −2.", "Die größte Modellabweichung beträgt etwa 15,7 %. Für den kleinsten Kraftwert ergibt 0,01/0,06 · 100 eine grobe relative Unsicherheit von 16,7 %.", "In dieser vereinfachten Betrachtung liefern die Daten keinen erkennbaren Widerspruch zum 1/r²-Modell. Sie beweisen das Modell jedoch nicht und bestimmen auch nicht direkt die Unsicherheit von n."] },
+    workedExample: { title: "Eine angemessene Schlussfolgerung", lines: ["Die relative Exponentabweichung beträgt |−2,075 − (−2)|/2 · 100 ≈ 3,75 %.", "Die größte Modellabweichung beträgt etwa 15,7 %. Die größte angenommene relative Messunsicherheit beträgt 0,01/0,06 · 100 ≈ 16,7 % und bildet die schulische Vergleichsgrenze.", "Nach der hier verwendeten schulischen Vergleichsregel sind beide Abweichungen mit den angenommenen Messunsicherheiten vereinbar. Die Daten beweisen das 1/r²-Modell jedoch nicht und bestimmen auch nicht direkt die Unsicherheit von n."] },
     remember: "Formuliere: mit 1/r² vereinbar – nicht: exakt bewiesen.",
     actionHeading: "Jetzt auswerten",
-    actions: ["Betrachte Messpunkte und Regressionskurve.", "Vergleiche den Regressionswert n = −2,075 mit der theoretischen Erwartung n = −2.", "Vergleiche 15,7 % Modellabweichung mit der grob abgeschätzten relativen Unsicherheit von 16,7 %.", "Formuliere eine vorsichtige Schlussfolgerung."],
-    resultRecognition: "Die Messpunkte streuen um die fallende Modellkurve, ohne einen systematischen Widerspruch zu zeigen.",
+    actions: ["Betrachte Messpunkte und Regressionskurve.", "Berechne und vergleiche die relative Exponentabweichung von n = −2,075 gegenüber n = −2 (3,75 %).", "Vergleiche 3,75 % und 15,7 % mit der schulischen Vergleichsgrenze von 16,7 %.", "Formuliere eine vorsichtige Schlussfolgerung."],
+    resultRecognition: "Exponent- und Modellabweichung liegen unter der schulischen Vergleichsgrenze von 16,7 %.",
     formula: null, images: [IMAGES.curve],
-    troubleshooting: "1/r² kann als r⁻² geschrieben werden. Betrachte Exponent, Streuung und Genauigkeit gemeinsam.",
-    mistake: "Die relative Unsicherheit eines Kraftwertes ist nicht die statistische Unsicherheit des Exponenten n.",
-    check: { prompt: "Prüfe Unsicherheit und Schlussfolgerung.", fields: [
-      { id: "uncertainty", kind: "result", type: "number", label: "Grobe relative Unsicherheit in %", placeholder: "Ergebnis eingeben", expected: 16.7, tolerance: 0.7, required: true, feedback: { correct: "Rund 16,7 % stimmt.", incorrect: "Berechne 0,01/0,06 · 100." } },
+    troubleshooting: "1/r² kann als r⁻² geschrieben werden. Die schulische Vergleichsregel ersetzt keine vollständige Unsicherheitsfortpflanzung oder statistische Modellprüfung.",
+    mistake: "Die angenommene relative Messunsicherheit eines Kraftwertes ist nicht die statistische Unsicherheit des Exponenten n.",
+    check: { prompt: "Prüfe Vergleichsgrenze und Schlussfolgerung.", fields: [
+      { id: "uncertainty", kind: "result", type: "number", label: "Größte angenommene relative Messunsicherheit in %", placeholder: "Ergebnis eingeben", expected: 16.7, tolerance: 0.7, required: true, feedback: { correct: "Rund 16,7 % als schulische Vergleichsgrenze stimmt.", incorrect: "Berechne 0,01/0,06 · 100 für die angenommene Messunsicherheit." } },
       { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist angemessen?", expected: "compatible", required: true, options: [option("", "Bitte auswählen …"), option("compatible", "Die Daten sind mit 1/r² vereinbar, beweisen es aber nicht."), option("proven", "Die Messreihe beweist 1/r² exakt."), option("uncertainty", "16,7 % ist die exakte Unsicherheit von n.")], feedback: { correct: "Genau: vereinbar, aber nicht bewiesen.", incorrect: "Die Daten erlauben eine vorsichtige Vereinbarkeitsaussage." } },
-      { id: "difference", kind: "result", type: "number", label: "Abstand von −2,075 zu −2", placeholder: "Ergebnis eingeben", expected: 0.075, tolerance: 0.01, required: false, feedback: { correct: "Der Abstand ist 0,075.", incorrect: "Berechne |−2,075 − (−2)|." } }
+      { id: "difference", kind: "result", type: "number", label: "Relative Abweichung von −2,075 zu −2 in %", placeholder: "Ergebnis eingeben", expected: 3.75, tolerance: 0.08, required: false, feedback: { correct: "Die relative Exponentabweichung beträgt 3,75 %.", incorrect: "Berechne |−2,075 − (−2)|/2 · 100." } }
     ], success: "Du kannst die Messreihe fachlich vorsichtig beurteilen.", retry: "Unterscheide Vereinbarkeit, Beweis und Exponentenunsicherheit." }
   }
 ]);
@@ -799,7 +799,7 @@ export const UQ_POWER_STEPS = Object.freeze([
     why: "Die prozentuale Abweichung macht Unterschiede bei verschiedenen Größenordnungen vergleichbar. Das Vorzeichen zeigt die Richtung, der Betrag die Größe.",
     concepts: [{ term: "Relative Abweichung", text: "(Messwert − Modellwert) geteilt durch Modellwert." }, { term: "Vorzeichen", text: "Positiv: Messwert liegt über dem Modell; negativ: darunter." }, { term: "Betrag", text: "Die Größe ohne Vorzeichen; damit vergleichen wir die Zeilen." }],
     workedExample: { title: "Zeile 1", lines: ["(2,0 − 2,05601) / 2,05601 · 100 ≈ −2,72 %.", "Das Minus bedeutet: Der Messwert liegt unter dem Modellwert.", "Der Betrag der Abweichung beträgt 2,72 %."] },
-    remember: "Modellabweichungen sind nicht automatisch Messfehler.",
+    remember: "Modellabweichungen sind nicht automatisch Messunsicherheiten.",
     actionHeading: "Jetzt in GeoGebra", actions: ["Gib die Formel in E1 ein.", "Fülle E1 bis E5 aus.", "Vergleiche die Beträge.", "Notiere Spannung und Vorzeichen des größten Betrags."],
     resultRecognition: "In Spalte E stehen die relativen Abweichungen der Messwerte von der Modellfunktion in Prozent.",
     formula: "=(B1-D1)/D1*100", images: [UQ_IMAGES.modelTable],
@@ -814,19 +814,19 @@ export const UQ_POWER_STEPS = Object.freeze([
   },
   {
     id: "uq-power-conclusion", phaseId: "conclusion", phase: "conclusion", shortTitle: "Urteil", title: "Die Proportionalitätsvermutung beurteilen",
-    goal: "Du wendest die Methode des größten Einzelfehlers auf Exponent und Modellabweichungen an und formulierst ein vorsichtiges Urteil.",
-    why: "Eine fachlich tragfähige Aussage stützt sich nicht nur darauf, dass der Exponent nahe bei 1 liegt. Auch die Modellabweichungen werden mit dem größten relativen Einzelfehler verglichen. Die gemeinsame Fehlerseite leitet diese schulische Methode einmal ausführlich her.",
-    concepts: [{ term: "Exponent n", text: "Im Vergleich nennen wir den Potenzexponenten n, damit er nicht mit dem y-Achsenabschnitt b einer Geraden verwechselt wird." }, { term: "Exponentabweichung", text: "|1,011566 − 1|/1 · 100 ≈ 1,16 %." }, { term: "Größter Einzelfehler", text: "Aus ΔU und ΔQ ergibt sich auf der gemeinsamen Fehlerseite fmax = 10 %." }],
-    workedExample: { title: "Beide Abweichungen vergleichen", lines: ["Die relative Exponentabweichung beträgt etwa 1,16 %.", "Die größte Modellabweichung beträgt etwa 3,74 %.", "Beide Werte liegen unter fmax = 10 % und können nach dieser Methode durch die Messfehler erklärt werden."] },
-    remember: "n ≈ 1 und die Modellabweichungen sind im Rahmen der Methode des größten Einzelfehlers durch Messfehler erklärbar; bewiesen ist Q ∝ U damit nicht.",
-    actionHeading: "Jetzt urteilen", actions: ["Bearbeite die gemeinsame Seite zur Methode des größten Einzelfehlers.", "Vergleiche 1,16 % und 3,74 % jeweils mit fmax = 10 %.", "Behandle den Exponenten näherungsweise als n ≈ 1.", "Formuliere eine Vereinbarkeitsaussage ohne Beweisbehauptung."],
-    resultRecognition: "Exponentabweichung und Modellabweichungen liegen beide unter der schulischen Fehlergrenze fmax = 10 %.",
+    goal: "Du wendest die schulische Vergleichsregel auf Exponent und Modellabweichungen an und formulierst ein vorsichtiges Urteil.",
+    why: "Eine fachlich tragfähige Aussage stützt sich nicht nur darauf, dass der Exponent nahe bei 1 liegt. Auch die Modellabweichungen werden mit einer aus angenommenen Messunsicherheiten gebildeten schulischen Vergleichsgrenze verglichen. Die gemeinsame Vergleichsseite leitet diese Regel ausführlich her.",
+    concepts: [{ term: "Exponent n", text: "Im Vergleich nennen wir den Potenzexponenten n, damit er nicht mit dem y-Achsenabschnitt b einer Geraden verwechselt wird." }, { term: "Exponentabweichung", text: "|1,011566 − 1|/1 · 100 ≈ 1,16 %." }, { term: "Größter relativer Einzelfehler", text: "Damit ist in diesem Kurs die größte angenommene relative Messunsicherheit gemeint; sie bildet hier die schulische Vergleichsgrenze fmax = 10 %." }],
+    workedExample: { title: "Beide Abweichungen vergleichen", lines: ["Die relative Exponentabweichung beträgt etwa 1,16 %.", "Die größte Modellabweichung beträgt etwa 3,74 %.", "Beide Werte liegen unter der schulischen Vergleichsgrenze fmax = 10 %. Nach der hier verwendeten schulischen Vergleichsregel sind sie mit den angenommenen Messunsicherheiten vereinbar."] },
+    remember: "n ≈ 1 und die Modellabweichungen sind nach der schulischen Vergleichsregel mit den angenommenen Messunsicherheiten vereinbar; bewiesen ist Q ∝ U damit nicht.",
+    actionHeading: "Jetzt urteilen", actions: ["Bearbeite die gemeinsame Seite zur schulischen Vergleichsregel.", "Vergleiche 1,16 % und 3,74 % jeweils mit fmax = 10 %.", "Behandle den Exponenten näherungsweise als n ≈ 1.", "Formuliere eine Vereinbarkeitsaussage ohne Beweisbehauptung."],
+    resultRecognition: "Exponentabweichung und Modellabweichungen liegen beide unter der schulischen Vergleichsgrenze fmax = 10 %.",
     formula: null, images: [UQ_IMAGES.regression, UQ_IMAGES.modelTable],
-    troubleshooting: "fmax = 10 % ist eine übertragene schulische Fehlergrenze. Sie ist weder eine vollständige Fehlerfortpflanzung noch eine statistisch bestimmte Unsicherheit des Exponenten.",
+    troubleshooting: "fmax = 10 % ist eine schulische Vergleichsgrenze. Sie dient der schulischen Beurteilung von Messdaten und ersetzt weder eine vollständige Unsicherheitsfortpflanzung noch eine statistische Modellprüfung.",
     mistake: "n wird nicht willkürlich gleich 1 gesetzt. Die Theorie erwartet n = 1; weil die relative Exponentabweichung 1,16 % unter fmax liegt, darf n im Rahmen dieser Methode näherungsweise als 1 behandelt werden.",
     sharedRequirement: true,
-    check: { prompt: "Prüfe die Fehlergrenze und die Schlussfolgerung.", fields: [
-      { id: "limit", kind: "result", type: "number", label: "Größter relativer Einzelfehler in %", placeholder: "Ergebnis eingeben", expected: 10, tolerance: 0.05, required: true, feedback: { correct: "fmax beträgt 10 %.", incorrect: "Bearbeite die gemeinsame Fehlerseite und vergleiche dort 10 % mit 5 %." } },
+    check: { prompt: "Prüfe die Vergleichsgrenze und die Schlussfolgerung.", fields: [
+      { id: "limit", kind: "result", type: "number", label: "Schulische Vergleichsgrenze fmax in %", placeholder: "Ergebnis eingeben", expected: 10, tolerance: 0.05, required: true, feedback: { correct: "fmax beträgt 10 %.", incorrect: "Bearbeite die gemeinsame Vergleichsseite und vergleiche dort 10 % mit 5 %." } },
       { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist angemessen?", expected: "compatible", required: true, options: [option("", "Bitte auswählen …"), option("compatible", "Die Daten sind mit Q ∝ U vereinbar, beweisen es aber nicht."), option("proven", "Die Proportionalität ist exakt bewiesen."), option("b-error", "10 % ist die statistische Unsicherheit des Exponenten.")], feedback: { correct: "Genau: vereinbar, aber nicht bewiesen.", incorrect: "Unterscheide größten Einzelfehler, Modellabweichung und Exponent." } },
       { id: "distance", kind: "result", type: "number", label: "Relative Abweichung von n zu 1 in %", placeholder: "Ergebnis eingeben", expected: 1.1566178961, tolerance: 0.08, required: false, feedback: { correct: "Die relative Exponentabweichung passt.", incorrect: "Berechne |1,011566 − 1|/1 · 100." } }
     ], success: "Du hast die Proportionalität fachlich vorsichtig beurteilt.", retry: "Nutze Exponent und Abweichungen gemeinsam." }
@@ -945,40 +945,40 @@ export const UQ_CONSTANT_STEPS = Object.freeze([
     ], success: "Du hast die Streuung der Kapazitätswerte bestimmt.", retry: "Nutze Betrag und Vorzeichen getrennt." }
   },
   {
-    id: "uq-constant-uncertainty", phaseId: "deviations", phase: "deviations", shortTitle: "Fehlervergleich", title: "Die Methode des größten Einzelfehlers anwenden",
-    goal: "Du überträgst den größten relativen Einzelfehler auf die Streuung der Kapazitätswerte.",
-    why: "Die gemeinsame Fehlerseite zeigt, wie aus ΔU und ΔQ der größte relative Einzelfehler fmax = 10 % entsteht. Hier wenden wir dieses Ergebnis auf die größte Konstantenabweichung an.",
-    concepts: [{ term: "Methode", text: "Der größte relative Einzelfehler wird als Fehlergrenze auf die untersuchten Abweichungen übertragen." }, { term: "fmax = 10 %", text: "Der Spannungswert 50 V liefert mit 5 V den größten relativen Einzelfehler." }, { term: "Erklärbar", text: "Liegt eine Abweichung unter fmax, kann sie im Rahmen der Methode durch die Messfehler erklärt werden." }],
-    workedExample: { title: "Konstantenabweichung vergleichen", lines: ["Die größte Abweichung einer Einzelkapazität vom Mittelwert beträgt 3,83 %.", "Es gilt 3,83 % < fmax = 10 %.", "Die Streuung kann nach dieser schulischen Methode durch die Messfehler erklärt werden."] },
+    id: "uq-constant-uncertainty", phaseId: "deviations", phase: "deviations", shortTitle: "Vergleich", title: "Die schulische Vergleichsregel anwenden",
+    goal: "Du vergleichst die Streuung der Kapazitätswerte mit einer schulischen Vergleichsgrenze.",
+    why: "Die gemeinsame Vergleichsseite zeigt, wie aus ΔU und ΔQ die schulische Vergleichsgrenze fmax = 10 % entsteht. Hier wenden wir dieses Ergebnis auf die größte Konstantenabweichung an.",
+    concepts: [{ term: "Schulische Vergleichsregel", text: "Der größte relative Einzelfehler bezeichnet in diesem Kurs die größte angenommene relative Messunsicherheit und wird als Vergleichsgrenze auf Modellabweichungen übertragen." }, { term: "fmax = 10 %", text: "Der Spannungswert 50 V liefert mit 5 V die größte angenommene relative Messunsicherheit." }, { term: "Vereinbar", text: "Liegt eine Modellabweichung unter fmax, ist sie nach der schulischen Vergleichsregel mit den angenommenen Messunsicherheiten vereinbar." }],
+    workedExample: { title: "Konstantenabweichung vergleichen", lines: ["Die größte Modellabweichung einer Einzelkapazität vom Mittelwert beträgt 3,83 %.", "Es gilt 3,83 % < der schulischen Vergleichsgrenze fmax = 10 %.", "Nach der hier verwendeten schulischen Vergleichsregel ist die Streuung mit den angenommenen Messunsicherheiten vereinbar."] },
     remember: "Weil 3,83 % < 10 % gilt, darf die Kapazität im Rahmen der Methode als konstant angesehen werden.",
-    actionHeading: "Jetzt vergleichen", actions: ["Bearbeite die gemeinsame Seite zur Methode des größten Einzelfehlers.", "Übernimm fmax = 10 %.", "Vergleiche 3,83 % mit fmax.", "Formuliere: Die Abweichung kann durch die Messfehler erklärt werden."],
-    resultRecognition: "Die größte Konstantenabweichung (3,83 %) liegt unter dem größten relativen Einzelfehler fmax = 10 %.",
+    actionHeading: "Jetzt vergleichen", actions: ["Bearbeite die gemeinsame Seite zur schulischen Vergleichsregel.", "Übernimm fmax = 10 %.", "Vergleiche 3,83 % mit fmax.", "Formuliere: Nach der schulischen Vergleichsregel ist die Modellabweichung mit den angenommenen Messunsicherheiten vereinbar."],
+    resultRecognition: "Die größte Konstantenabweichung (3,83 %) liegt unter der schulischen Vergleichsgrenze fmax = 10 %.",
     formula: null, images: [UQ_IMAGES.table, UQ_IMAGES.constantDeviations],
-    troubleshooting: "Falls dir die 10 % noch unklar sind, öffne die gemeinsame Fehlerseite. Dort werden absolute Fehler, relative Einzelfehler und die Wahl des größten Werts Schritt für Schritt getrennt.",
-    mistake: "Die 10 % sind nicht die berechnete Unsicherheit jeder Kapazität und keine vollständige Fehlerfortpflanzung. Sie werden in dieser Unterrichtsmethode bewusst als gemeinsame Fehlergrenze übertragen.",
+    troubleshooting: "Falls dir die 10 % noch unklar sind, öffne die gemeinsame Vergleichsseite. Dort werden absolute Messunsicherheiten, relative Messunsicherheiten und die Wahl des größten Werts Schritt für Schritt getrennt.",
+    mistake: "Die 10 % sind nicht die berechnete Messunsicherheit jeder Kapazität und keine vollständige Unsicherheitsfortpflanzung. Sie werden in dieser schulischen Vergleichsregel bewusst als gemeinsame Vergleichsgrenze übertragen.",
     sharedRequirement: true,
-    check: { prompt: "Wende den größten relativen Einzelfehler auf die Konstantenabweichung an.", fields: [
-      { id: "u-error", kind: "result", type: "number", label: "Größter relativer Einzelfehler in %", placeholder: "Ergebnis eingeben", expected: 10, tolerance: 0.05, required: true, feedback: { correct: "fmax = 10 % stimmt.", incorrect: "Bearbeite die gemeinsame Fehlerseite." } },
-      { id: "choice", kind: "understanding", type: "choice", label: "Was folgt aus 3,83 % < 10 %?", expected: "explainable", required: true, options: [option("", "Bitte auswählen …"), option("explainable", "Die Streuung kann durch Messfehler erklärt werden."), option("proven", "Die Proportionalität ist mathematisch bewiesen."), option("sum", "Die Fehler müssen zu 15 % addiert werden.")], feedback: { correct: "Richtig: Die Streuung ist mit den Messfehlern erklärbar.", incorrect: "Die Methode überträgt den größten, nicht die Summe der Einzelfehler." } },
+    check: { prompt: "Wende die schulische Vergleichsregel auf die Konstantenabweichung an.", fields: [
+      { id: "u-error", kind: "result", type: "number", label: "Schulische Vergleichsgrenze fmax in %", placeholder: "Ergebnis eingeben", expected: 10, tolerance: 0.05, required: true, feedback: { correct: "fmax = 10 % stimmt.", incorrect: "Bearbeite die gemeinsame Vergleichsseite." } },
+      { id: "choice", kind: "understanding", type: "choice", label: "Was folgt aus 3,83 % < 10 %?", expected: "explainable", required: true, options: [option("", "Bitte auswählen …"), option("explainable", "Nach der schulischen Vergleichsregel ist die Streuung mit den angenommenen Messunsicherheiten vereinbar."), option("proven", "Die Proportionalität ist mathematisch bewiesen."), option("sum", "Die Fehler müssen zu 15 % addiert werden.")], feedback: { correct: "Richtig: Die Streuung ist nach der schulischen Vergleichsregel mit den angenommenen Messunsicherheiten vereinbar.", incorrect: "Die Regel verwendet die größte angenommene relative Messunsicherheit, nicht die Summe." } },
       { id: "q-error", kind: "result", type: "number", label: "Größte Konstantenabweichung in %", placeholder: "Ergebnis eingeben", expected: 3.8307421061, tolerance: 0.08, required: false, feedback: { correct: "3,83 % stimmt.", incorrect: "Vergleiche die Beträge der Kapazitätsabweichungen." } }
-    ], success: "Du hast die Methode des größten Einzelfehlers auf das Konstantenverfahren angewendet.", retry: "Vergleiche 3,83 % mit fmax = 10 %." }
+    ], success: "Du hast die schulische Vergleichsregel auf das Konstantenverfahren angewendet.", retry: "Vergleiche 3,83 % mit fmax = 10 %." }
   },
   {
     id: "uq-constant-conclusion", phaseId: "conclusion", phase: "conclusion", shortTitle: "Urteil", title: "Kapazität und Proportionalität beurteilen",
-    goal: "Du formulierst aus Mittelwert, Streuung und der Methode des größten Einzelfehlers eine vorsichtige Schlussfolgerung.",
+    goal: "Du formulierst aus Mittelwert, Streuung und der schulischen Vergleichsregel eine vorsichtige Schlussfolgerung.",
     why: "Ein gutes Ergebnis nennt sowohl den bestimmten Kapazitätswert als auch die Aussagekraft und Begrenzung des Experiments.",
     concepts: [{ term: "Vereinbar", text: "Die Messwerte widersprechen der theoretischen Erwartung innerhalb der verwendeten Abschätzung nicht." }, { term: "Gestützt", text: "Die Messreihe liefert Hinweise zugunsten des Modells." }, { term: "Bewiesen", text: "Eine stärkere Aussage, die aus einer endlichen fehlerbehafteten Messreihe nicht folgt." }],
-    workedExample: { title: "Eine angemessene Schlussfolgerung", lines: ["Die mittlere Kapazität beträgt etwa 416 pF.", "Die größte Konstantenabweichung von 3,83 % liegt unter dem größten relativen Einzelfehler von 10 % und kann deshalb durch die Messfehler erklärt werden.", "Im Rahmen dieser schulischen Methode ist die Messreihe mit Q = C · U vereinbar; sie beweist die Proportionalität jedoch nicht."] },
+    workedExample: { title: "Eine angemessene Schlussfolgerung", lines: ["Die mittlere Kapazität beträgt etwa 416 pF.", "Die größte Modellabweichung einer Einzelkapazität von 3,83 % liegt unter der schulischen Vergleichsgrenze von 10 %.", "Nach der hier verwendeten schulischen Vergleichsregel ist die Messreihe mit den angenommenen Messunsicherheiten und damit mit Q = C · U vereinbar; sie beweist die Proportionalität jedoch nicht."] },
     remember: "Ergebnis: C ≈ 416 pF; die Daten sind mit Q ∝ U vereinbar.",
-    actionHeading: "Jetzt formulieren", actions: ["Nenne den Kapazitätsmittelwert mit Einheit.", "Nenne 3,83 % und den größten relativen Einzelfehler 10 %.", "Erkläre die Streuung durch die Messfehler.", "Verwende das Wort vereinbar und vermeide eine Beweisbehauptung."],
+    actionHeading: "Jetzt formulieren", actions: ["Nenne den Kapazitätsmittelwert mit Einheit.", "Nenne 3,83 % und die schulische Vergleichsgrenze 10 %.", "Vergleiche die Modellabweichung mit den angenommenen Messunsicherheiten.", "Verwende das Wort vereinbar und vermeide eine Beweisbehauptung."],
     resultRecognition: "Die Messreihe stützt die Hypothese Q ∝ U mit C ≈ 416 pF im Rahmen der schulischen Messunsicherheit.",
     formula: null, images: [UQ_IMAGES.mean, UQ_IMAGES.constantDeviations],
     troubleshooting: "Eine passende Formulierung lautet: Die Messwerte stützen die Proportionalitätsvermutung, beweisen sie aber nicht.",
-    mistake: "Aus 3,83 % < 10 % folgt keine exakte Bestätigung. Es folgt nach der vereinfachten Unterrichtsmethode, dass die beobachtete Streuung durch die angegebenen Messfehler erklärt werden kann.",
+    mistake: "Aus 3,83 % < 10 % folgt keine exakte Bestätigung. Nach der schulischen Vergleichsregel ist die beobachtete Modellabweichung mit den angenommenen Messunsicherheiten vereinbar.",
     sharedRequirement: true,
     check: { prompt: "Prüfe Ergebnis und Schlussfolgerung.", fields: [
       { id: "capacity", kind: "result", type: "number", label: "Mittlere Kapazität in pF", placeholder: "Ergebnis eingeben", expected: 415.9333333, tolerance: 1, required: true, feedback: { correct: "Etwa 416 pF stimmt.", incorrect: "Nutze den Mittelwert aus C1:C5." } },
-      { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist fachlich angemessen?", expected: "compatible", required: true, options: [option("", "Bitte auswählen …"), option("compatible", "Q ∝ U ist mit den Messdaten vereinbar, aber nicht bewiesen."), option("exact", "Alle Kapazitäten sind exakt gleich."), option("failed", "Jede Streuung widerlegt Proportionalität.")], feedback: { correct: "Genau: vereinbar, nicht bewiesen.", incorrect: "Berücksichtige Messstreuung und die Methode des größten Einzelfehlers." } },
+      { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist fachlich angemessen?", expected: "compatible", required: true, options: [option("", "Bitte auswählen …"), option("compatible", "Q ∝ U ist mit den Messdaten vereinbar, aber nicht bewiesen."), option("exact", "Alle Kapazitäten sind exakt gleich."), option("failed", "Jede Streuung widerlegt Proportionalität.")], feedback: { correct: "Genau: vereinbar, nicht bewiesen.", incorrect: "Berücksichtige Messstreuung und die schulische Vergleichsregel." } },
       { id: "deviation", kind: "result", type: "number", label: "Größte Konstantenabweichung in %", placeholder: "Ergebnis eingeben", expected: 3.8307421061, tolerance: 0.08, required: false, feedback: { correct: "3,83 % stimmt.", incorrect: "Vergleiche die Beträge in E1:E5." } }
     ], success: "Du hast Kapazität und Proportionalität angemessen beurteilt.", retry: "Verbinde 416 pF, 3,83 % und 10 %." }
   }
@@ -1136,22 +1136,22 @@ export const UQ_LINEAR_STEPS = Object.freeze([
   },
   {
     id: "uq-linear-conclusion", phaseId: "conclusion", phase: "conclusion", shortTitle: "Urteil", title: "Die lineare Auswertung vorsichtig beurteilen",
-    goal: "Du verbindest Steigung, y-Achsenabschnitt, Modellabweichungen und die Methode des größten Einzelfehlers zu einem fachlich angemessenen Urteil.",
-    why: "Eine lineare Messreihe ist nicht automatisch direkt proportional. Neben der Modellabweichung muss deshalb auch der Einfluss des von null verschiedenen, extrapolierten y-Achsenabschnitts beurteilt werden. Die gemeinsame Fehlerseite zeigt dafür das schulische Vorgehen.",
-    concepts: [{ term: "Größter Einzelfehler", text: "Aus ΔU und ΔQ ergibt sich nach der gemeinsamen Methode fmax = 10 %." }, { term: "Anteil von b", text: "Da eine relative Abweichung von b gegenüber null nicht definiert ist, wird |b| auf den kleinsten gemessenen Ladungswert bezogen." }, { term: "Vereinbar", text: "Die Daten liefern im Rahmen der schulischen Methode keinen deutlichen Widerspruch zur theoretischen Erwartung." }],
-    workedExample: { title: "Modell und y-Achsenabschnitt prüfen", lines: ["Die größte Modellabweichung 7,41 % liegt unter fmax = 10 %.", "Für den y-Achsenabschnitt gilt |b|/Qmin · 100 = 0,12/2,0 · 100 = 6 %; auch 6 % liegt unter 10 %.", "Beide Abweichungen können nach dieser Methode durch Messfehler erklärt und b näherungsweise vernachlässigt werden: Q(U) ≈ m · U."] },
+    goal: "Du verbindest Steigung, y-Achsenabschnitt, Modellabweichungen und die schulische Vergleichsregel zu einem fachlich angemessenen Urteil.",
+    why: "Eine lineare Messreihe ist nicht automatisch direkt proportional. Neben der Modellabweichung muss deshalb auch der Einfluss des von null verschiedenen, extrapolierten y-Achsenabschnitts beurteilt werden. Die gemeinsame Vergleichsseite zeigt dafür das schulische Vorgehen.",
+    concepts: [{ term: "Schulische Vergleichsgrenze", text: "Aus den angenommenen Messunsicherheiten von ΔU und ΔQ ergibt sich fmax = 10 %." }, { term: "Anteil von b", text: "Da eine relative Abweichung von b gegenüber null nicht definiert ist, wird |b| auf den kleinsten gemessenen Ladungswert bezogen." }, { term: "Vereinbar", text: "Nach der schulischen Vergleichsregel sind die Daten mit den angenommenen Messunsicherheiten vereinbar; eine statistische Modellprüfung ist das nicht." }],
+    workedExample: { title: "Modell und y-Achsenabschnitt prüfen", lines: ["Die größte Modellabweichung 7,41 % liegt unter fmax = 10 %.", "Für den y-Achsenabschnitt gilt |b|/Qmin · 100 = 0,12/2,0 · 100 = 6 %; auch 6 % liegt unter 10 %.", "Nach der hier verwendeten schulischen Vergleichsregel sind beide Modellabweichungen mit den angenommenen Messunsicherheiten vereinbar; b darf näherungsweise vernachlässigt werden: Q(U) ≈ m · U."] },
     remember: "Weil 7,41 % und 6 % unter 10 % liegen, kann b schulisch näherungsweise vernachlässigt werden; statistisch bestätigt ist b = 0 damit nicht.",
-    actionHeading: "Jetzt urteilen", actions: ["Bearbeite die gemeinsame Seite zur Methode des größten Einzelfehlers.", "Nenne die Steigung als Kapazität von etwa 408 pF.", "Vergleiche 7,41 % und den Anteil |b|/Qmin = 6 % jeweils mit fmax = 10 %.", "Formuliere b ≈ 0 und Q(U) ≈ m · U als Näherung, nicht als Beweis."],
+    actionHeading: "Jetzt urteilen", actions: ["Bearbeite die gemeinsame Seite zur schulischen Vergleichsregel.", "Nenne die Steigung als Kapazität von etwa 408 pF.", "Vergleiche 7,41 % und den Anteil |b|/Qmin = 6 % jeweils mit fmax = 10 %.", "Formuliere b ≈ 0 und Q(U) ≈ m · U als Näherung, nicht als Beweis."],
     resultRecognition: "Schlussfolgerung: C ≈ 408 pF; Abweichung 7,41 % und Anteil 6 % liegen unter fmax = 10 %; mit Q ∝ U vereinbar.",
     formula: null, images: [UQ_IMAGES.linearRegression, UQ_IMAGES.linearModelTable],
     troubleshooting: "Eine relative Abweichung von b gegenüber dem theoretischen Wert null lässt sich wegen der Division durch null nicht berechnen. Deshalb verwendet die Unterrichtsmethode den Anteil |b|/Qmin = 6 %.",
-    mistake: "Die Rechnung mit 6 % ist eine schulische Fehlerbeurteilung. Sie ersetzt keine statistische Unsicherheit des Regressionsparameters und bestätigt b = 0 nicht exakt.",
+    mistake: "Die Rechnung mit 6 % gehört zur schulischen Vergleichsregel. Sie ersetzt keine vollständige Unsicherheitsfortpflanzung oder statistische Modellprüfung und bestätigt b = 0 nicht exakt.",
     sharedRequirement: true,
     check: { prompt: "Prüfe Vergleichswerte und Schlussfolgerung.", fields: [
-      { id: "limit", kind: "result", type: "number", label: "Größter relativer Einzelfehler in %", placeholder: "Ergebnis eingeben", expected: 10, tolerance: 0.05, required: true, feedback: { correct: "fmax beträgt 10 %.", incorrect: "Bearbeite die gemeinsame Fehlerseite." } },
-      { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist fachlich angemessen?", expected: "compatible", required: true, options: [option("", "Bitte auswählen …"), option("compatible", "Die Abweichungen sind durch Messfehler erklärbar; b kann näherungsweise vernachlässigt werden."), option("proven", "Die direkte Proportionalität ist exakt bewiesen."), option("uncertainty", "10 % ist die statistische Unsicherheit von n.")], feedback: { correct: "Genau: schulisch erklärbar und näherungsweise vernachlässigbar, aber nicht statistisch bestätigt.", incorrect: "Unterscheide die Unterrichtsmethode von einer statistischen Parameterschätzung." } },
+      { id: "limit", kind: "result", type: "number", label: "Schulische Vergleichsgrenze fmax in %", placeholder: "Ergebnis eingeben", expected: 10, tolerance: 0.05, required: true, feedback: { correct: "fmax beträgt 10 %.", incorrect: "Bearbeite die gemeinsame Vergleichsseite." } },
+      { id: "judgement", kind: "understanding", type: "choice", label: "Welche Aussage ist fachlich angemessen?", expected: "compatible", required: true, options: [option("", "Bitte auswählen …"), option("compatible", "Die Modellabweichungen sind nach der schulischen Vergleichsregel mit den angenommenen Messunsicherheiten vereinbar; b kann näherungsweise vernachlässigt werden."), option("proven", "Die direkte Proportionalität ist exakt bewiesen."), option("uncertainty", "10 % ist die statistische Unsicherheit von n.")], feedback: { correct: "Genau: nach der schulischen Vergleichsregel vereinbar und näherungsweise vernachlässigbar, aber nicht statistisch bestätigt.", incorrect: "Unterscheide die Unterrichtsmethode von einer statistischen Parameterschätzung." } },
       { id: "intercept", kind: "result", type: "number", label: "Anteil |b|/Qmin in %", placeholder: "Ergebnis eingeben", expected: 6, tolerance: 0.05, required: false, feedback: { correct: "Der Anteil des y-Achsenabschnitts beträgt 6 %.", incorrect: "Berechne 0,12/2,0 · 100." } }
-    ], success: "Du hast die lineare Regression mit der Methode des größten Einzelfehlers beurteilt.", retry: "Verbinde 408 pF, b = 0,12, 7,41 %, 6 % und fmax = 10 %." }
+    ], success: "Du hast die lineare Regression mit der schulischen Vergleichsregel beurteilt.", retry: "Verbinde 408 pF, b = 0,12, 7,41 %, 6 % und fmax = 10 %." }
   }
 ]);
 
@@ -1273,23 +1273,23 @@ export const CHARGING_EXPONENTIAL_STEPS = Object.freeze([
   {
     id: "charging-regression", phaseId: "model", phase: "model", shortTitle: "TrendExp", title: "Die Exponentialregression berechnen",
     goal: "Du wendest TrendExp auf D1:D9 an und liest A sowie k aus der Ausgabe ab.",
-    why: "TrendExp bestimmt die Parameter der exponentiellen Modellfunktion aus den neun regulären Punkten (0 bis 80 s). Durch den Funktionsnamen U kann das Modell anschließend direkt in der Tabelle ausgewertet werden.",
+    why: "TrendExp bestimmt die Parameter der exponentiellen Modellfunktion aus dem aufgabenbedingt vorgegebenen Datenbereich D1:D9 (0 bis 80 s). Der zusätzliche Originalwert bei 100 s bleibt dokumentiert und wird in der Vertiefung behandelt; er wird nicht stillschweigend entfernt. Durch den Funktionsnamen U kann das Modell anschließend direkt in der Tabelle ausgewertet werden.",
     concepts: [
       { term: "TrendExp", text: "GeoGebras Befehl für eine Exponentialregression der Form A · e^(k·x)." },
       { term: "Funktionsname U", text: "Ein frei gewählter Name für die Regressionsfunktion; er erinnert hier an die untersuchte Spannung." },
-      { term: "Grundweg D1:D9", text: "Die neun regulären Messpaare von 0 bis 80 s." }
+      { term: "Grundweg D1:D9", text: "Die Aufgabe gibt die neun regulären Messpaare von 0 bis 80 s vor. Der vorhandene Originalwert bei 100 s gehört nicht zu diesem Bereich und wird ausdrücklich in der Vertiefung dokumentiert." }
     ],
-    workedExample: { title: "Die GeoGebra-Ausgabe lesen", lines: ["GeoGebra liefert U(x) ≈ 3,6925788 · e^(−0,0304341x).", "Damit ist A ≈ 3,69258 V und k ≈ −0,030434 s⁻¹.", "Der Bereich D1:D9 umfasst die neun regulären Messpunkte."] },
+    workedExample: { title: "Die GeoGebra-Ausgabe lesen", lines: ["GeoGebra liefert U(x) ≈ 3,6925788 · e^(−0,0304341x).", "Damit ist A ≈ 3,69258 V und k ≈ −0,030434 s⁻¹.", "Der aufgabenbedingt vorgegebene Bereich D1:D9 umfasst die neun regulären Messpunkte; der vorhandene Originalwert bei 100 s gehört nicht zu diesem Bereich."] },
     remember: "A ≈ 3,69258 V und k ≈ −0,030434 s⁻¹; verwendet wird D1:D9.",
     actionHeading: "Jetzt in GeoGebra",
-    actions: ["Wechsle zur Algebraansicht.", "Gib die Formel U(x)=TrendExp(D1:D9) vollständig ein und bestätige.", "Kontrolliere den Punktbereich D1:D9.", "Lies A und k aus der Funktion ab."],
-    resultRecognition: "In der Algebra-Ansicht: U(x) ≈ 3.6926 · e^(-0.03043·x) für D1:D9.",
+    actions: ["Wechsle zur Algebraansicht.", "Gib die Formel U(x)=TrendExp(D1:D9) vollständig ein und bestätige.", "Kontrolliere und dokumentiere den vorgegebenen Punktbereich D1:D9.", "Lies A und k aus der Funktion ab."],
+    resultRecognition: "In der Algebra-Ansicht: U(x) ≈ 3.6926 · e^(-0.03043·x) für den aufgabenbedingt vorgegebenen Bereich D1:D9.",
     formula: "U(x)=TrendExp(D1:D9)", images: [CHARGING_IMAGES.regression],
     troubleshooting: "Wenn TrendExp eine Fehlermeldung zeigt, prüfe, ob D1:D9 tatsächlich Punkte enthalten und alle ΔU-Werte positiv sind.",
     mistake: "U ist nur der Funktionsname. Das x in U(x) steht in diesem Versuch für die Zeit t, nicht für eine zusätzliche Messgröße.",
     check: { prompt: "Übertrage Regressionsparameter und Punktbereich.", fields: [
       { id: "a", kind: "result", type: "number", label: "Regressionsanfangswert A in V", placeholder: "Ergebnis eingeben", expected: 3.6925788228, tolerance: 0.001, required: true, feedback: { correct: "A stimmt.", incorrect: "Lies den Faktor vor e ab (ca. 3,69258 V)." } },
-      { id: "range", kind: "understanding", type: "choice", label: "Welcher Bereich wird im Grundweg ausgewertet?", expected: "nine", required: true, options: [option("", "Bitte auswählen …"), option("nine", "Die neun regulären Messpunkte D1 bis D9."), option("all", "Alle zehn Messpunkte von D1 bis D10."), option("subset", "Nur die ersten drei Punkte.")], feedback: { correct: "Richtig: Der Grundweg nutzt die neun regulären Punkte D1:D9.", incorrect: "Verwende D1:D9 für die regulären Messwerte." } },
+      { id: "range", kind: "understanding", type: "choice", label: "Welcher Bereich wird im Grundweg ausgewertet?", expected: "nine", required: true, options: [option("", "Bitte auswählen …"), option("nine", "Die neun regulären Messpunkte D1 bis D9."), option("all", "Alle zehn Messpunkte von D1 bis D10."), option("subset", "Nur die ersten drei Punkte.")], feedback: { correct: "Richtig: Der Grundweg nutzt den aufgabenbedingt vorgegebenen Bereich D1:D9; der Originalwert bei 100 s bleibt dokumentiert.", incorrect: "Verwende D1:D9 für die regulären Messwerte." } },
       { id: "k", kind: "result", type: "number", label: "Exponent k in s⁻¹", placeholder: "Ergebnis eingeben", expected: -0.03043405407, tolerance: 0.00005, required: false, feedback: { correct: "k stimmt.", incorrect: "Achte auf das Minuszeichen im Exponenten (ca. −0,030434 s⁻¹)." } }
     ], success: "Die Exponentialregression ist korrekt bestimmt und gelesen.", retry: "Prüfe Eingabe, Punktbereich D1:D9, Faktor und Exponent." }
   },
@@ -1368,20 +1368,20 @@ export const CHARGING_EXPONENTIAL_STEPS = Object.freeze([
     goal: "Du wendest die schulische Vergleichsregel auf die neun Messwerte an und formulierst ein vorsichtiges Urteil.",
     why: "Für den vorgegebenen Grundweg von 0 bis 80 s vergleichst du Modellabweichung und Messunsicherheit mit derselben schulischen Vergleichsregel.",
     concepts: [
-      { term: "Zeitfehler", text: "Aus Δt = 1 s und dem kleinsten von null verschiedenen Zeitpunkt 10 s ergeben sich Δt/t_min = 1/10 · 100 % = 10 %. Bei t = 0 wäre ein relativer Fehler nicht definiert." },
-      { term: "Spannungsfehler", text: "Aus ΔU_Gerät = 0,001 V und der kleinsten regulären Spannungsdifferenz 0,332 V ergeben sich 0,001/0,332 · 100 % ≈ 0,30 % (bzw. mit dem Prüfwert 0,251 V rund 0,40 %)." },
-      { term: "Größter relativer Einzelfehler", text: "Das Maximum aus Spannungs- und Zeitfehler, hier fmax = 10 %." },
+      { term: "Relative Zeitunsicherheit", text: "Bei t = 0 kann keine relative Zeitunsicherheit Δt/t angegeben werden. Nach unserer schulischen Vergleichsregel wird für die Zeitunsicherheit der kleinste positive Messwert t = 10 s verwendet: 1/10 · 100 % = 10 %." },
+      { term: "Relative Spannungsunsicherheit", text: "Aus ΔU_Gerät = 0,001 V und der kleinsten regulären Spannungsdifferenz 0,332 V ergeben sich 0,001/0,332 · 100 % ≈ 0,30 % (bzw. mit dem Prüfwert 0,251 V rund 0,40 %)." },
+      { term: "Größter relativer Einzelfehler", text: "Damit ist in diesem Kurs die größte angenommene relative Messunsicherheit gemeint. Das Maximum aus Spannungs- und Zeitunsicherheit bildet hier die schulische Vergleichsgrenze fmax = 10 %." },
       { term: "Vertiefung 10. Messwert", text: "Der 10. Messwert (100 s / 0,251 V) weicht gegenüber der 9-Punkte-Kurve TrendExp(D1:D9) um 42,6 % ab (im 10-Punkte-Modell TrendExp(D1:D10) um 23,0 %). Ein Messwert darf nicht allein deshalb ausgeschlossen werden, weil er schlecht zum Modell passt, noch darf 100 s ohne Beleg in 90 s umgedeutet werden." }
     ],
     workedExample: { title: "Alle Vergleichswerte und Vertiefung zusammenführen", lines: [
-      "Zeit: 1/10 · 100 = 10 %; Spannung: 0,001/0,332 · 100 ≈ 0,30 %; damit fmax = 10 %.",
+      "Bei t = 0 ist Δt/t nicht definiert. Nach unserer schulischen Vergleichsregel verwenden wir t = 10 s: Zeit 1/10 · 100 = 10 %; Spannung 0,001/0,332 · 100 ≈ 0,30 %; damit fmax = 10 %.",
       "Der Regressionsanfangswert A aus D1:D9 weicht relativ um etwa 2,31 % von U₀ ab; die größte Modellabweichung der neun Punkte beträgt etwa 2,61 % bei 80 s.",
-      "Beide Abweichungen liegen deutlich unter 10 % und können nach der schulischen Methode durch die Messfehler erklärt werden.",
+      "Beide Modellabweichungen liegen deutlich unter der schulischen Vergleichsgrenze von 10 %. Nach der hier verwendeten schulischen Vergleichsregel sind sie mit den angenommenen Messunsicherheiten vereinbar.",
       "Die schulische Vergleichsregel ordnet die Abweichungen der vorgegebenen Teilreihe von 0 bis 80 s ein; sie beweist das Modell nicht."
     ] },
     remember: "Die Daten sind mit einem exponentiellen Aufladevorgang vereinbar; sie beweisen das Modell nicht.",
     actionHeading: "Jetzt ein fachliches Urteil formulieren",
-    actions: ["Berechne die relativen Einzelfehler von Spannung und Zeit.", "Bestimme fmax = 10 %.", "Vergleiche 2,31 % und 2,61 % jeweils mit fmax = 10 %.", "Formuliere eine vorsichtige Vereinbarkeitsaussage."],
+    actions: ["Berechne die angenommenen relativen Messunsicherheiten von Spannung und Zeit.", "Bestimme fmax = 10 %.", "Vergleiche 2,31 % und 2,61 % jeweils mit fmax = 10 %.", "Formuliere eine vorsichtige Vereinbarkeitsaussage."],
     resultRecognition: "Deine Beurteilung nennt die Messreihe, die schulische Vergleichsregel und ihre begrenzte Aussagekraft.",
     formula: null, images: [],
     optionalExtension: {
@@ -1390,13 +1390,13 @@ export const CHARGING_EXPONENTIAL_STEPS = Object.freeze([
       images: [CHARGING_IMAGES.curveWithCheckValue]
     },
     troubleshooting: "Der Zeitwert 100 s darf nicht einfach eigenmächtig in 90 s umgeschrieben werden, solange kein Originalprotokoll dies belegt. Ein abweichender Punkt darf auch nicht nur deshalb verworfen werden, weil er dem Modell widerspricht.",
-    mistake: "Die 10-%-Grenze ist eine vereinfachte schulische Beurteilung, keine vollständige Fehlerfortpflanzung und kein mathematischer Beweis des Modells.",
-    check: { prompt: "Prüfe Fehlerwerte und Schlussfolgerung.", fields: [
-      { id: "time-error", kind: "result", type: "number", label: "Relativer Zeitfehler in %", placeholder: "Ergebnis eingeben", expected: 10, tolerance: 0.05, required: true, feedback: { correct: "Der Zeitfehler beträgt 10 %.", incorrect: "Verwende 1 s und den kleinsten positiven Zeitpunkt 10 s." } },
+    mistake: "Die 10-%-Vergleichsgrenze dient der schulischen Beurteilung von Messdaten. Sie ersetzt keine vollständige Unsicherheitsfortpflanzung oder statistische Modellprüfung und liefert keinen mathematischen Beweis des Modells.",
+    check: { prompt: "Prüfe Messunsicherheiten, Vergleichsgrenze und Schlussfolgerung.", fields: [
+      { id: "time-error", kind: "result", type: "number", label: "Relative Zeitunsicherheit in %", placeholder: "Ergebnis eingeben", expected: 10, tolerance: 0.05, required: true, feedback: { correct: "Die relative Zeitunsicherheit beträgt nach der schulischen Vergleichsregel 10 %.", incorrect: "Bei t = 0 ist Δt/t nicht definiert. Nach der schulischen Vergleichsregel verwende 1 s und den kleinsten positiven Zeitpunkt 10 s." } },
       { id: "judgement", kind: "understanding", type: "choice", label: "Welche Schlussfolgerung ist fachlich angemessen?", expected: "compatible", required: true, options: [option("", "Bitte auswählen …"), option("compatible", "Die geprüften Daten sind mit einem exponentiellen Aufladevorgang vereinbar, beweisen ihn aber nicht."), option("proven", "Die Exponentialfunktion ist mathematisch bewiesen."), option("tau-proven", "Ohne weitere Angaben ist eine theoretisch erwartete Zeitkonstante exakt bestätigt.")], feedback: { correct: "Genau: Vereinbarkeit statt Beweis.", incorrect: "Messunsicherheiten und der begrenzte Messbereich begrenzen die Aussage." } },
-      { id: "voltage-error", kind: "result", type: "number", label: "Relativer Spannungsfehler in %", placeholder: "Ergebnis eingeben", expected: 0.3012, tolerance: 0.12, required: false, feedback: { correct: "Der Spannungsfehler stimmt (ca. 0,30 % bei 0,332 V bzw. 0,40 % bei 0,251 V).", incorrect: "Berechne 0,001/0,332 · 100 (ca. 0,30 %)." } },
+      { id: "voltage-error", kind: "result", type: "number", label: "Relative Spannungsunsicherheit in %", placeholder: "Ergebnis eingeben", expected: 0.3012, tolerance: 0.12, required: false, feedback: { correct: "Die relative Spannungsunsicherheit stimmt (ca. 0,30 % bei 0,332 V bzw. 0,40 % bei 0,251 V).", incorrect: "Berechne 0,001/0,332 · 100 (ca. 0,30 %)." } },
       { id: "start-error", kind: "result", type: "number", label: "Abweichung von A gegenüber U₀ in %", placeholder: "Ergebnis eingeben", expected: 2.312729555, tolerance: 0.05, required: false, feedback: { correct: "Die Anfangswertabweichung stimmt.", incorrect: "Berechne |3,69258−3,780|/3,780 · 100 (ca. 2,31 %)." } }
-    ], success: "Du hast Regression, Zeitmaße, Messfehler und die Vertiefung zu einem vorsichtigen Urteil verbunden.", retry: "Vergleiche 2,31 % und 2,61 % mit fmax = 10 % und formuliere nur eine Vereinbarkeitsaussage." }
+    ], success: "Du hast Regression, Zeitmaße, Messunsicherheiten und die Vertiefung zu einem vorsichtigen Urteil verbunden.", retry: "Vergleiche 2,31 % und 2,61 % mit fmax = 10 % und formuliere nur eine Vereinbarkeitsaussage." }
   }
 ]);
 
@@ -1460,9 +1460,9 @@ export const COURSES = Object.freeze({
       ["Potenzfunktion", m(String.raw`Q(U) \approx 0{,}0393011\,U^{1{,}011566}`)],
       ["Größte Modellabweichung", m(String.raw`\approx 3{,}74\,\%\ \text{bei}\ U=100\,\mathrm{V}`)],
       ["Relative Exponentabweichung", m(String.raw`\approx 1{,}16\,\%`)],
-      ["Größter relativer Einzelfehler", m(String.raw`f_{\max}=10\,\%`)]
+      ["Schulische Vergleichsgrenze", m(String.raw`f_{\max}=10\,\%`)]
     ],
-    conclusion: "Der Potenzexponent n ≈ 1,0116 weicht relativ um etwa 1,16 % vom theoretisch erwarteten Wert 1 ab; die größte Modellabweichung beträgt etwa 3,74 %. Beide Werte liegen unter dem größten relativen Einzelfehler fmax = 10 % und können nach dieser schulischen Methode durch die Messfehler erklärt werden. Die Messreihe ist mit Q ∝ U vereinbar, beweist die Proportionalität aber nicht. Der Faktor a der freien Potenzregression wird nicht ungeprüft als Kapazität interpretiert."
+    conclusion: "Der Potenzexponent n ≈ 1,0116 weicht relativ um etwa 1,16 % vom theoretisch erwarteten Wert 1 ab; die größte Modellabweichung beträgt etwa 3,74 %. Beide Werte liegen unter der schulischen Vergleichsgrenze fmax = 10 %. Nach der hier verwendeten schulischen Vergleichsregel sind sie mit den angenommenen Messunsicherheiten vereinbar. Die Messreihe ist mit Q ∝ U vereinbar, beweist die Proportionalität aber nicht. Der Faktor a der freien Potenzregression wird nicht ungeprüft als Kapazität interpretiert."
   }),
   "proportional-constants": Object.freeze({
     id: "proportional-constants",
@@ -1479,15 +1479,15 @@ export const COURSES = Object.freeze({
       { label: "Ich kann U-Q-Messwerte in die Tabelle eintragen.", steps: ["uq-constant-context", "uq-constant-table"] },
       { label: "Ich kann einzelne Quotienten und den Mittelwert mit GeoGebra berechnen.", steps: ["uq-constant-ratios", "uq-constant-mean"] },
       { label: "Ich kann den Mittelwert als mittlere Kapazität deuten und in pF angeben.", steps: ["uq-constant-parameters"] },
-      { label: "Ich kann Konstantenabweichungen mit dem größten relativen Einzelfehler vergleichen.", steps: ["uq-constant-deviation", "uq-constant-uncertainty"] },
+      { label: "Ich kann Konstantenabweichungen mit der schulischen Vergleichsgrenze vergleichen.", steps: ["uq-constant-deviation", "uq-constant-uncertainty"] },
       { label: "Ich kann Proportionalität vorsichtig beurteilen.", steps: ["uq-constant-conclusion"] }
     ],
     referenceResults: [
       ["Mittlere Kapazität", m(String.raw`\approx 0{,}0415933\cdot10^{-8}\,\mathrm{F}\approx416\,\mathrm{pF}`)],
       ["Größte Konstantenabweichung", m(String.raw`\approx3{,}83\,\%\ \text{bei}\ U=50\,\mathrm{V}`)],
-      ["Größter relativer Einzelfehler", m(String.raw`f_{\max}=10\,\%`)]
+      ["Schulische Vergleichsgrenze", m(String.raw`f_{\max}=10\,\%`)]
     ],
-    conclusion: "Die mittlere Kapazität beträgt etwa 416 pF. Die größte Konstantenabweichung von etwa 3,83 % liegt unter dem größten relativen Einzelfehler fmax = 10 % und kann nach der schulischen Methode durch die Messfehler erklärt werden. Die Messreihe ist mit Q = C · U vereinbar und stützt die Annahme direkter Proportionalität; sie beweist sie jedoch nicht."
+    conclusion: "Die mittlere Kapazität beträgt etwa 416 pF. Die größte Modellabweichung einer Einzelkapazität von etwa 3,83 % liegt unter der schulischen Vergleichsgrenze fmax = 10 %. Nach der hier verwendeten schulischen Vergleichsregel ist sie mit den angenommenen Messunsicherheiten vereinbar. Die Messreihe ist mit Q = C · U vereinbar und stützt die Annahme direkter Proportionalität; sie beweist sie jedoch nicht."
   }),
   "proportional-linear": Object.freeze({
     id: "proportional-linear",
@@ -1512,9 +1512,9 @@ export const COURSES = Object.freeze({
       ["Kapazität aus der Steigung", m(String.raw`\approx408\,\mathrm{pF}`)],
       ["Größte Modellabweichung", m(String.raw`\approx7{,}41\,\%\ \text{bei}\ U=50\,\mathrm{V}`)],
       ["Anteil des y-Achsenabschnitts", m(String.raw`\frac{|b|}{Q_{\min}}\cdot100=6\,\%`)],
-      ["Größter relativer Einzelfehler", m(String.raw`f_{\max}=10\,\%`)]
+      ["Schulische Vergleichsgrenze", m(String.raw`f_{\max}=10\,\%`)]
     ],
-    conclusion: "Die Messpunkte werden gut durch eine Gerade beschrieben. Die Steigung entspricht einer Kapazität von etwa 408 pF. Die größte Modellabweichung von etwa 7,41 % und der relative Anteil des y-Achsenabschnitts von 6 % liegen unter dem größten relativen Einzelfehler fmax = 10 %. Beide Abweichungen können nach der schulischen Methode durch die Messfehler erklärt werden; b darf näherungsweise vernachlässigt werden, sodass Q(U) ≈ m · U gilt. Ein Beweis für direkte Proportionalität oder eine statistische Bestätigung von b = 0 folgt daraus nicht."
+    conclusion: "Die Messpunkte werden gut durch eine Gerade beschrieben. Die Steigung entspricht einer Kapazität von etwa 408 pF. Die größte Modellabweichung von etwa 7,41 % und der relative Anteil des y-Achsenabschnitts von 6 % liegen unter der schulischen Vergleichsgrenze fmax = 10 %. Nach der hier verwendeten schulischen Vergleichsregel sind beide Abweichungen mit den angenommenen Messunsicherheiten vereinbar; b darf näherungsweise vernachlässigt werden, sodass Q(U) ≈ m · U gilt. Ein Beweis für direkte Proportionalität oder eine statistische Bestätigung von b = 0 folgt daraus nicht."
   }),
   "capacitor-exponential": Object.freeze({
     id: "capacitor-exponential",
@@ -1531,7 +1531,7 @@ export const COURSES = Object.freeze({
       { label: "Ich kann das Exponentialmodell verstehen und die Regression für die regulären Messwerte durchführen.", steps: ["charging-model", "charging-regression"] },
       { label: "Ich kann Zeitkonstante und Halbwertszeit bestimmen.", steps: ["charging-time"] },
       { label: "Ich kann Modellwerte und Modellabweichungen berechnen.", steps: ["charging-predictions", "charging-deviations"] },
-      { label: "Ich kann Modellabweichungen mit dem größten relativen Einzelfehler vergleichen, vorsichtig urteilen und den Prüfwert kritisch vertiefen.", steps: ["charging-conclusion"] }
+      { label: "Ich kann Modellabweichungen mit der schulischen Vergleichsgrenze vergleichen, vorsichtig urteilen und den Prüfwert kritisch vertiefen.", steps: ["charging-conclusion"] }
     ],
     referenceResults: [
       ["Exponentialfunktion", m(String.raw`\widehat{\Delta U}(t)\approx3{,}6925788\,e^{-0{,}0304341t}`)],
@@ -1539,10 +1539,10 @@ export const COURSES = Object.freeze({
       ["Halbwertszeit", m(String.raw`t_{1/2}\approx22{,}78\,\mathrm{s}`)],
       ["Größte Modellabweichung (D1:D9)", m(String.raw`\approx2{,}61\,\%\ \text{bei}\ t=80\,\mathrm{s}`)],
       ["Abweichung Modellanfangswert", m(String.raw`\approx2{,}31\,\%\ \text{von}\ U_0`)],
-      ["Größter relativer Einzelfehler", m(String.raw`f_{\max}=10\,\%`)],
+      ["Schulische Vergleichsgrenze", m(String.raw`f_{\max}=10\,\%`)],
       ["Vertiefung 10. Messwert", m(String.raw`42{,}6\,\%\ \text{Abweichung von}\ D1:D9`)]
     ],
-    conclusion: "Die Exponentialregression für die neun regulären Messwerte D1:D9 liefert ΔÛ(t) ≈ 3,6925788 · e^(−0,0304341 · t), eine Zeitkonstante von etwa 32,86 s und eine Halbwertszeit von etwa 22,78 s. Die Abweichung des Regressionsanfangswerts von U₀ beträgt etwa 2,31 %, die größte Modellabweichung der neun Punkte etwa 2,61 %. Beide liegen deutlich unter dem größten relativen Einzelfehler fmax = 10 % und können nach der schulischen Methode durch Messfehler erklärt werden. Die Daten sind mit einem exponentiellen Aufladevorgang vereinbar, beweisen ihn aber nicht. Der 10. Messwert (100 s / 0,251 V) weicht gegenüber der Neun-Punkte-Kurve um 42,6 % (im Zehn-Punkte-Modell um 23,0 %) ab; er wird als Vertiefung diskutiert und nicht ungeklärt in den Grundweg einbezogen."
+    conclusion: "Die Exponentialregression für den aufgabenbedingt vorgegebenen Bereich D1:D9 liefert ΔÛ(t) ≈ 3,6925788 · e^(−0,0304341 · t), eine Zeitkonstante von etwa 32,86 s und eine Halbwertszeit von etwa 22,78 s. Die Abweichung des Regressionsanfangswerts von U₀ beträgt etwa 2,31 %, die größte Modellabweichung der neun Punkte etwa 2,61 %. Beide liegen deutlich unter der schulischen Vergleichsgrenze fmax = 10 %. Nach der hier verwendeten schulischen Vergleichsregel sind sie mit den angenommenen Messunsicherheiten vereinbar. Die Daten sind mit einem exponentiellen Aufladevorgang vereinbar, beweisen ihn aber nicht. Der 10. Originalmesswert (100 s / 0,251 V) weicht gegenüber der Neun-Punkte-Kurve um 42,6 % (im Zehn-Punkte-Modell um 23,0 %) ab; er wird ausdrücklich als Vertiefung dokumentiert und nicht ungeklärt in den Grundweg einbezogen."
   })
 });
 

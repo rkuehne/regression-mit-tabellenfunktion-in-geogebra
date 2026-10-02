@@ -175,7 +175,14 @@ function createWorksheetPanel(example) {
 function buildStaticContent() {
   els.guide.replaceChildren(...DOCUMENTATION_GENERAL_GUIDE.map((item) => {
     const listItem = document.createElement("li");
-    listItem.textContent = item;
+    const separator = item.indexOf(":");
+    if (separator > 0) {
+      const title = document.createElement("strong");
+      title.textContent = item.slice(0, separator);
+      listItem.append(title, document.createTextNode(item.slice(separator)));
+    } else {
+      listItem.textContent = item;
+    }
     return listItem;
   }));
 

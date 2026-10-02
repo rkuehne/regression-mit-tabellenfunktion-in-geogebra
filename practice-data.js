@@ -188,7 +188,7 @@ export const PRACTICE_TASKS = Object.freeze({
           "Größte Modellabweichung bei U = 40 V: Messwert liegt mit −2,61 % unter dem Modellwert.",
           "Relativer Anteil des Achsenabschnitts am kleinsten Messwert: |b|/Qmin · 100 % = 0,04286/1,6 · 100 % ≈ 2,68 %.",
           "Schulische Grenze: max(2/40, 0,1/1,6) · 100 % = 6,25 %.",
-          "Urteil: Sowohl größte Modellabweichung (2,61 %) als auch Anteil des Achsenabschnitts (2,68 %) liegen unter 6,25 % und sind nach der schulischen Regel durch Messunsicherheiten erklärbar. Die Daten sind mit Q ∝ U vereinbar."
+          "Urteil: Sowohl größte Modellabweichung (2,61 %) als auch Anteil des Achsenabschnitts (2,68 %) liegen unter der schulischen Vergleichsgrenze von 6,25 %. Nach der hier verwendeten schulischen Vergleichsregel sind sie mit den angenommenen Messunsicherheiten vereinbar. Die Daten sind mit Q ∝ U vereinbar."
         ]
       })
     ])
@@ -283,8 +283,8 @@ export const PRACTICE_TASKS = Object.freeze({
           "Physikalische Formel: F(r) ≈ 32,42 mN · (r / 1 cm)^(−2,028).",
           "Exponentabweichung gegenüber −2: |−2,0276 − (−2)| / 2 · 100 % ≈ 1,38 %.",
           "Größte Modellabweichung bei r = 15 cm: Messwert liegt mit +4,69 % über dem Modellwert.",
-          "Schulische Grenze: max(0,1/6, 0,01/0,06) · 100 % ≈ 16,67 %.",
-          "Urteil: Exponentabweichung (1,38 %) und Modellabweichung (4,69 %) liegen weit unter 16,67 %. Die Daten sind mit F ∝ 1/r² vereinbar."
+          "Schulische Vergleichsgrenze: max(0,1/6, 0,01/0,06) · 100 % ≈ 16,67 %.",
+          "Urteil: Exponentabweichung (1,38 %) und Modellabweichung (4,69 %) liegen unter der schulischen Vergleichsgrenze von 16,67 %. Nach der hier verwendeten schulischen Vergleichsregel sind sie mit den angenommenen Messunsicherheiten vereinbar. Die Daten sind mit F ∝ 1/r² vereinbar."
         ]
       })
     ])
@@ -299,7 +299,7 @@ export const PRACTICE_TASKS = Object.freeze({
     tableHeaders: ["t in s (Spalte A)", "U_C in V (Spalte B)"],
     tableRows: PRACTICE_EXPONENTIAL_RAW.map((d) => [d.t, d.uc]),
     assignment: "Berechne zunächst ΔU = U₀ − U_C für alle sieben Messpaare. Wähle eine passende Exponentialregression, bestimme A, k und die Zeitkonstante τ. Berechne Modellwerte und relative Modellabweichungen. Vergleiche die größte Abweichung mit der schulischen Vergleichsregel und schreibe die physikalische Formel mit Einheiten auf.",
-    assumptionsText: "Vorgegebene Annahmen für die schulische Vergleichsregel: absolute Unsicherheit der Spannungsdifferenz \\(0{,}01\\,\\mathrm{V}\\) und Zeitunsicherheit \\(0{,}2\\,\\mathrm{s}\\). Bestimme die Vergleichsgrenze selbst; für t = 0 wird kein relativer Zeitanteil gebildet.",
+    assumptionsText: "Vorgegebene Annahmen für die schulische Vergleichsregel: absolute Messunsicherheit der Spannungsdifferenz \\(0{,}01\\,\\mathrm{V}\\) und Zeitunsicherheit \\(0{,}2\\,\\mathrm{s}\\). Bestimme die Vergleichsgrenze selbst. Bei t = 0 kann keine relative Zeitunsicherheit Δt/t angegeben werden; nach unserer schulischen Vergleichsregel verwendest du dafür den kleinsten positiven Messwert.",
     fields: Object.freeze([
       Object.freeze({
         id: "startA",
@@ -359,7 +359,7 @@ export const PRACTICE_TASKS = Object.freeze({
         tolerance: 0.03,
         unit: "%",
         correct: "f_max = 2,5 % stimmt.",
-        incorrect: "Bilde die relativen Eingangsunsicherheiten; bei t = 0 zählt kein relativer Zeitanteil."
+        incorrect: "Bilde die relativen Messunsicherheiten. Bei t = 0 ist Δt/t nicht definiert; nach unserer schulischen Vergleichsregel verwende den kleinsten positiven Messwert."
       })
     ]),
     hints: Object.freeze([
@@ -391,8 +391,8 @@ export const PRACTICE_TASKS = Object.freeze({
           "Parameter k ≈ −0,049928 s⁻¹; Zeitkonstante τ = −1/k ≈ 20,03 s; Halbwertszeit t₁/₂ ≈ 13,88 s.",
           "Physikalische Formel: ΔU(t) ≈ 5,021 V · e^(−0,04993 s⁻¹ · t).",
           "Größte Modellabweichung bei t = 48 s: Messwert liegt mit −1,54 % unter dem Modellwert.",
-          "Schulische Grenze: max(0,2/8, 0,01/0,45) · 100 % = 2,5 %.",
-          "Urteil: Sowohl die Anfangswertabweichung (0,41 %) als auch die größte Modellabweichung (1,54 %) liegen unter der Grenze von 2,5 %. Die Daten sind mit dem Exponentialmodell vereinbar."
+          "Schulische Vergleichsgrenze: max(0,2/8, 0,01/0,45) · 100 % = 2,5 %.",
+          "Urteil: Sowohl die Anfangswertabweichung (0,41 %) als auch die größte Modellabweichung (1,54 %) liegen unter der schulischen Vergleichsgrenze von 2,5 %. Nach der hier verwendeten schulischen Vergleichsregel sind sie mit den angenommenen Messunsicherheiten vereinbar. Die Daten sind mit dem Exponentialmodell vereinbar."
         ]
       })
     ])

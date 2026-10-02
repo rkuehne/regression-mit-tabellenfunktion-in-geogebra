@@ -34,9 +34,9 @@ backUrl += "#course";
 if (returnLink) returnLink.href = backUrl;
 if (returnTopLink) returnTopLink.href = backUrl;
 const copyPhrases = new Map([
-  ["phrase-power", "Die Potenzregression ergibt den Exponenten n ≈ 1,0116. Aus ΔU = 5 V und ΔQ = 0,1 · 10⁻⁸ C ergibt sich nach der Methode des größten Einzelfehlers ein größter relativer Einzelfehler von 10 %. Die relative Exponentabweichung beträgt etwa 1,16 %, die größte Modellabweichung etwa 3,74 %. Beide Abweichungen liegen unter 10 % und können daher durch die Messfehler erklärt werden. Der Exponent kann näherungsweise als n ≈ 1 behandelt werden. Die Messwerte sind damit mit Q ∝ U vereinbar, beweisen die Proportionalität aber nicht."],
-  ["phrase-constants", "Die mittlere Kapazität beträgt etwa 416 pF. Nach der Methode des größten Einzelfehlers ergibt sich aus den Messfehlern ein größter relativer Einzelfehler von 10 %. Die größte Abweichung einer Einzelkapazität vom Mittelwert beträgt etwa 3,83 % und liegt damit unter 10 %. Die Streuung kann durch die Messfehler erklärt und die Kapazität im Rahmen dieser Methode als konstant angesehen werden. Die Messwerte sind mit Q ∝ U vereinbar, beweisen die Proportionalität aber nicht."],
-  ["phrase-linear", "Die lineare Regression ergibt Q(U) = 0,0408U + 0,12. Aus ΔU = 5 V und ΔQ = 0,1 · 10⁻⁸ C ergibt sich nach der Methode des größten Einzelfehlers ein größter relativer Einzelfehler von 10 %. Die größte Modellabweichung beträgt 7,41 %. Der Anteil des y-Achsenabschnitts am kleinsten Ladungswert beträgt 0,12/2,0 · 100 = 6 %. Beide Abweichungen liegen unter 10 % und können daher durch die Messfehler erklärt werden. Der y-Achsenabschnitt kann näherungsweise vernachlässigt werden, sodass Q(U) ≈ mU gilt. Die Messwerte sind damit mit Q ∝ U vereinbar, beweisen die Proportionalität aber nicht."]
+  ["phrase-power", "Die Potenzregression ergibt den Exponenten n ≈ 1,0116. Aus ΔU = 5 V und ΔQ = 0,1 · 10⁻⁸ C ergibt sich eine schulische Vergleichsgrenze von 10 %. Die relative Exponentabweichung beträgt etwa 1,16 %, die größte Modellabweichung etwa 3,74 %. Nach der hier verwendeten schulischen Vergleichsregel sind beide Abweichungen mit den angenommenen Messunsicherheiten vereinbar. Der Exponent kann näherungsweise als n ≈ 1 behandelt werden. Die Messwerte sind damit mit Q ∝ U vereinbar, beweisen die Proportionalität aber nicht."],
+  ["phrase-constants", "Die mittlere Kapazität beträgt etwa 416 pF. Aus den angenommenen Messunsicherheiten ergibt sich eine schulische Vergleichsgrenze von 10 %. Die größte Modellabweichung einer Einzelkapazität vom Mittelwert beträgt etwa 3,83 % und liegt damit unter 10 %. Nach der hier verwendeten schulischen Vergleichsregel ist sie mit den angenommenen Messunsicherheiten vereinbar; die Kapazität darf in diesem Rahmen als konstant angesehen werden. Die Messwerte sind mit Q ∝ U vereinbar, beweisen die Proportionalität aber nicht."],
+  ["phrase-linear", "Die lineare Regression ergibt Q(U) = 0,0408U + 0,12. Aus ΔU = 5 V und ΔQ = 0,1 · 10⁻⁸ C ergibt sich eine schulische Vergleichsgrenze von 10 %. Die größte Modellabweichung beträgt 7,41 %. Der Anteil des y-Achsenabschnitts am kleinsten Ladungswert beträgt 0,12/2,0 · 100 = 6 %. Nach der hier verwendeten schulischen Vergleichsregel sind beide Abweichungen mit den angenommenen Messunsicherheiten vereinbar. Der y-Achsenabschnitt kann näherungsweise vernachlässigt werden, sodass Q(U) ≈ mU gilt. Die Messwerte sind damit mit Q ∝ U vereinbar, beweisen die Proportionalität aber nicht."]
 ]);
 
 const fields = SHARED_ERROR_FIELDS;
@@ -95,7 +95,7 @@ form.addEventListener("submit", (event) => {
   save();
   renderStatus();
   overallFeedback.textContent = allValid
-    ? "Abgeschlossen. Die gemeinsame Fehlerkontrolle zählt jetzt für alle drei Q–U-Lernwege."
+    ? "Abgeschlossen. Die gemeinsame Vergleichskontrolle zählt jetzt für alle drei Q–U-Lernwege."
     : "Noch nicht vollständig. Prüfe zuerst das markierte Feld.";
   overallFeedback.className = `feedback ${allValid ? "good" : "bad"}`;
   typesetMath(form);

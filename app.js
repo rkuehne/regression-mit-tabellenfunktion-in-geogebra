@@ -273,9 +273,9 @@ function renderProgress() {
   els.courseComplete.classList.toggle("pending", allStepsComplete && !sharedComplete);
   if (allStepsComplete && !sharedComplete) {
     els.completionTitle.textContent = "Noch ein gemeinsamer Schritt";
-    els.completionText.textContent = "Schließe die Methode des größten Einzelfehlers einmal ab. Danach gilt sie für alle drei Q–U-Lernwege.";
+    els.completionText.textContent = "Schließe die schulische Vergleichsregel (größter relativer Einzelfehler) einmal ab. Danach gilt sie für alle drei Q–U-Lernwege.";
     els.completionActionLink.href = `./groesster-einzelfehler.html?course=${encodeURIComponent(course.id)}`;
-    els.completionActionLink.textContent = "Fehlerseite abschließen";
+    els.completionActionLink.textContent = "Vergleichsseite abschließen";
   } else if (allStepsComplete) {
     setMathText(els.completionTitle, `${course.title} abgeschlossen`);
     els.completionText.textContent = "Übertrage den Rechenweg als Nächstes auf neue Daten oder öffne bei Bedarf die Bearbeitungsübersicht.";
@@ -964,7 +964,7 @@ function renderSummary({ typeset = true } = {}) {
   els.summaryStatus.className = `summary-status${courseComplete ? " complete" : ""}`;
   setMathText(els.summarySubtitle, `GeoGebra-Trainer · ${course.title}`);
   setMathText(els.summaryProgress, course.sharedRequirement
-    ? `${completeCount} von ${course.steps.length} Schritten · Methode des größten Einzelfehlers: ${sharedComplete ? "abgeschlossen" : "offen"}`
+    ? `${completeCount} von ${course.steps.length} Schritten · Schulische Vergleichsregel: ${sharedComplete ? "abgeschlossen" : "offen"}`
     : `${completeCount} von ${course.steps.length} Schritten abgeschlossen`);
   els.printStudentName.textContent = state.student.name.trim() || "–";
   els.printCourseName.textContent = state.student.course.trim() || "–";
@@ -985,7 +985,7 @@ function renderSummary({ typeset = true } = {}) {
   if (course.sharedRequirement) {
     const item = document.createElement("li");
     if (sharedComplete) item.className = "complete";
-    item.textContent = `Gemeinsame Fehlerseite: Methode des größten Einzelfehlers – ${sharedComplete ? "vollständig" : "Kontrolle offen"}`;
+    item.textContent = `Gemeinsame Vergleichsseite – ${sharedComplete ? "vollständig" : "Kontrolle offen"}`;
     els.summaryChecklist.append(item);
   }
 
@@ -1000,7 +1000,7 @@ function renderSummary({ typeset = true } = {}) {
   if (course.sharedRequirement) {
     const item = document.createElement("li");
     if (sharedComplete) item.className = "complete";
-    item.textContent = `${sharedComplete ? "✓" : "○"} Ich kann die Methode des größten Einzelfehlers herleiten und auf Abweichungen anwenden.`;
+    item.textContent = `${sharedComplete ? "✓" : "○"} Ich kann die schulische Vergleichsregel herleiten und auf Modellabweichungen anwenden.`;
     els.summaryCompetencies.append(item);
   }
 
@@ -1008,8 +1008,8 @@ function renderSummary({ typeset = true } = {}) {
   const referenceResults = [...course.referenceResults];
   if (course.sharedRequirement) {
     referenceResults.push(
-      ["Methode des größten Einzelfehlers", sharedComplete ? "abgeschlossen" : "noch offen"],
-      ["Relative Einzelfehler", "\\(U: 10\\,\\% \\;·\\; Q: 5\\,\\% \\;·\\; f_{\\max}=10\\,\\%\\)"]
+      ["Schulische Vergleichsregel", sharedComplete ? "abgeschlossen" : "noch offen"],
+      ["Relative Messunsicherheiten", "\\(U: 10\\,\\% \\;·\\; Q: 5\\,\\% \\;·\\; f_{\\max}=10\\,\\%\\)"]
     );
   }
   referenceResults.forEach(([term, value]) => {
@@ -1025,7 +1025,7 @@ function renderSummary({ typeset = true } = {}) {
   setMathText(els.summaryConclusion, courseComplete
     ? course.conclusion
     : course.sharedRequirement && !sharedComplete && completeCount === course.steps.length
-      ? `Alle ${course.steps.length} Schritte sind abgeschlossen. Die abschließende Beurteilung wird eingetragen, sobald auch die gemeinsame Kontrolle zur Methode des größten Einzelfehlers abgeschlossen ist.`
+      ? `Alle ${course.steps.length} Schritte sind abgeschlossen. Die abschließende Beurteilung wird eingetragen, sobald auch die gemeinsame Kontrolle zur schulischen Vergleichsregel abgeschlossen ist.`
       : "Die abschließende Beurteilung wird eingetragen, sobald alle Ergebnis- und Verständnisprüfungen dieses Lernwegs abgeschlossen sind.");
 }
 

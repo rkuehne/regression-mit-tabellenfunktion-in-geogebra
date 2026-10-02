@@ -175,7 +175,7 @@ function renderTask(taskId) {
   const assumptionsBox = document.createElement("div");
   assumptionsBox.className = "practice-assumptions-box";
   const assumptionsHeading = document.createElement("h4");
-  assumptionsHeading.textContent = "Vorgegebene Annahmen für die Fehlerregel";
+  assumptionsHeading.textContent = "Vorgegebene Annahmen für die schulische Vergleichsregel";
   const assumptionsP = document.createElement("p");
   assumptionsP.innerHTML = task.assumptionsText;
   assumptionsBox.append(assumptionsHeading, assumptionsP);
